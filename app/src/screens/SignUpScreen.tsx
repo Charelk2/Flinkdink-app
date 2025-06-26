@@ -1,3 +1,4 @@
+// ✅ SignUpScreen.tsx
 import React, { useState } from 'react';
 import {
   View,
@@ -12,7 +13,7 @@ import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../../config/firebase';
 import Toast from 'react-native-toast-message';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../../src/navigation/types'; // adjust path
+import { RootStackParamList } from '../../src/navigation/types';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'SignUp'>;
 
@@ -24,12 +25,7 @@ export default function SignUpScreen() {
   const [loading, setLoading] = useState(false);
 
   const showToast = (type: 'success' | 'error', message: string) => {
-    Toast.show({
-      type,
-      text1: message,
-      position: 'top',
-      visibilityTime: 3000,
-    });
+    Toast.show({ type, text1: message, position: 'top', visibilityTime: 3000 });
   };
 
   const handleSignUp = async () => {
@@ -37,48 +33,32 @@ export default function SignUpScreen() {
     const cleanPassword = password.trim();
 
     if (!cleanEmail || !cleanPassword) {
-      showToast('error', 'Please enter both email and password.');
-      return;
+      return showToast('error', 'Please enter both email and password.');
     }
-
     if (cleanPassword.length < 6) {
-      showToast('error', 'Password must be at least 6 characters.');
-      return;
+      return showToast('error', 'Password must be at least 6 characters.');
     }
 
     setLoading(true);
-
     try {
-        await createUserWithEmailAndPassword(auth, cleanEmail, cleanPassword);
-        showToast('success', 'Account created!');
-        setTimeout(() => {
-          navigation.reset({
-            index: 0,
-            routes: [{ name: 'AddChild' }],
-          });
-        }, 1500);
-        
+      await createUserWithEmailAndPassword(auth, cleanEmail, cleanPassword);
+      showToast('success', 'Account created!');
+      setTimeout(() => navigation.reset({ index: 0, routes: [{ name: 'AddChild' }] }), 1500);
     } catch (error: any) {
       console.log('SIGN-UP ERROR:', error.code);
-      const getSignupErrorMessage = (code: string): string => {
+      const getMessage = (code: string) => {
         switch (code) {
-          case 'auth/email-already-in-use':
-            return 'Account already exists. Redirecting to login...';
-          case 'auth/invalid-email':
-            return 'Invalid email address.';
-          case 'auth/weak-password':
-            return 'Password must be at least 6 characters.';
-          default:
-            return 'Sign-up failed. Please try again.';
+          case 'auth/email-already-in-use': return 'Account already exists. Redirecting to login...';
+          case 'auth/invalid-email': return 'Invalid email address.';
+          case 'auth/weak-password': return 'Password must be at least 6 characters.';
+          default: return 'Sign-up failed. Please try again.';
         }
       };
-      
-      const message = getSignupErrorMessage(error.code);
+      const message = getMessage(error.code);
       showToast('error', message);
-      
       if (error.code === 'auth/email-already-in-use') {
         setTimeout(() => navigation.navigate('Login'), 2000);
-      }      
+      }
     } finally {
       setLoading(false);
     }
@@ -111,18 +91,13 @@ export default function SignUpScreen() {
         />
         <TouchableOpacity
           onPress={() => setShowPassword(!showPassword)}
-          style={styles.toggleButton}
-        >
+          style={styles.toggleButton}>
           <Text style={styles.toggleText}>{showPassword ? 'Hide' : 'Show'}</Text>
         </TouchableOpacity>
       </View>
 
       <TouchableOpacity style={styles.button} onPress={handleSignUp} disabled={loading}>
-        {loading ? (
-          <ActivityIndicator color="#382E1C" />
-        ) : (
-          <Text style={styles.buttonText}>Create Account</Text>
-        )}
+        {loading ? <ActivityIndicator color="#382E1C" /> : <Text style={styles.buttonText}>Create Account</Text>}
       </TouchableOpacity>
 
       <TouchableOpacity onPress={() => navigation.navigate('Login')}>
@@ -132,21 +107,11 @@ export default function SignUpScreen() {
   );
 }
 
+// Shared styles
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#FFFBF2', justifyContent: 'center', padding: 24 },
-  title: {
-    fontSize: 36,
-    fontFamily: 'ComicSans',
-    textAlign: 'center',
-    color: '#382E1C',
-    marginBottom: 30,
-  },
-  label: {
-    fontSize: 18,
-    fontFamily: 'ComicSans',
-    color: '#382E1C',
-    marginBottom: 6,
-  },
+  title: { fontSize: 36, fontFamily: 'ComicSans', textAlign: 'center', color: '#382E1C', marginBottom: 30 },
+  label: { fontSize: 18, fontFamily: 'ComicSans', color: '#382E1C', marginBottom: 6 },
   input: {
     backgroundColor: '#FFF8E7',
     borderWidth: 2,
@@ -160,38 +125,20 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#FFF8E7',
-    borderColor: '#D6B98C',
     borderRadius: 10,
     paddingRight: 12,
     marginBottom: 20,
   },
-  toggleButton: {
-    paddingHorizontal: 10,
-    paddingVertical: 8,
-  },
-  toggleText: {
-    fontFamily: 'ComicSans',
-    fontSize: 14,
-    color: '#555',
-  },
+  toggleButton: { paddingHorizontal: 10, paddingVertical: 8 },
+  toggleText: { fontFamily: 'ComicSans', fontSize: 14, color: '#555' },
   button: {
-    backgroundColor: '#FBD278',
+    backgroundColor: '#FFC8A2',
     padding: 16,
     borderRadius: 30,
     alignItems: 'center',
     marginBottom: 16,
   },
-  buttonText: {
-    fontSize: 20,
-    color: '#382E1C',
-    fontFamily: 'ComicSans',
-  },
-  footerText: {
-    marginTop: 65,
-    fontSize: 16,
-    fontFamily: 'ComicSans',
-    textAlign: 'center',
-    color: '#555',
-    textDecorationLine: 'underline',
-  },
+  buttonText: { fontSize: 20, color: '#382E1C', fontFamily: 'ComicSans' },
+  forgotPasswordText: { fontSize: 12, fontFamily: 'ComicSans', color: '#555', textAlign: 'right' },
+  footerText: { fontSize: 16, marginTop: 50, fontFamily: 'ComicSans', textAlign: 'center', color: '#555', textDecorationLine: 'underline' },
 });

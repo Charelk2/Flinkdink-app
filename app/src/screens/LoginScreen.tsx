@@ -12,9 +12,9 @@ import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../../config/firebase';
 import Toast from 'react-native-toast-message';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../navigation/types'; // adjust path
+import { RootStackParamList } from '../navigation/types';
 
-type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'SignUp'>;
+type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'Login'>;
 
 export default function LoginScreen() {
   const navigation = useNavigation<NavigationProp>();
@@ -24,12 +24,7 @@ export default function LoginScreen() {
   const [loading, setLoading] = useState(false);
 
   const showToast = (type: 'success' | 'error', message: string) => {
-    Toast.show({
-      type,
-      text1: message,
-      position: 'top',
-      visibilityTime: 3000,
-    });
+    Toast.show({ type, text1: message, position: 'top', visibilityTime: 3000 });
   };
 
   const handleLogin = async () => {
@@ -37,44 +32,34 @@ export default function LoginScreen() {
     const cleanPassword = password.trim();
 
     if (!cleanEmail || !cleanPassword) {
-      showToast('error', 'Please enter both email and password.');
-      return;
+      return showToast('error', 'Please enter both email and password.');
     }
 
     setLoading(true);
-
     try {
       await signInWithEmailAndPassword(auth, cleanEmail, cleanPassword);
       showToast('success', 'Welcome back!');
       setTimeout(() => navigation.navigate('ProfileSelector'), 500);
     } catch (error: any) {
-        console.log('Login error:', error.code);
-      
-        const getLoginErrorMessage = (code: string): string => {
-          switch (code) {
-            case 'auth/invalid-email':
-              return 'Invalid email address.';
-            case 'auth/user-not-found':
-              return 'No account found with this email.';
-            case 'auth/wrong-password':
-            case 'auth/invalid-credential':
-              return 'Incorrect email or password.';
-            default:
-              return 'Login failed. Please try again.';
-          }
-        };
-      
-        const message = getLoginErrorMessage(error.code);
-        showToast('error', message);
-      } finally {
-        setLoading(false);
-      }      
+      console.log('Login error:', error.code);
+      const getMessage = (code: string) => {
+        switch (code) {
+          case 'auth/invalid-email': return 'Invalid email address.';
+          case 'auth/user-not-found': return 'No account found with this email.';
+          case 'auth/wrong-password':
+          case 'auth/invalid-credential': return 'Incorrect email or password.';
+          default: return 'Login failed. Please try again.';
+        }
+      };
+      showToast('error', getMessage(error.code));
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Log In</Text>
-
       <Text style={styles.label}>Email</Text>
       <TextInput
         value={email}
@@ -98,37 +83,22 @@ export default function LoginScreen() {
         />
         <TouchableOpacity
           onPress={() => setShowPassword(!showPassword)}
-          style={styles.toggleButton}
-        >
+          style={styles.toggleButton}>
           <Text style={styles.toggleText}>{showPassword ? 'Hide' : 'Show'}</Text>
         </TouchableOpacity>
       </View>
 
       <TouchableOpacity style={styles.button} onPress={handleLogin} disabled={loading}>
-        {loading ? (
-          <ActivityIndicator color="#382E1C" />
-        ) : (
-          <Text style={styles.buttonText}>Log In</Text>
-        )}
+        {loading ? <ActivityIndicator color="#382E1C" /> : <Text style={styles.buttonText}>Log In</Text>}
       </TouchableOpacity>
 
-      <View style={{ alignItems: 'flex-end', marginBottom: 16 }}>
-        <Text
-          onPress={() => navigation.navigate('ForgotPassword')}
-          style={styles.forgotPasswordText}
-        >
-          Forgot Password?
-        </Text>
-      </View>
+      <Text onPress={() => navigation.navigate('ForgotPassword')} style={styles.forgotPasswordText}>
+        Forgot Password?
+      </Text>
 
-      <View style={{ alignItems: 'center' }}>
-        <Text
-          onPress={() => navigation.navigate('SignUp')}
-          style={styles.footerText}
-        >
-          Not a member? Sign up now
-        </Text>
-      </View>
+      <Text onPress={() => navigation.navigate('SignUp')} style={styles.footerText}>
+        Not a member? Sign up now
+      </Text>
     </View>
   );
 }

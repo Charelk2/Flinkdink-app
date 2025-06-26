@@ -1,41 +1,33 @@
+// AuthContext.tsx
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { onAuthStateChanged, User } from 'firebase/auth';
 import { auth } from '../../config/firebase';
 
-const AuthContext = createContext<any>(null);
+interface AuthContextType {
+  user: User | null;
+  loading: boolean;
+}
 
-export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
+const AuthContext = createContext<AuthContextType>({
+  user: null,
+  loading: true,
+});
+
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [authReady, setAuthReady] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    let unsubscribe: () => void;
+    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+      setUser(firebaseUser);
+      setLoading(false);
+    });
 
-    const init = async () => {
-      try {
-        console.log('[AuthContext] Waiting for Firebase Auth to initialize...');
-        // Wait a tick to ensure auth is ready on native
-        await new Promise((resolve) => setTimeout(resolve, 0));
-
-        unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
-          console.log('[AuthContext] Firebase user:', firebaseUser?.email);
-          setUser(firebaseUser);
-          setAuthReady(true);
-        });
-      } catch (err) {
-        console.error('[AuthContext] Error initializing Firebase Auth:', err);
-      }
-    };
-
-    init();
-
-    return () => {
-      if (unsubscribe) unsubscribe();
-    };
+    return unsubscribe;
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, loading: !authReady, auth }}>
+    <AuthContext.Provider value={{ user, loading }}>
       {children}
     </AuthContext.Provider>
   );

@@ -16,7 +16,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { ChildProfile } from '../../src/models/types';
 import { RootStackParamList } from '../navigation/types';
 import { getProfiles } from '../../utils/storage';
-import { doc, deleteDoc } from 'firebase/firestore';
+import { doc, deleteDoc } from 'firebase/firestore'; // ✅ correct
 import { auth, db } from '../../config/firebase';
 import Toast from 'react-native-toast-message';
 import { Ionicons } from '@expo/vector-icons';

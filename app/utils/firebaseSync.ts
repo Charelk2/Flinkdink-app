@@ -5,7 +5,7 @@ import {
     getDocs,
     collection,
     CollectionReference,
-  } from 'firebase/firestore';
+  } from '@firebase/firestore';
   import { db } from '../config/firebase';
   import { ChildProfile } from '../src/models/types';
   
