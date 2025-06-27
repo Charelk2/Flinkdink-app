@@ -16,10 +16,11 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { ChildProfile } from '../../src/models/types';
 import { RootStackParamList } from '../navigation/types';
 import { getProfiles } from '../../utils/storage';
-import { doc, deleteDoc } from 'firebase/firestore'; // ✅ correct
+import { doc, deleteDoc } from 'firebase/firestore'; // ✅ fixed import
 import { auth, db } from '../../config/firebase';
 import Toast from 'react-native-toast-message';
 import { Ionicons } from '@expo/vector-icons';
+import { fetchAllChildProfiles } from '../../utils/firebaseSync';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'SignUp'>;
 
@@ -29,9 +30,21 @@ export default function ProfileSelectorScreen() {
 
   useEffect(() => {
     const load = async () => {
-      const saved = await getProfiles();
-      setProfiles(saved);
+      const user = auth.currentUser;
+      if (!user) {
+        console.warn('No user signed in');
+        return;
+      }
+  
+      try {
+        const cloudProfiles = await fetchAllChildProfiles(user.uid);
+        console.log('✅ Loaded profiles from Firestore:', cloudProfiles);
+        setProfiles(cloudProfiles);
+      } catch (err) {
+        console.error('❌ Failed to load profiles from Firestore:', err);
+      }
     };
+  
     load();
   }, []);
 
@@ -55,35 +68,28 @@ export default function ProfileSelectorScreen() {
       return;
     }
 
-    const confirmDelete = async () => {
-      try {
-        await deleteDoc(doc(db, 'users', user.uid, 'children', profile.id));
-        setProfiles((prev) => prev.filter((p) => p.id !== profile.id));
+const confirmDelete = async () => {
+  try {
+    await deleteDoc(doc(db, 'users', user.uid, 'children', profile.id));
+    const updatedProfiles = await fetchAllChildProfiles(user.uid); // 🔁 refetch from Firestore
+    setProfiles(updatedProfiles);
 
-        const current = await AsyncStorage.getItem('activeProfileId');
-        if (current === profile.id) {
-          await AsyncStorage.removeItem('activeProfileId');
-        }
+    const current = await AsyncStorage.getItem('activeProfileId');
+    if (current === profile.id) {
+      await AsyncStorage.removeItem('activeProfileId');
+    }
 
-        Toast.show({
-          type: 'success',
-          text1: 'Profile deleted',
-        });
-      } catch (err) {
-        console.error('Failed to delete profile:', err);
-        Toast.show({
-          type: 'error',
-          text1: 'Could not delete profile',
-        });
-      }
-    };
+    Toast.show({ type: 'success', text1: 'Profile deleted' });
+  } catch (err) {
+    console.error('Failed to delete profile:', err);
+    Toast.show({ type: 'error', text1: 'Could not delete profile' });
+  }
+};
 
-    // Trigger vibration
     if (Platform.OS !== 'web') {
       Vibration.vibrate(50);
     }
 
-    // Confirm dialog
     if (Platform.OS === 'web') {
       if (window.confirm(`Delete ${profile.name}? This cannot be undone.`)) {
         await confirmDelete();
