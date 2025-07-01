@@ -10,5 +10,7 @@ export const imageMap: { [key: string]: any } = {
     'ierse-wolfhond.svg': require('../assets/images/ierse-wolfhond.jpg'),
     'vizsla.svg': require('../assets/images/vizsla.jpg'),
     'skaaphond.svg': require('../assets/images/skaaphond.jpg'),
+    'dog.svg': require('../assets/images/worshond.jpeg'),
+    'placeholder.png': require('../assets/images/worshond.jpeg'),
   };
   
