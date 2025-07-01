@@ -1,4 +1,4 @@
-{
+export default {
   "language": [
     "hondehok",
     "boekrak",
@@ -264,3 +264,4 @@
     ]
   ]
 }
+;

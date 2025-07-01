@@ -1,4 +1,4 @@
-{
+export default {
   "language": [
     "droog - nat",
     "skoon - vuil",
@@ -94,3 +94,4 @@
     [81, 72, 63, 54, 45, 36, 27, 18, 9, 0]
   ]
 }
+;

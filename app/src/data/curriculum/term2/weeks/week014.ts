@@ -1,4 +1,4 @@
-{
+export default {
   "language": [
     "perd",
     "bees",
@@ -123,3 +123,4 @@
   ]
 ]
 }
+;

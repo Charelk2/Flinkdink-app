@@ -1,4 +1,4 @@
-{
+export default {
   "language": [
     "teddie",
     "hemp",
@@ -85,3 +85,4 @@
     }
   ]
 }
+;

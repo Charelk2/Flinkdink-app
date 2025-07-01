@@ -1,17 +1,18 @@
-{
+export default {
   "language": [
-    "hamer",
-    "saag",
-    "boor",
-    "spykers",
-    "skroef",
-    "maatband",
-    "waterpas",
-    "pakkie",
-    "boks",
-    "toue"
+    "houtvloer",
+    "veelap",
+    "tandeborsel",
+    "olielamp",
+    "eetlus",
+    "padkaart",
+    "slaapsak",
+    "waterkan",
+    "glyskaal",
+    "vuurhout"
   ],
-  "mathWindowStart": 166,
+  "mathWindowStart": 226,
+  "mathWindowLength": 0,
   "encyclopedia": [
     {
       "id": "afghaanse-hond",
@@ -84,13 +85,51 @@
       "image": "/images/dog.svg"
     }
   ],
-  "counting": [
-    [2, 4, 6, 8, 10],
-    [12, 14, 16, 18, 20],
-    [3, 6, 9, 12, 15],
-    [15, 18, 21, 24, 27, 30],
-    [30, 33, 36, 39, 42, 45, 48],
-    [50, 52, 54, 56, 58, 60],
-    [51, 54, 57, 60, 63, 66, 69]
+  "multiplication": [
+    [
+      { "a": 4, "b": 1, "product": 4 },
+      { "a": 4, "b": 2, "product": 8 },
+      { "a": 4, "b": 3, "product": 12 }
+    ],
+    [
+      { "a": 4, "b": 4, "product": 16 },
+      { "a": 4, "b": 5, "product": 20 },
+      { "a": 4, "b": 6, "product": 24 }
+    ],
+    [
+      { "a": 4, "b": 7, "product": 28 },
+      { "a": 4, "b": 8, "product": 32 },
+      { "a": 4, "b": 9, "product": 36 }
+    ],
+    [],
+    [],
+    [],
+    [
+      { "a": 4, "b": 7, "product": 28 },
+      { "a": 4, "b": 8, "product": 32 },
+      { "a": 4, "b": 9, "product": 36 }
+    ]
+  ],
+  "division": [
+    [],
+    [],
+    [],
+    [
+      { "a": 12, "b": 4, "quotient": 3 },
+      { "a": 8, "b": 4, "quotient": 2 },
+      { "a": 4, "b": 4, "quotient": 1 }
+    ],
+    [
+      { "a": 24, "b": 4, "quotient": 6 },
+      { "a": 20, "b": 4, "quotient": 5 },
+      { "a": 16, "b": 4, "quotient": 4 }
+    ],
+    [
+      { "a": 36, "b": 4, "quotient": 9 },
+      { "a": 32, "b": 4, "quotient": 8 },
+      { "a": 28, "b": 4, "quotient": 7 }
+    ],
+    []
   ]
 }
+;

@@ -1,4 +1,4 @@
-{
+export default {
   "language": [
     "heuwel",
     "bos",
@@ -85,3 +85,4 @@
     }
   ]
 }
+;

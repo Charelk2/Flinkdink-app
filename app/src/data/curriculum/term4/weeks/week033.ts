@@ -1,18 +1,17 @@
-{
+export default {
   "language": [
-    "sandveld",
-    "grasmat",
-    "kaasbord",
-    "windpomp",
-    "sneeubal",
-    "sonhoed",
-    "karwas",
-    "reënjas",
-    "sterlig",
-    "katmandjie"
+    "vel",
+    "voet",
+    "kop",
+    "tande",
+    "tong",
+    "hakskeen",
+    "pols",
+    "knie",
+    "tone",
+    "nael"
   ],
-  "mathWindowStart": 216,
-  "mathWindowLength": 0,
+  "mathWindowStart": 191,
   "encyclopedia": [
     {
       "id": "afghaanse-hond",
@@ -85,50 +84,14 @@
       "image": "/images/dog.svg"
     }
   ],
-  "multiplication": [
-    [
-      { "a": 2, "b": 1, "product": 2 },
-      { "a": 2, "b": 2, "product": 4 },
-      { "a": 2, "b": 3, "product": 6 }
-    ],
-    [
-      { "a": 2, "b": 4, "product": 8 },
-      { "a": 2, "b": 5, "product": 10 },
-      { "a": 2, "b": 6, "product": 12 }
-    ],
-    [
-      { "a": 2, "b": 7, "product": 14 },
-      { "a": 2, "b": 8, "product": 16 },
-      { "a": 2, "b": 9, "product": 18 }
-    ],
-    [],
-    [],
-    [],
-    [
-      { "a": 2, "b": 7, "product": 14 },
-      { "a": 2, "b": 8, "product": 16 },
-      { "a": 2, "b": 9, "product": 18 }
-    ]
-  ],
-  "division": [
-    [],
-    [],
-    [],
-    [
-      { "a": 6, "b": 2, "quotient": 3 },
-      { "a": 4, "b": 2, "quotient": 2 },
-      { "a": 2, "b": 2, "quotient": 1 }
-    ],
-    [
-      { "a": 12, "b": 2, "quotient": 6 },
-      { "a": 10, "b": 2, "quotient": 5 },
-      { "a": 8, "b": 2, "quotient": 4 }
-    ],
-    [
-      { "a": 18, "b": 2, "quotient": 9 },
-      { "a": 16, "b": 2, "quotient": 8 },
-      { "a": 14, "b": 2, "quotient": 7 }
-    ],
-    []
+  "counting": [
+    [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20],
+    [11, 13, 15, 17, 19, 21, 23, 25, 27, 29, 31],
+    [3, 6, 9, 12, 15, 18, 21, 24, 27, 30],
+    [4, 8, 12, 16, 20, 24, 28],
+    [5, 10, 15, 20, 25, 30, 35, 40, 45, 50],
+    [30, 27, 24, 21, 18, 15, 12, 9, 6, 3],
+    [50, 45, 40, 35, 30, 25, 20, 15, 10, 5]
   ]
 }
+;

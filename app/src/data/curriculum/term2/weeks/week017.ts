@@ -1,4 +1,4 @@
-{
+export default {
   "language": [
     "Mamma",
     "Pappa",
@@ -123,3 +123,4 @@
     ]
   ]
 }
+;

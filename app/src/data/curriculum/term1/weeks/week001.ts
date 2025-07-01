@@ -1,4 +1,4 @@
-{
+export default {
   "language": [
     "Mamma",
     "Pappa",
@@ -87,3 +87,4 @@
   "mathWindowLength": 5,
   "mathShuffleFirstHalf": false
 }
+;

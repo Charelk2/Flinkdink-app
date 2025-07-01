@@ -1,17 +1,17 @@
-{
+export default {
   "language": [
-    "mandjie",
-    "klok",
-    "radio",
-    "pot",
-    "pan",
-    "muur",
-    "besem",
-    "seep",
-    "laken",
-    "bak"
+    "muisgat",
+    "blompot",
+    "seepbak",
+    "koffiebeker",
+    "woltrui",
+    "braaibak",
+    "kerslig",
+    "kitaarboks",
+    "klipmuur",
+    "skoenveter"
   ],
-  "mathWindowStart": 141,
+  "mathWindowStart": 221,
   "mathWindowLength": 0,
   "encyclopedia": [
     {
@@ -85,41 +85,51 @@
       "image": "/images/dog.svg"
     }
   ],
+  "multiplication": [
+    [
+      { "a": 3, "b": 1, "product": 3 },
+      { "a": 3, "b": 2, "product": 6 },
+      { "a": 3, "b": 3, "product": 9 }
+    ],
+    [
+      { "a": 3, "b": 4, "product": 12 },
+      { "a": 3, "b": 5, "product": 15 },
+      { "a": 3, "b": 6, "product": 18 }
+    ],
+    [
+      { "a": 3, "b": 7, "product": 21 },
+      { "a": 3, "b": 8, "product": 24 },
+      { "a": 3, "b": 9, "product": 27 }
+    ],
+    [],
+    [],
+    [],
+    [
+      { "a": 3, "b": 7, "product": 21 },
+      { "a": 3, "b": 8, "product": 24 },
+      { "a": 3, "b": 9, "product": 27 }
+    ]
+  ],
   "division": [
+    [],
+    [],
+    [],
     [
-      { "a": 6, "b": 6, "quotient": 1 },
-      { "a": 10, "b": 5, "quotient": 2 },
-      { "a": 42, "b": 6, "quotient": 7 }
-    ],
-    [
-      { "a": 25, "b": 5, "quotient": 5 },
-      { "a": 24, "b": 6, "quotient": 4 },
-      { "a": 45, "b": 5, "quotient": 9 }
-    ],
-    [
-      { "a": 49, "b": 7, "quotient": 7 },
-      { "a": 21, "b": 7, "quotient": 3 },
-      { "a": 30, "b": 3, "quotient": 10 }
-    ],
-    [
-      { "a": 16, "b": 4, "quotient": 4 },
-      { "a": 8, "b": 1, "quotient": 8 },
-      { "a": 12, "b": 3, "quotient": 4 }
-    ],
-    [
-      { "a": 30, "b": 5, "quotient": 6 },
-      { "a": 9, "b": 1, "quotient": 9 },
-      { "a": 35, "b": 7, "quotient": 5 }
+      { "a": 9, "b": 3, "quotient": 3 },
+      { "a": 6, "b": 3, "quotient": 2 },
+      { "a": 3, "b": 3, "quotient": 1 }
     ],
     [
       { "a": 18, "b": 3, "quotient": 6 },
-      { "a": 27, "b": 9, "quotient": 3 },
-      { "a": 36, "b": 6, "quotient": 6 }
+      { "a": 15, "b": 3, "quotient": 5 },
+      { "a": 12, "b": 3, "quotient": 4 }
     ],
     [
-      { "a": 42, "b": 7, "quotient": 6 },
-      { "a": 15, "b": 5, "quotient": 3 },
-      { "a": 48, "b": 6, "quotient": 8 }
-    ]
+      { "a": 27, "b": 3, "quotient": 9 },
+      { "a": 24, "b": 3, "quotient": 8 },
+      { "a": 21, "b": 3, "quotient": 7 }
+    ],
+    []
   ]
 }
+;

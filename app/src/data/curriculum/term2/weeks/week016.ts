@@ -1,4 +1,4 @@
-{
+export default {
   "language": [
     "melk",
     "brood",
@@ -123,3 +123,4 @@
   ]
 ]
 }
+;

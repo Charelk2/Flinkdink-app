@@ -1,4 +1,4 @@
-{
+export default {
   "language": [
     "rooi",
     "swart",
@@ -85,3 +85,4 @@
     }
   ]
 }
+;

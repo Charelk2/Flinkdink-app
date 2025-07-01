@@ -1,4 +1,4 @@
-{
+export default {
   "language": [
     "luiperd",
     "hoender",
@@ -123,3 +123,4 @@
   ]
 ]
 }
+;
