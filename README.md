@@ -12,3 +12,9 @@ registers both the `main` and `auth` entry points. The repository now includes a
 compatibility helper to avoid this issue. After updating `index.js`, run
 `expo start -c` or rebuild the native project to clear any stale caches that may
 cause the old entry point configuration to persist.
+
+## Curriculum Images
+
+Curriculum week data references images using just the file name. When adding or
+editing week data, omit the `/images/` prefix. The `imageMap` utility maps these
+filenames to actual assets.
