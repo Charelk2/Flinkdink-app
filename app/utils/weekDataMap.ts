@@ -1,9 +1,9 @@
 // app/utils/weekDataMap.ts
 
-import * as term1 from '../data/curriculum/term1';
-import * as term2 from '../data/curriculum/term2';
-import * as term3 from '../data/curriculum/term3';
-import * as term4 from '../data/curriculum/term4';
+import * as term1 from '../src/data/curriculum/term1';
+import * as term2 from '../src/data/curriculum/term2';
+import * as term3 from '../src/data/curriculum/term3';
+import * as term4 from '../src/data/curriculum/term4';
 
 export const weekDataMap: { [key: number]: () => Promise<any> } = {
   // Term 1

@@ -1,121 +1,114 @@
-// app/utils/generateSessionSlides.ts
-import React from 'react';
+import type * as React from 'react';
+import { View, Text, Image, StyleSheet, useWindowDimensions } from 'react-native';
 import { loadWeekData } from './loadWeekData';
-import DotBoard from '../src/components/DotBoard'; // ✅ if you're inside /app/utils/
-import { Image, Text, View } from 'react-native';
+import DotBoard from '../src/components/DotBoard';
 import { imageMap } from './imageMap';
+import { ChildProfile } from '../src/models/types';
 
+export interface Slide {
+  type: 'language' | 'encyclopedia' | 'math';
+  id: string;
+  content: JSX.Element;
+}
 
-export async function generateSessionSlides(week: number) {
+export async function generateSessionSlides(
+  week: number,
+  profile: ChildProfile
+): Promise<Slide[]> {
   const data = await loadWeekData(week);
+  if (!data) throw new Error(`No data found for week ${week}`);
 
-  const language = data.language.map((word: string, i: number) => ({
+  const languageSlides: Slide[] = (data.language ?? []).map((word: string, i: number) => ({
     type: 'language',
     id: `lang-${i}`,
     content: (
-      <View
-        key={`lang-${i}`}
-        style={{
-          flex: 1,
-          justifyContent: 'center',
-          alignItems: 'center',
-          padding: 24,
-          backgroundColor: '#FFFBF2',
-        }}
-      >
-        <Text
-          style={{
-            fontSize: 40,
-            fontFamily: 'ComicSans',
-            color: '#382E1C',
-            textAlign: 'center',
-          }}
-        >
-          {word}
-        </Text>
-      </View>
+      <FullSlide key={`lang-${i}`}>
+        <Text style={styles.languageText}>{word}</Text>
+      </FullSlide>
     ),
   }));
 
-  const encyclopedia = data.encyclopedia.map((item: any, i: number) => ({
+  const encyclopediaSlides: Slide[] = (data.encyclopedia ?? []).map((item: any, i: number) => ({
     type: 'encyclopedia',
-    id: item.id,
+    id: item.id || `ency-${i}`,
     content: (
-      <View
-        key={`ency-${i}`}
-        style={{
-          flex: 1,
-          justifyContent: 'center',
-          alignItems: 'center',
-          padding: 24,
-          backgroundColor: '#FFFBF2',
-        }}
-      >
+      <FullSlide key={`ency-${i}`}>
         <Image
           source={imageMap[item.image] || imageMap['dog.svg']}
-          style={{
-            width: 220,
-            height: 220,
-            borderRadius: 20,
-            marginBottom: 16,
-          }}
+          style={styles.image}
+          resizeMode="contain"
         />
-        <Text
-          style={{
-            fontSize: 24,
-            fontFamily: 'ComicSans',
-            color: '#382E1C',
-            marginBottom: 8,
-            textAlign: 'center',
-          }}
-        >
-          {item.title}
-        </Text>
-        <Text
-          style={{
-            fontSize: 16,
-            fontFamily: 'ComicSans',
-            color: '#555',
-            textAlign: 'center',
-          }}
-        >
-          {item.fact}
-        </Text>
-      </View>
+        <Text style={styles.title}>{item.title}</Text>
+        <Text style={styles.fact}>{item.fact}</Text>
+      </FullSlide>
     ),
   }));
 
   const mathLength = data.mathWindowLength ?? 10;
   const mathStart = data.mathWindowStart ?? 1;
 
-  const math = Array.from({ length: mathLength }, (_, i) => mathStart + i).map((n, i) => ({
-    type: 'math',
-    id: `math-${n}`,
-    content: (
-      <View
-        key={`math-${n}`}
-        style={{
-          flex: 1,
-          justifyContent: 'center',
-          alignItems: 'center',
-          padding: 24,
-          backgroundColor: '#FFFBF2',
-        }}
-      >
-        <DotBoard count={n} />
-        <Text
-          style={{
-            fontSize: 16,
-            marginTop: 10,
-            fontFamily: 'ComicSans',
-            color: '#999',
-          }}
-        >
-          Count: {n}
-        </Text>
-      </View>
-    ),
-  }));
+  const mathSlides: Slide[] = Array.from({ length: mathLength }, (_, i) => {
+    const count = mathStart + i;
+    return {
+      type: 'math',
+      id: `math-${count}`,
+      content: (
+        <FullSlide key={`math-${count}`}>
+          <DotBoard count={count} />
+          <Text style={styles.countText}>Count: {count}</Text>
+        </FullSlide>
+      ),
+    };
+  });
 
-  return [...language, ...encyclopedia, ...math];
+  return [...languageSlides, ...encyclopediaSlides, ...mathSlides];
 }
+
+function FullSlide({ children }: { children: React.ReactNode }) {
+  const { width, height } = useWindowDimensions();
+  return (
+    <View style={[styles.slide, { width, height }]}>
+      {children}
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  slide: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#FFFBF2',
+    paddingHorizontal: 24,
+  },
+  languageText: {
+    fontSize: 40,
+    fontFamily: 'ComicSans',
+    color: '#382E1C',
+    textAlign: 'center',
+  },
+  image: {
+    width: 220,
+    height: 220,
+    borderRadius: 20,
+    marginBottom: 16,
+  },
+  title: {
+    fontSize: 24,
+    fontFamily: 'ComicSans',
+    color: '#382E1C',
+    marginBottom: 8,
+    textAlign: 'center',
+  },
+  fact: {
+    fontSize: 16,
+    fontFamily: 'ComicSans',
+    color: '#555',
+    textAlign: 'center',
+  },
+  countText: {
+    fontSize: 16,
+    marginTop: 10,
+    fontFamily: 'ComicSans',
+    color: '#999',
+  },
+});

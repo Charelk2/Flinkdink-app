@@ -1,10 +1,6 @@
 // app/utils/loadWeekData.ts
-
 import { weekDataMap } from './weekDataMap';
 
-/**
- * Loads a specific week's curriculum data using the pre-generated static import map.
- */
 export async function loadWeekData(week: number): Promise<any> {
   const loader = weekDataMap[week];
   if (!loader) {
@@ -12,8 +8,8 @@ export async function loadWeekData(week: number): Promise<any> {
   }
 
   try {
-    const module = await loader();
-    return module.default;
+    const module = await loader(); // already a raw object
+    return module; // ✅ no .default here
   } catch (err) {
     console.error(`❌ Failed to load week ${week}:`, err);
     throw new Error('Week data not found');

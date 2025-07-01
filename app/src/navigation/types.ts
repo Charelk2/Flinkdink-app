@@ -12,4 +12,5 @@ export type RootStackParamList = {
   Session: undefined;
   Progress: undefined;
   Curriculum: undefined;
+  SessionComplete: undefined; 
 };

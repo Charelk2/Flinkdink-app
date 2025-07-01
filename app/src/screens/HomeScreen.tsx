@@ -1,5 +1,5 @@
 // app/src/screens/HomeScreen.tsx
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -16,24 +16,40 @@ import HamburgerMenu from '../components/HamburgerMenu';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../navigation/types';
+import { getCompletedWeeks } from '../../utils/progress';
 
-const HomeScreen = () => {
-  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>(); // ✅ Correctly typed here
+export default function HomeScreen() {
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const { activeProfile } = useActiveProfile();
-  const [menuVisible, setMenuVisible] = React.useState(false);
+  const [menuVisible, setMenuVisible] = useState(false);
+  const [completedWeeks, setCompletedWeeks] = useState<number[]>([]);
 
-  const today = format(new Date(), 'EEEE, MMMM d'); // e.g. Thursday, June 27
+  const today = format(new Date(), 'EEEE, MMMM d');
+
+  useEffect(() => {
+    const loadProgress = async () => {
+      if (activeProfile) {
+        const weeks = await getCompletedWeeks(activeProfile.id);
+        setCompletedWeeks(weeks);
+      }
+    };
+    loadProgress();
+  }, [activeProfile]);
 
   const handleSessionStart = () => navigation.navigate('Session');
   const handleViewProgress = () => navigation.navigate('Progress');
   const handleCurriculum = () => navigation.navigate('Curriculum');
+
   const handleMenu = () => setMenuVisible(true);
   const handleCloseMenu = () => setMenuVisible(false);
   const handleMyAccount = () => {
     handleCloseMenu();
     navigation.navigate('MyAccount');
   };
-  
+  const handleSwitchProfile = () => {
+    handleCloseMenu();
+    navigation.navigate('ProfileSelector');
+  };
 
   const handleSignOut = async () => {
     try {
@@ -43,11 +59,6 @@ const HomeScreen = () => {
     } finally {
       handleCloseMenu();
     }
-  };
-
-  const handleSwitchProfile = () => {
-    handleCloseMenu();
-    navigation.navigate('ProfileSelector');
   };
 
   return (
@@ -83,9 +94,16 @@ const HomeScreen = () => {
         {/* Progress Grid */}
         <Text style={styles.sectionTitle}>40-Week Progress</Text>
         <View style={styles.grid}>
-          {Array.from({ length: 40 }).map((_, i) => (
-            <View key={i} style={[styles.gridBlock, i < 5 ? styles.done : styles.todo]} />
-          ))}
+          {Array.from({ length: 40 }).map((_, i) => {
+            const weekNum = i + 1;
+            const isDone = completedWeeks.includes(weekNum);
+            return (
+              <View
+                key={weekNum}
+                style={[styles.gridBlock, isDone ? styles.done : styles.todo]}
+              />
+            );
+          })}
         </View>
       </ScrollView>
 
@@ -99,7 +117,7 @@ const HomeScreen = () => {
       />
     </>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#FFFBF2' },
@@ -158,5 +176,3 @@ const styles = StyleSheet.create({
   done: { backgroundColor: '#00C896' },
   todo: { backgroundColor: '#D6D6D6' },
 });
-
-export default HomeScreen;

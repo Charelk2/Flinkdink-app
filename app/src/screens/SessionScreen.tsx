@@ -1,21 +1,22 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { useActiveProfile } from '../context/ActiveProfileContext';
-import { generateSessionSlides } from '../../utils/generateSessionSlides';
+import { generateSessionSlides, Slide } from '../../utils/generateSessionSlides';
 import {
   markWeekCompleted,
   getTodaySessionCount,
   incrementTodaySessionCount,
 } from '../../utils/progress';
-import Carousel from '../components/Carousel';
 import Toast from 'react-native-toast-message';
-import { useNavigation } from '@react-navigation/native';
 import ConfettiCannon from 'react-native-confetti-cannon';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../navigation/types';
 
 export default function SessionScreen() {
   const { activeProfile } = useActiveProfile();
-  const navigation = useNavigation();
-  const [slides, setSlides] = useState([]);
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const [slides, setSlides] = useState<Slide[]>([]);
   const [index, setIndex] = useState(0);
   const [loading, setLoading] = useState(true);
   const [completed, setCompleted] = useState(false);
@@ -46,7 +47,7 @@ export default function SessionScreen() {
 
       try {
         const week = getWeekNumber();
-        const content = await generateSessionSlides(week);
+        const content = await generateSessionSlides(week, activeProfile);
         setSlides(content);
       } catch (e) {
         console.error('Failed to load session:', e);
@@ -58,13 +59,15 @@ export default function SessionScreen() {
     load();
   }, [activeProfile]);
 
-  useEffect(() => {
-    if (!slides.length || !activeProfile) return;
-
-    if (index === slides.length - 1 && !completed) {
+  const handleNext = async () => {
+    if (index < slides.length - 1) {
+      setIndex(index + 1);
+    } else if (!completed && activeProfile) {
       const week = getWeekNumber();
-      markWeekCompleted(activeProfile.id, week);
-      incrementTodaySessionCount(activeProfile.id);
+      await markWeekCompleted(activeProfile.id, week);
+      await incrementTodaySessionCount(activeProfile.id);
+      const completedCount = (await getTodaySessionCount(activeProfile.id));
+
       setCompleted(true);
       setShowConfetti(true);
 
@@ -75,11 +78,27 @@ export default function SessionScreen() {
         position: 'top',
       });
 
+      // Add final slide with celebration
+      setSlides([
+        ...slides,
+        {
+          id: 'final',
+          type: 'language',
+          content: (
+            <View style={styles.finalSlide}>
+              <Text style={styles.finalText}>🎉 Well done, {activeProfile.name}!</Text>
+              <Text style={styles.subText}>Session {completedCount} of 3 completed</Text>
+            </View>
+          ),
+        },
+      ]);
+      setIndex(slides.length); // Move to final slide
+
       setTimeout(() => {
         navigation.replace('SessionComplete');
       }, 3000);
     }
-  }, [index, slides]);
+  };
 
   if (loading || !activeProfile) {
     return (
@@ -91,13 +110,79 @@ export default function SessionScreen() {
 
   return (
     <View style={styles.container}>
-      {showConfetti && <ConfettiCannon count={80} origin={{ x: 200, y: 0 }} fadeOut />}
-      <Carousel items={slides} onIndexChange={setIndex} renderItem={(item) => item.content} />
+      {slides[index]?.content}
+
+      {!completed && (
+        <TouchableOpacity onPress={handleNext} style={styles.button}>
+          <Text style={styles.buttonText}>Next</Text>
+        </TouchableOpacity>
+      )}
+
+      {showConfetti && (
+        <View style={styles.confettiContainer} pointerEvents="none">
+          <ConfettiCannon
+            count={100}
+            origin={{ x: 200, y: 0 }}
+            fadeOut
+            autoStart
+            explosionSpeed={400}
+            fallSpeed={2800}
+          />
+        </View>
+      )}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#FFFBF2', padding: 12 },
-  loading: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#FFFBF2' },
+  container: {
+    flex: 1,
+    backgroundColor: '#FFFBF2',
+  },
+  loading: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#FFFBF2',
+  },
+  button: {
+    backgroundColor: '#FBD278',
+    paddingVertical: 14,
+    paddingHorizontal: 30,
+    borderRadius: 30,
+    alignSelf: 'center',
+    marginBottom: 50,
+    position: 'absolute',
+    bottom: 40,
+  },
+  buttonText: {
+    fontSize: 20,
+    fontFamily: 'ComicSans',
+    color: '#382E1C',
+  },
+  finalSlide: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#FFFBF2',
+    paddingHorizontal: 24,
+  },
+  finalText: {
+    fontSize: 32,
+    fontFamily: 'ComicSans',
+    color: '#382E1C',
+    textAlign: 'center',
+  },
+  subText: {
+    fontSize: 20,
+    fontFamily: 'ComicSans',
+    color: '#555',
+    textAlign: 'center',
+    marginTop: 10,
+  },
+  confettiContainer: {
+    ...StyleSheet.absoluteFillObject,
+    zIndex: 999,
+    pointerEvents: 'none',
+  },
 });

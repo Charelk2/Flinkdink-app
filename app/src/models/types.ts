@@ -4,6 +4,7 @@ export type ChildProfile = {
     birthday: string; // ISO format
     avatar: string;   // emoji or image ID
     createdAt: number;
+    startDate?: string; // 👈 ADD THIS
   };
   
   

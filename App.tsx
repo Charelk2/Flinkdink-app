@@ -73,7 +73,7 @@ export default function App() {
       try {
         await SplashScreen.preventAutoHideAsync();
         await Font.loadAsync({
-          ComicSans: require('./assets/fonts/ComicSansMS.ttf'),
+          ComicSans: require('./app/assets/fonts/ComicSansMS.ttf'),
         });
       } catch (error) {
         console.error('❌ Font or splash screen error:', error);
