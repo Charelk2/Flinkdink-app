@@ -30,32 +30,43 @@ export default function LoginScreen() {
   const handleLogin = async () => {
     const cleanEmail = email.trim().toLowerCase();
     const cleanPassword = password.trim();
-
+  
     if (!cleanEmail || !cleanPassword) {
+      console.log('❌ Missing email or password.');
       return showToast('error', 'Please enter both email and password.');
     }
-
+  
+    //console.log(`🔐 Attempting login for: ${cleanEmail}`);
     setLoading(true);
+  
     try {
       await signInWithEmailAndPassword(auth, cleanEmail, cleanPassword);
+      //console.log('✅ Logged in ${cleanEmail}. -> ProfileSelector...');
       showToast('success', 'Welcome back!');
       setTimeout(() => navigation.navigate('ProfileSelector'), 500);
     } catch (error: any) {
-      console.log('Login error:', error.code);
+      console.log(`❌ Login error [${error.code}]: ${error.message}`);
       const getMessage = (code: string) => {
         switch (code) {
-          case 'auth/invalid-email': return 'Invalid email address.';
-          case 'auth/user-not-found': return 'No account found with this email.';
+          case 'auth/invalid-email':
+            return 'Invalid email address.';
+          case 'auth/user-not-found':
+            return 'No account found with this email.';
           case 'auth/wrong-password':
-          case 'auth/invalid-credential': return 'Incorrect email or password.';
-          default: return 'Login failed. Please try again.';
+          case 'auth/invalid-credential':
+            return 'Incorrect email or password.';
+          case 'auth/network-request-failed':
+            return 'Network error. Are you offline?';
+          default:
+            return 'Login failed. Please try again.';
         }
       };
       showToast('error', getMessage(error.code));
     } finally {
       setLoading(false);
+      //console.log('🔄 Logged in.');
     }
-  };
+  };  
 
   return (
     <View style={styles.container}>

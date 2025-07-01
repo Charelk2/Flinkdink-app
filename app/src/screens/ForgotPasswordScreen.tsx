@@ -1,3 +1,5 @@
+
+//app/src/screens/ForgotPasswordScreen.tsx
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import { sendPasswordResetEmail } from 'firebase/auth';

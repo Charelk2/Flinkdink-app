@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 import { auth } from '../../config/firebase';
@@ -18,6 +18,8 @@ import { getProfiles, saveProfiles } from '../../utils/storage';
 import uuid from 'react-native-uuid';
 
 import { RootStackParamList } from '../navigation/types';
+import { RouteProp } from '@react-navigation/native';
+import { ChildProfile } from '../../src/models/types'; // ✅ Needed for typing
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'AddChild'>;
 
@@ -25,30 +27,46 @@ const avatarOptions = ['🧒', '👧', '🐸', '🐵', '😍'];
 
 export default function AddChildScreen() {
   const navigation = useNavigation<NavigationProp>();
+  const route = useRoute<RouteProp<RootStackParamList, 'AddChild'>>();
+  const profileToEdit = route.params?.profileToEdit;
+
   const [name, setName] = useState('');
   const [birthday, setBirthday] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [avatarIndex, setAvatarIndex] = useState(0);
 
+  useEffect(() => {
+    if (profileToEdit) {
+      setName(profileToEdit.name);
+      setBirthday(new Date(profileToEdit.birthday));
+      const index = avatarOptions.findIndex((a) => a === profileToEdit.avatar);
+      if (index !== -1) setAvatarIndex(index);
+    }
+  }, []);
+
   const handleSave = async () => {
     const trimmed = name.trim();
     if (!trimmed) return;
 
-    const newChild = {
-      id: uuid.v4() as string,
+    const updatedChild: ChildProfile = {
+      id: profileToEdit?.id ?? (uuid.v4() as string),
       name: trimmed,
       birthday: birthday.toISOString(),
       avatar: avatarOptions[avatarIndex],
-      createdAt: Date.now(),
+      createdAt: profileToEdit?.createdAt ?? Date.now(),
     };
 
     const existing = await getProfiles();
-    await saveProfiles([...existing, newChild]);
+    const updatedList = profileToEdit
+      ? existing.map((p) => (p.id === updatedChild.id ? updatedChild : p))
+      : [...existing, updatedChild];
+
+    await saveProfiles(updatedList);
 
     const user = auth.currentUser;
     if (user) {
       try {
-        await uploadChildProfile(user.uid, newChild);
+        await uploadChildProfile(user.uid, updatedChild);
       } catch (e) {
         console.warn('Failed to sync profile to cloud:', e);
       }
@@ -80,7 +98,7 @@ export default function AddChildScreen() {
         <Ionicons name="arrow-back" size={28} color="#382E1C" />
       </TouchableOpacity>
 
-      <Text style={styles.title}>Add Child</Text>
+      <Text style={styles.title}>{profileToEdit ? 'Edit Child' : 'Add Child'}</Text>
 
       <Text style={styles.label}>Child’s name</Text>
       <TextInput
@@ -149,7 +167,7 @@ export default function AddChildScreen() {
       </View>
 
       <TouchableOpacity style={styles.button} onPress={handleSave}>
-        <Text style={styles.buttonText}>Save</Text>
+        <Text style={styles.buttonText}>{profileToEdit ? 'Update' : 'Save'}</Text>
       </TouchableOpacity>
     </View>
   );

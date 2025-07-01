@@ -1,3 +1,5 @@
+// App.tsx
+
 import React, { useCallback, useEffect, useState } from 'react';
 import { View, ActivityIndicator } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
@@ -14,17 +16,23 @@ import ForgotPasswordScreen from './app/src/screens/ForgotPasswordScreen';
 import HomeScreen from './app/src/screens/HomeScreen';
 import AddChildScreen from './app/src/screens/AddChildScreen';
 import ProfileSelectorScreen from './app/src/screens/ProfileSelector';
+import MyAccountScreen from './app/src/screens/MyAccountScreen';
+import SessionScreen from './app/src/screens/SessionScreen';
+import ProgressScreen from './app/src/screens/ProgressScreen';
+import CurriculumScreen from './app/src/screens/CurriculumScreen';
+
+// Navigation Types
 import { RootStackParamList } from './app/src/navigation/types';
 
 // Context
 import { AuthProvider, useAuth } from './app/src/context/AuthContext';
+import { ActiveProfileProvider } from './app/src/context/ActiveProfileContext';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 function AppNavigator() {
   const { user, loading } = useAuth();
 
-  // Avoid rendering anything until Firebase Auth state is ready
   if (loading) {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
@@ -37,9 +45,13 @@ function AppNavigator() {
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       {user ? (
         <>
-          <Stack.Screen name="AddChild" component={AddChildScreen} />
-          <Stack.Screen name="Home" component={HomeScreen} />
           <Stack.Screen name="ProfileSelector" component={ProfileSelectorScreen} />
+          <Stack.Screen name="Home" component={HomeScreen} />
+          <Stack.Screen name="AddChild" component={AddChildScreen} />
+          <Stack.Screen name="MyAccount" component={MyAccountScreen} />
+          <Stack.Screen name="Session" component={SessionScreen} />
+          <Stack.Screen name="Progress" component={ProgressScreen} />
+          <Stack.Screen name="Curriculum" component={CurriculumScreen} />
         </>
       ) : (
         <>
@@ -53,7 +65,6 @@ function AppNavigator() {
   );
 }
 
-
 export default function App() {
   const [appIsReady, setAppIsReady] = useState(false);
 
@@ -62,7 +73,7 @@ export default function App() {
       try {
         await SplashScreen.preventAutoHideAsync();
         await Font.loadAsync({
-          ComicSans: require('./app/assets/fonts/ComicSansMS.ttf'),
+          ComicSans: require('./assets/fonts/ComicSansMS.ttf'),
         });
       } catch (error) {
         console.error('❌ Font or splash screen error:', error);
@@ -84,10 +95,12 @@ export default function App() {
 
   return (
     <AuthProvider>
-      <NavigationContainer onReady={onLayoutRootView}>
-        <AppNavigator />
-        <Toast />
-      </NavigationContainer>
+      <ActiveProfileProvider>
+        <NavigationContainer onReady={onLayoutRootView}>
+          <AppNavigator />
+          <Toast />
+        </NavigationContainer>
+      </ActiveProfileProvider>
     </AuthProvider>
   );
 }

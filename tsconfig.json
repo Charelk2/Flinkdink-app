@@ -18,6 +18,10 @@
     "noEmit": true,
     "jsx": "react-native"
   },
+  "include": [
+    "app",
+    "app/src/types"
+  ],
   "exclude": [
     "node_modules"
   ],

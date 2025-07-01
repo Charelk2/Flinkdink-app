@@ -1,0 +1,10 @@
+export { default as week001 } from './weeks/week001';
+export { default as week002 } from './weeks/week002';
+export { default as week003 } from './weeks/week003';
+export { default as week004 } from './weeks/week004';
+export { default as week005 } from './weeks/week005';
+export { default as week006 } from './weeks/week006';
+export { default as week007 } from './weeks/week007';
+export { default as week008 } from './weeks/week008';
+export { default as week009 } from './weeks/week009';
+export { default as week010 } from './weeks/week010';
