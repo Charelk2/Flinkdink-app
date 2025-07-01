@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import Carousel from '../components/Carousel'
-import encyclopediaImages from '../utils/encyclopediaImages'
+import { imageMap } from '../utils/imageMap'
 
 const shuffle = (arr) => [...arr].sort(() => Math.random() - 0.5)
 
@@ -9,7 +9,7 @@ const EncyclopediaModule = ({ cards }) => {
     shuffle(
       cards.map((c) => ({
         ...c,
-        image: encyclopediaImages[c.id] || c.image,
+        image: imageMap[c.image] || c.image,
       })),
     ),
   )
@@ -20,7 +20,7 @@ const EncyclopediaModule = ({ cards }) => {
       shuffle(
         cards.map((c) => ({
           ...c,
-          image: encyclopediaImages[c.id] || c.image,
+          image: imageMap[c.image] || c.image,
         })),
       ),
     )
@@ -32,23 +32,16 @@ const EncyclopediaModule = ({ cards }) => {
         items={items}
         onIndexChange={setIndex}
         renderItem={(card) => {
-          const img =
-            typeof card.image === 'string'
-              ? { avif: card.image, webp: card.image, fallback: card.image }
-              : card.image
+          const img = imageMap[card.image] || card.image
 
           return (
             <div className="space-y-2">
-              <picture className="zoom-img">
-                <source type="image/avif" srcSet={img.avif} />
-                <source type="image/webp" srcSet={img.webp} />
-                <img
-                  loading="lazy"
-                  src={img.fallback}
-                  alt={card.title}
-                  className="w-full rounded-xl encyclopedia-thumb"
-                />
-              </picture>
+              <img
+                loading="lazy"
+                src={img}
+                alt={card.title}
+                className="w-full rounded-xl encyclopedia-thumb"
+              />
               <h3 className="text-xl font-bold">{card.title}</h3>
             </div>
           )
