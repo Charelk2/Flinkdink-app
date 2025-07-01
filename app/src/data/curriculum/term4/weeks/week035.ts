@@ -1,18 +1,17 @@
-{
+export default {
   "language": [
-    "flits",
-    "wekker",
-    "kabel",
-    "prop",
-    "skêr",
-    "gom",
-    "liniaal",
-    "potlood",
-    "gloeilamp",
-    "notaboek"
+    "wimpers",
+    "skedel",
+    "boude",
+    "derm",
+    "oog",
+    "hand",
+    "vinger",
+    "been",
+    "neus",
+    "elmboog"
   ],
-  "mathWindowStart": 151,
-  "mathWindowLength": 0,
+  "mathWindowStart": 201,
   "encyclopedia": [
     {
       "id": "afghaanse-hond",
@@ -85,41 +84,14 @@
       "image": "/images/dog.svg"
     }
   ],
-  "division": [
-    [
-      { "a": 48, "b": 8, "quotient": 6 },
-      { "a": 48, "b": 6, "quotient": 8 },
-      { "a": 20, "b": 5, "quotient": 4 }
-    ],
-    [
-      { "a": 20, "b": 2, "quotient": 10 },
-      { "a": 14, "b": 2, "quotient": 7 },
-      { "a": 24, "b": 4, "quotient": 6 }
-    ],
-    [
-      { "a": 27, "b": 3, "quotient": 9 },
-      { "a": 30, "b": 6, "quotient": 5 },
-      { "a": 40, "b": 5, "quotient": 8 }
-    ],
-    [
-      { "a": 32, "b": 4, "quotient": 8 },
-      { "a": 40, "b": 8, "quotient": 5 },
-      { "a": 50, "b": 2, "quotient": 25 }
-    ],
-    [
-      { "a": 6, "b": 2, "quotient": 3 },
-      { "a": 18, "b": 3, "quotient": 6 },
-      { "a": 44, "b": 11, "quotient": 4 }
-    ],
-    [
-      { "a": 72, "b": 8, "quotient": 9 },
-      { "a": 36, "b": 9, "quotient": 4 },
-      { "a": 54, "b": 6, "quotient": 9 }
-    ],
-    [
-      { "a": 66, "b": 3, "quotient": 22 },
-      { "a": 81, "b": 9, "quotient": 9 },
-      { "a": 42, "b": 6, "quotient": 7 }
-    ]
+  "counting": [
+    [6, 12, 18, 24, 30],
+    [7, 14, 21, 28, 35, 42, 49],
+    [49, 42, 35, 28, 21, 14, 7, 0],
+    [30, 24, 18, 12, 6, 0],
+    [9, 18, 27, 36, 45],
+    [30, 36, 42, 48, 54],
+    [45, 36, 27, 18, 9, 0]
   ]
 }
+;

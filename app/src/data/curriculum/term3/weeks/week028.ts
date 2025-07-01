@@ -1,4 +1,4 @@
-{
+export default {
   "language": [
     "waaier",
     "stoel",
@@ -123,3 +123,4 @@
     ]
   ]
 }
+;

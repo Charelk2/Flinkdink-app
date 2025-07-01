@@ -1,12 +1,17 @@
 export default {
   "language": [
-    "silwer",
-    "koper",
-    "grys",
-    "pienk",
-    "goud"
+    "vroeg - laat",
+    "eerste - laaste",
+    "bo - onder",
+    "binne - buite",
+    "lief - kwaad",
+    "somer - winter",
+    "glad - grof",
+    "reg - verkeerd",
+    "sterk - swak",
+    "sag - hard"
   ],
-  "mathWindowStart": 60,
+  "mathWindowStart": 186,
   "mathWindowLength": 0,
   "encyclopedia": [
     {
@@ -85,122 +90,179 @@ export default {
       {
         "a": 1,
         "b": 2,
-        "sum": 3
-      },
-      {
-        "a": 9,
-        "b": 3,
-        "sum": 12
-      },
-      {
-        "a": 4,
-        "b": 3,
-        "sum": 7
-      }
-    ],
-    [
-      {
-        "a": 2,
-        "b": 3,
-        "sum": 5
-      },
-      {
-        "a": 6,
-        "b": 9,
-        "sum": 15
-      },
-      {
-        "a": 4,
-        "b": 10,
-        "sum": 14
-      }
-    ],
-    [
-      {
-        "a": 8,
-        "b": 9,
-        "sum": 17
-      },
-      {
-        "a": 19,
-        "b": 1,
-        "sum": 20
-      },
-      {
-        "a": 7,
-        "b": 4,
-        "sum": 11
-      }
-    ],
-    [
-      {
-        "a": 14,
-        "b": 5,
-        "sum": 19
-      },
-      {
-        "a": 4,
-        "b": 2,
+        "c": 3,
         "sum": 6
       },
+      null,
       {
-        "a": 9,
-        "b": 9,
-        "sum": 18
-      }
-    ],
-    [
-      {
-        "a": 3,
+        "a": 2,
         "b": 4,
-        "sum": 7
-      },
-      {
-        "a": 5,
-        "b": 5,
-        "sum": 10
-      },
-      {
-        "a": 8,
-        "b": 1,
+        "c": 3,
         "sum": 9
       }
     ],
     [
+      null,
       {
-        "a": 7,
+        "a": 5,
         "b": 6,
-        "sum": 13
+        "c": 1,
+        "sum": 12
       },
+      null
+    ],
+    [
       {
         "a": 3,
-        "b": 3,
-        "sum": 6
+        "b": 10,
+        "c": 5,
+        "sum": 18
       },
       {
-        "a": 15,
-        "b": 4,
-        "sum": 19
+        "a": 20,
+        "b": 12,
+        "c": 4,
+        "sum": 36
+      },
+      {
+        "a": 9,
+        "b": 12,
+        "c": 2,
+        "sum": 23
       }
     ],
     [
       {
-        "a": 10,
-        "b": 10,
-        "sum": 20
+        "a": 4,
+        "b": 3,
+        "c": 5,
+        "sum": 12
       },
+      null,
       {
         "a": 8,
-        "b": 5,
-        "sum": 13
-      },
+        "b": 7,
+        "c": 2,
+        "sum": 17
+      }
+    ],
+    [
+      null,
+      null,
+      null
+    ],
+    [
       {
         "a": 6,
         "b": 9,
-        "sum": 15
+        "c": 4,
+        "sum": 19
+      },
+      null,
+      {
+        "a": 11,
+        "b": 5,
+        "c": 3,
+        "sum": 19
+      }
+    ],
+    [
+      null,
+      {
+        "a": 7,
+        "b": 13,
+        "c": 6,
+        "sum": 26
+      },
+      null
+    ]
+  ],
+  "subtraction": [
+    [
+      null,
+      {
+        "a": 7,
+        "b": 3,
+        "c": 1,
+        "difference": 3
+      },
+      null
+    ],
+    [
+      {
+        "a": 10,
+        "b": 5,
+        "c": 2,
+        "difference": 3
+      },
+      null,
+      {
+        "a": 12,
+        "b": 10,
+        "c": 1,
+        "difference": 1
+      }
+    ],
+    [
+      null,
+      null,
+      null
+    ],
+    [
+      null,
+      {
+        "a": 15,
+        "b": 4,
+        "c": 6,
+        "difference": 5
+      },
+      null
+    ],
+    [
+      {
+        "a": 20,
+        "b": 10,
+        "c": 5,
+        "difference": 5
+      },
+      {
+        "a": 50,
+        "b": 30,
+        "c": 8,
+        "difference": 12
+      },
+      {
+        "a": 44,
+        "b": 4,
+        "c": 10,
+        "difference": 30
+      }
+    ],
+    [
+      null,
+      {
+        "a": 40,
+        "b": 12,
+        "c": 8,
+        "difference": 20
+      },
+      null
+    ],
+    [
+      {
+        "a": 22,
+        "b": 11,
+        "c": 2,
+        "difference": 9
+      },
+      null,
+      {
+        "a": 30,
+        "b": 15,
+        "c": 4,
+        "difference": 11
       }
     ]
   ]
 }
-
 ;

@@ -1,4 +1,4 @@
-{
+export default {
   "language": [
     "waterval",
     "donderweer",
@@ -85,3 +85,4 @@
     }
   ]
 }
+;

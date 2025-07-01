@@ -1,4 +1,4 @@
-{
+export default {
   "language": [
     "water",
     "room",
@@ -123,3 +123,4 @@
   ]
 ]
 }
+;

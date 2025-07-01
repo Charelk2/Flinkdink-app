@@ -1,4 +1,4 @@
-{
+export default {
   "language": [
     "boom",
     "blom",
@@ -85,3 +85,4 @@
     }
   ]
 }
+;

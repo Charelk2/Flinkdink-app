@@ -1,19 +1,17 @@
-{
+export default {
   "language": [
-    "mat",
-    "bed",
-    "dak",
-    "kas",
-    "lig",
-    "bad",
-    "mes",
-    "vurk",
-    "lepel",
-    "stoel",
-    "tafel",
-    "ketel"
+    "houtvloer",
+    "veelap",
+    "tandeborsel",
+    "olielamp",
+    "eetlus",
+    "padkaart",
+    "slaapsak",
+    "waterkan",
+    "glyskaal",
+    "vuurhout"
   ],
-  "mathWindowStart": 121,
+  "mathWindowStart": 231,
   "mathWindowLength": 0,
   "encyclopedia": [
     {
@@ -87,162 +85,135 @@
       "image": "/images/dog.svg"
     }
   ],
-  "addition": [
+  "multiplication": [
     [
-      null,
       {
-        "a": 4,
-        "b": 37,
-        "sum": 41
+        "a": 5,
+        "b": 1,
+        "product": 5
       },
-      null
-    ],
-    [
       {
-        "a": 42,
+        "a": 5,
+        "b": 2,
+        "product": 10
+      },
+      {
+        "a": 5,
         "b": 3,
-        "sum": 45
-      },
-      null,
-      {
-        "a": 23,
-        "b": 6,
-        "sum": 29
+        "product": 15
       }
     ],
     [
-      null,
       {
-        "a": 16,
-        "b": 8,
-        "sum": 24
-      },
-      null
-    ],
-    [
-      {
-        "a": 27,
-        "b": 18,
-        "sum": 45
+        "a": 5,
+        "b": 4,
+        "product": 20
       },
       {
-        "a": 40,
-        "b": 8,
-        "sum": 48
-      },
-      {
-        "a": 14,
-        "b": 0,
-        "sum": 14
-      }
-    ],
-    [
-      null,
-      null,
-      null
-    ],
-    [
-      {
-        "a": 31,
-        "b": 6,
-        "sum": 37
-      },
-      null,
-      {
-        "a": 22,
+        "a": 5,
         "b": 5,
-        "sum": 27
+        "product": 25
+      },
+      {
+        "a": 5,
+        "b": 6,
+        "product": 30
       }
     ],
     [
-      null,
       {
-        "a": 12,
-        "b": 17,
-        "sum": 29
+        "a": 5,
+        "b": 7,
+        "product": 35
       },
-      null
+      {
+        "a": 5,
+        "b": 8,
+        "product": 40
+      },
+      {
+        "a": 5,
+        "b": 9,
+        "product": 45
+      }
+    ],
+    [],
+    [],
+    [],
+    [
+      {
+        "a": 5,
+        "b": 7,
+        "product": 35
+      },
+      {
+        "a": 5,
+        "b": 8,
+        "product": 40
+      },
+      {
+        "a": 5,
+        "b": 9,
+        "product": 45
+      }
     ]
   ],
-  "subtraction": [
+  "division": [
+    [],
+    [],
+    [],
     [
+      {
+        "a": 15,
+        "b": 5,
+        "quotient": 3
+      },
+      {
+        "a": 10,
+        "b": 5,
+        "quotient": 2
+      },
+      {
+        "a": 5,
+        "b": 5,
+        "quotient": 1
+      }
+    ],
+    [
+      {
+        "a": 30,
+        "b": 5,
+        "quotient": 6
+      },
       {
         "a": 25,
-        "b": 9,
-        "difference": 16
+        "b": 5,
+        "quotient": 5
       },
-      null,
       {
-        "a": 25,
-        "b": 8,
-        "difference": 17
+        "a": 20,
+        "b": 5,
+        "quotient": 4
       }
-    ],
-    [
-      null,
-      {
-        "a": 47,
-        "b": 18,
-        "difference": 29
-      },
-      null
-    ],
-    [
-      {
-        "a": 49,
-        "b": 11,
-        "difference": 38
-      },
-      null,
-      {
-        "a": 35,
-        "b": 26,
-        "difference": 9
-      }
-    ],
-    [
-      null,
-      null,
-      null
-    ],
-    [
-      {
-        "a": 24,
-        "b": 19,
-        "difference": 5
-      },
-      {
-        "a": 27,
-        "b": 16,
-        "difference": 11
-      },
-      {
-        "a": 34,
-        "b": 6,
-        "difference": 28
-      }
-    ],
-    [
-      null,
-      {
-        "a": 50,
-        "b": 25,
-        "difference": 25
-      },
-      null
     ],
     [
       {
         "a": 45,
-        "b": 15,
-        "difference": 30
+        "b": 5,
+        "quotient": 9
       },
-      null,
       {
-        "a": 33,
-        "b": 14,
-        "difference": 19
+        "a": 40,
+        "b": 5,
+        "quotient": 8
+      },
+      {
+        "a": 35,
+        "b": 5,
+        "quotient": 7
       }
-    ]
+    ],
+    []
   ]
 }
+;

@@ -1,4 +1,4 @@
-{
+export default {
   "language": [
     "vriend",
     "lag",
@@ -85,3 +85,4 @@
     }
   ]
 }
+;

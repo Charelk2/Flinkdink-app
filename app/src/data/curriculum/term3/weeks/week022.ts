@@ -1,17 +1,17 @@
-{
+export default {
   "language": [
-    "houtvloer",
-    "veelap",
-    "tandeborsel",
-    "olielamp",
-    "eetlus",
-    "padkaart",
-    "slaapsak",
-    "waterkan",
-    "glyskaal",
-    "vuurhout"
+    "oond",
+    "yskas",
+    "wasmasjien",
+    "vrieskas",
+    "kombuis",
+    "badkamer",
+    "slaapkamer",
+    "televisiekamer",
+    "eetkamer",
+    "sitkamer"
   ],
-  "mathWindowStart": 231,
+  "mathWindowStart": 126,
   "mathWindowLength": 0,
   "encyclopedia": [
     {
@@ -85,134 +85,163 @@
       "image": "/images/dog.svg"
     }
   ],
-  "multiplication": [
+  "addition": [
     [
+      null,
       {
-        "a": 5,
-        "b": 1,
-        "product": 5
-      },
-      {
-        "a": 5,
-        "b": 2,
-        "product": 10
-      },
-      {
-        "a": 5,
-        "b": 3,
-        "product": 15
-      }
-    ],
-    [
-      {
-        "a": 5,
-        "b": 4,
-        "product": 20
-      },
-      {
-        "a": 5,
-        "b": 5,
-        "product": 25
-      },
-      {
-        "a": 5,
+        "a": 19,
         "b": 6,
-        "product": 30
-      }
+        "sum": 25
+      },
+      null
     ],
     [
       {
-        "a": 5,
-        "b": 7,
-        "product": 35
+        "a": 16,
+        "b": 3,
+        "sum": 19
       },
+      null,
       {
-        "a": 5,
-        "b": 8,
-        "product": 40
-      },
-      {
-        "a": 5,
+        "a": 40,
         "b": 9,
-        "product": 45
+        "sum": 49
       }
     ],
-    [],
-    [],
-    [],
     [
-      {
-        "a": 5,
-        "b": 7,
-        "product": 35
-      },
-      {
-        "a": 5,
-        "b": 8,
-        "product": 40
-      },
-      {
-        "a": 5,
-        "b": 9,
-        "product": 45
-      }
-    ]
-  ],
-  "division": [
-    [],
-    [],
-    [],
-    [
-      {
-        "a": 15,
-        "b": 5,
-        "quotient": 3
-      },
+      null,
       {
         "a": 10,
-        "b": 5,
-        "quotient": 2
+        "b": 1,
+        "sum": 11
       },
-      {
-        "a": 5,
-        "b": 5,
-        "quotient": 1
-      }
+      null
     ],
     [
+      {
+        "a": 16,
+        "b": 6,
+        "sum": 22
+      },
+      {
+        "a": 27,
+        "b": 14,
+        "sum": 41
+      },
       {
         "a": 30,
         "b": 5,
-        "quotient": 6
+        "sum": 35
+      }
+    ],
+    [
+      null,
+      null,
+      {
+        "a": 33,
+        "b": 3,
+        "sum": 36
+      }
+    ],
+    [
+      {
+        "a": 18,
+        "b": 12,
+        "sum": 30
+      },
+      null,
+      {
+        "a": 26,
+        "b": 8,
+        "sum": 34
+      }
+    ],
+    [
+      null,
+      {
+        "a": 14,
+        "b": 9,
+        "sum": 23
+      },
+      null
+    ]
+  ],
+  "subtraction": [
+    [
+      {
+        "a": 14,
+        "b": 9,
+        "difference": 5
+      },
+      null,
+      {
+        "a": 50,
+        "b": 7,
+        "difference": 43
+      }
+    ],
+    [
+      null,
+      {
+        "a": 20,
+        "b": 8,
+        "difference": 12
+      },
+      null
+    ],
+    [
+      {
+        "a": 15,
+        "b": 7,
+        "difference": 8
+      },
+      null,
+      {
+        "a": 35,
+        "b": 15,
+        "difference": 20
+      }
+    ],
+    [
+      null,
+      null,
+      null
+    ],
+    [
+      {
+        "a": 34,
+        "b": 4,
+        "difference": 30
       },
       {
         "a": 25,
-        "b": 5,
-        "quotient": 5
+        "b": 7,
+        "difference": 18
       },
+      null
+    ],
+    [
+      null,
       {
-        "a": 20,
-        "b": 5,
-        "quotient": 4
-      }
+        "a": 41,
+        "b": 19,
+        "difference": 22
+      },
+      null
     ],
     [
       {
         "a": 45,
-        "b": 5,
-        "quotient": 9
+        "b": 23,
+        "difference": 22
       },
+      null,
       {
-        "a": 40,
-        "b": 5,
-        "quotient": 8
-      },
-      {
-        "a": 35,
-        "b": 5,
-        "quotient": 7
+        "a": 38,
+        "b": 17,
+        "difference": 21
       }
-    ],
-    []
+    ]
   ]
 }
+;

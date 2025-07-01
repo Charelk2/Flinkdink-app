@@ -1,17 +1,17 @@
-{
+export default {
   "language": [
-    "oond",
-    "yskas",
-    "wasmasjien",
-    "vrieskas",
-    "kombuis",
-    "badkamer",
-    "slaapkamer",
-    "televisiekamer",
-    "eetkamer",
-    "sitkamer"
+    "stoep",
+    "tuin",
+    "heining",
+    "venster",
+    "rekenaar",
+    "kombers",
+    "medisyne",
+    "tapyt",
+    "koppie",
+    "piering"
   ],
-  "mathWindowStart": 126,
+  "mathWindowStart": 136,
   "mathWindowLength": 0,
   "encyclopedia": [
     {
@@ -82,165 +82,45 @@
       "title": "Rhodesiese Rifrughond",
       "query": "Rhodesian Ridgeback",
       "fact": "This dog has a ridge of hair along its back.",
-      "image": "/images/dog.svg"
+    "image": "/images/dog.svg"
     }
   ],
-  "addition": [
+  "multiplication": [
     [
-      null,
-      {
-        "a": 19,
-        "b": 6,
-        "sum": 25
-      },
-      null
+      { "a": 7, "b": 3, "product": 21 },
+      { "a": 1, "b": 8, "product": 8 },
+      { "a": 5, "b": 4, "product": 20 }
     ],
     [
-      {
-        "a": 16,
-        "b": 3,
-        "sum": 19
-      },
-      null,
-      {
-        "a": 40,
-        "b": 9,
-        "sum": 49
-      }
+      { "a": 9, "b": 2, "product": 18 },
+      { "a": 2, "b": 7, "product": 14 },
+      { "a": 6, "b": 5, "product": 30 }
     ],
     [
-      null,
-      {
-        "a": 10,
-        "b": 1,
-        "sum": 11
-      },
-      null
+      { "a": 11, "b": 2, "product": 22 },
+      { "a": 4, "b": 3, "product": 12 },
+      { "a": 7, "b": 7, "product": 49 }
     ],
     [
-      {
-        "a": 16,
-        "b": 6,
-        "sum": 22
-      },
-      {
-        "a": 27,
-        "b": 14,
-        "sum": 41
-      },
-      {
-        "a": 30,
-        "b": 5,
-        "sum": 35
-      }
+      { "a": 20, "b": 2, "product": 40 },
+      { "a": 13, "b": 3, "product": 39 },
+      { "a": 7, "b": 2, "product": 14 }
     ],
     [
-      null,
-      null,
-      {
-        "a": 33,
-        "b": 3,
-        "sum": 36
-      }
+      { "a": 2, "b": 5, "product": 10 },
+      { "a": 11, "b": 4, "product": 44 },
+      { "a": 4, "b": 6, "product": 24 }
     ],
     [
-      {
-        "a": 18,
-        "b": 12,
-        "sum": 30
-      },
-      null,
-      {
-        "a": 26,
-        "b": 8,
-        "sum": 34
-      }
+      { "a": 3, "b": 9, "product": 27 },
+      { "a": 8, "b": 2, "product": 16 },
+      { "a": 12, "b": 2, "product": 24 }
     ],
     [
-      null,
-      {
-        "a": 14,
-        "b": 9,
-        "sum": 23
-      },
-      null
-    ]
-  ],
-  "subtraction": [
-    [
-      {
-        "a": 14,
-        "b": 9,
-        "difference": 5
-      },
-      null,
-      {
-        "a": 50,
-        "b": 7,
-        "difference": 43
-      }
-    ],
-    [
-      null,
-      {
-        "a": 20,
-        "b": 8,
-        "difference": 12
-      },
-      null
-    ],
-    [
-      {
-        "a": 15,
-        "b": 7,
-        "difference": 8
-      },
-      null,
-      {
-        "a": 35,
-        "b": 15,
-        "difference": 20
-      }
-    ],
-    [
-      null,
-      null,
-      null
-    ],
-    [
-      {
-        "a": 34,
-        "b": 4,
-        "difference": 30
-      },
-      {
-        "a": 25,
-        "b": 7,
-        "difference": 18
-      },
-      null
-    ],
-    [
-      null,
-      {
-        "a": 41,
-        "b": 19,
-        "difference": 22
-      },
-      null
-    ],
-    [
-      {
-        "a": 45,
-        "b": 23,
-        "difference": 22
-      },
-      null,
-      {
-        "a": 38,
-        "b": 17,
-        "difference": 21
-      }
+      { "a": 15, "b": 2, "product": 30 },
+      { "a": 4, "b": 7, "product": 28 },
+      { "a": 6, "b": 3, "product": 18 }
     ]
   ]
 }
+;

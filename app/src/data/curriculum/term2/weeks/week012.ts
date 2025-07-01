@@ -1,4 +1,4 @@
-{
+export default {
   "language": [
     "padda",
     "hond",
@@ -123,3 +123,4 @@
     ]
   ]
 }
+;

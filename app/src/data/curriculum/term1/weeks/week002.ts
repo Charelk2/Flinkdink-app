@@ -1,4 +1,4 @@
-{
+export default {
   "language": [
     "Oom",
     "Tannie",
@@ -87,3 +87,4 @@
   "mathWindowLength": 10,
   "mathShuffleFirstHalf": true
 }
+;

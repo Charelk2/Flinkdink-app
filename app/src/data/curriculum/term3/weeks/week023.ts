@@ -1,17 +1,17 @@
-{
+export default {
   "language": [
-    "houtvloer",
-    "veelap",
-    "tandeborsel",
-    "olielamp",
-    "eetlus",
-    "padkaart",
-    "slaapsak",
-    "waterkan",
-    "glyskaal",
-    "vuurhout"
+    "kaggel",
+    "grasperk",
+    "stoof",
+    "kussing",
+    "lamp",
+    "stort",
+    "handdoek",
+    "deur",
+    "wasbak",
+    "sleutel"
   ],
-  "mathWindowStart": 226,
+  "mathWindowStart": 131,
   "mathWindowLength": 0,
   "encyclopedia": [
     {
@@ -87,48 +87,40 @@
   ],
   "multiplication": [
     [
-      { "a": 4, "b": 1, "product": 4 },
-      { "a": 4, "b": 2, "product": 8 },
-      { "a": 4, "b": 3, "product": 12 }
+      { "a": 6, "b": 3, "product": 18 },
+      { "a": 10, "b": 5, "product": 50 },
+      { "a": 2, "b": 3, "product": 6 }
     ],
     [
-      { "a": 4, "b": 4, "product": 16 },
-      { "a": 4, "b": 5, "product": 20 },
-      { "a": 4, "b": 6, "product": 24 }
+      { "a": 8, "b": 4, "product": 32 },
+      { "a": 3, "b": 4, "product": 12 },
+      { "a": 8, "b": 5, "product": 40 }
+    ],
+    [
+      { "a": 9, "b": 3, "product": 27 },
+      { "a": 7, "b": 7, "product": 49 },
+      { "a": 7, "b": 6, "product": 42 }
     ],
     [
       { "a": 4, "b": 7, "product": 28 },
-      { "a": 4, "b": 8, "product": 32 },
-      { "a": 4, "b": 9, "product": 36 }
+      { "a": 1, "b": 4, "product": 4 },
+      { "a": 3, "b": 7, "product": 21 }
     ],
-    [],
-    [],
-    [],
     [
-      { "a": 4, "b": 7, "product": 28 },
+      { "a": 6, "b": 6, "product": 36 },
       { "a": 4, "b": 8, "product": 32 },
-      { "a": 4, "b": 9, "product": 36 }
+      { "a": 5, "b": 5, "product": 25 }
+    ],
+    [
+      { "a": 2, "b": 8, "product": 16 },
+      { "a": 9, "b": 4, "product": 36 },
+      { "a": 6, "b": 5, "product": 30 }
+    ],
+    [
+      { "a": 11, "b": 2, "product": 22 },
+      { "a": 4, "b": 9, "product": 36 },
+      { "a": 6, "b": 7, "product": 42 }
     ]
-  ],
-  "division": [
-    [],
-    [],
-    [],
-    [
-      { "a": 12, "b": 4, "quotient": 3 },
-      { "a": 8, "b": 4, "quotient": 2 },
-      { "a": 4, "b": 4, "quotient": 1 }
-    ],
-    [
-      { "a": 24, "b": 4, "quotient": 6 },
-      { "a": 20, "b": 4, "quotient": 5 },
-      { "a": 16, "b": 4, "quotient": 4 }
-    ],
-    [
-      { "a": 36, "b": 4, "quotient": 9 },
-      { "a": 32, "b": 4, "quotient": 8 },
-      { "a": 28, "b": 4, "quotient": 7 }
-    ],
-    []
   ]
 }
+;
