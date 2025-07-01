@@ -7,7 +7,7 @@ import {
   getTodaySessionCount,
   incrementTodaySessionCount,
 } from '../../utils/progress';
-import Carousel from '../components/Carousel';
+import Carousel from '../components/Carousel.tsx';
 import Toast from 'react-native-toast-message';
 import { useNavigation } from '@react-navigation/native';
 import ConfettiCannon from 'react-native-confetti-cannon';

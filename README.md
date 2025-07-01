@@ -18,3 +18,9 @@ cause the old entry point configuration to persist.
 Curriculum week data references images using just the file name. When adding or
 editing week data, omit the `/images/` prefix. The `imageMap` utility maps these
 filenames to actual assets.
+
+## Components
+
+The `Carousel` component for slide-based navigation lives at
+`app/src/components/Carousel.tsx`. Import from this path after removing the old
+duplicate `Carousel.jsx` file.

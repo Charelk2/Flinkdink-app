@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import Carousel from '../components/Carousel'
+import Carousel from '../src/components/Carousel.tsx'
 import { imageMap } from '../utils/imageMap'
 
 const shuffle = (arr) => [...arr].sort(() => Math.random() - 0.5)

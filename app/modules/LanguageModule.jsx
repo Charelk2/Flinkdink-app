@@ -1,4 +1,4 @@
-import Carousel from '../components/Carousel'
+import Carousel from '../src/components/Carousel.tsx'
 
 const shuffle = (arr) => [...arr].sort(() => Math.random() - 0.5)
 
