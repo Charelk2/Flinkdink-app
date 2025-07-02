@@ -25,3 +25,11 @@ Week content is bundled statically through `app/utils/weekDataMap.ts`. If you
 add or rename week files in `app/src/data/curriculum`, be sure to update the
 imports in `weekDataMap.ts` so the app can load the new data in both web and
 native builds.
+
+## Running Tests
+
+Run the unit test suite with:
+
+```bash
+npm test
+```
