@@ -8,8 +8,10 @@ export async function loadWeekData(week: number): Promise<any> {
   }
 
   try {
-    const module = await loader(); // already a raw object
-    return module; // ✅ no .default here
+    const module = await loader();
+    // Normalize both web (bundled) and native (Metro) behavior
+    // by returning the object's default export when present.
+    return (module as any).default ?? module;
   } catch (err) {
     console.error(`❌ Failed to load week ${week}:`, err);
     throw new Error('Week data not found');
