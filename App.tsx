@@ -20,13 +20,17 @@ import MyAccountScreen from './app/src/screens/MyAccountScreen';
 import SessionScreen from './app/src/screens/SessionScreen';
 import ProgressScreen from './app/src/screens/ProgressScreen';
 import CurriculumScreen from './app/src/screens/CurriculumScreen';
+import SessionCompleteScreen from './app/src/screens/SessionCompleteScreen'; // ✅ NEW
 
-// Navigation Types
+// Types
 import { RootStackParamList } from './app/src/navigation/types';
 
 // Context
 import { AuthProvider, useAuth } from './app/src/context/AuthContext';
-import { ActiveProfileProvider } from './app/src/context/ActiveProfileContext';
+import { ActiveProfileProvider, useActiveProfile } from './app/src/context/ActiveProfileContext';
+
+// Utils
+import { syncPendingProgress } from './app/utils/progress';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -44,24 +48,48 @@ function AppNavigator() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       {user ? (
+        <Stack.Screen name="ProfileSelector" component={ProfileSelectorScreen} />
+      ) : (
+        <Stack.Screen name="Onboarding" component={OnboardingScreen} />
+      )}
+  
+      {!user && (
         <>
-          <Stack.Screen name="ProfileSelector" component={ProfileSelectorScreen} />
+          <Stack.Screen name="Login" component={LoginScreen} />
+          <Stack.Screen name="SignUp" component={SignUpScreen} />
+          <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
+        </>
+      )}
+  
+      {user && (
+        <>
           <Stack.Screen name="Home" component={HomeScreen} />
           <Stack.Screen name="AddChild" component={AddChildScreen} />
           <Stack.Screen name="MyAccount" component={MyAccountScreen} />
           <Stack.Screen name="Session" component={SessionScreen} />
           <Stack.Screen name="Progress" component={ProgressScreen} />
           <Stack.Screen name="Curriculum" component={CurriculumScreen} />
-        </>
-      ) : (
-        <>
-          <Stack.Screen name="Onboarding" component={OnboardingScreen} />
-          <Stack.Screen name="Login" component={LoginScreen} />
-          <Stack.Screen name="SignUp" component={SignUpScreen} />
-          <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
+          <Stack.Screen name="SessionComplete" component={SessionCompleteScreen} />
         </>
       )}
     </Stack.Navigator>
+  );  
+}
+
+function AppWithSync() {
+  const { activeProfile } = useActiveProfile();
+
+  useEffect(() => {
+    if (activeProfile) {
+      syncPendingProgress(activeProfile.id);
+    }
+  }, [activeProfile]);
+
+  return (
+    <>
+      <AppNavigator />
+      <Toast />
+    </>
   );
 }
 
@@ -97,8 +125,7 @@ export default function App() {
     <AuthProvider>
       <ActiveProfileProvider>
         <NavigationContainer onReady={onLayoutRootView}>
-          <AppNavigator />
-          <Toast />
+          <AppWithSync />
         </NavigationContainer>
       </ActiveProfileProvider>
     </AuthProvider>

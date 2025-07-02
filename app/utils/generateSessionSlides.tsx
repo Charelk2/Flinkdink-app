@@ -118,26 +118,30 @@ export async function generateSessionSlides(
 
     const mathSlides: Slide[] = [];
 
+    const isValid = (n: any) => typeof n === 'number' && Number.isInteger(n) && n >= 0;
+
     if (week <= 10) {
       const length = data.mathWindowLength ?? 10;
       const start = data.mathWindowStart ?? 1;
       for (let i = 0; i < length; i++) {
         const count = start + i;
-        mathSlides.push({
-          type: 'math',
-          id: `count-${count}`,
-          content: (
-            <FullSlide key={`count-${count}`}>
-              <DotBoard count={count} />
-              <Text style={styles.countText}>🔢 Count: {count}</Text>
-            </FullSlide>
-          ),
-        });
+        if (isValid(count)) {
+          mathSlides.push({
+            type: 'math',
+            id: `count-${count}`,
+            content: (
+              <FullSlide key={`count-${count}`}>
+                <DotBoard count={count} />
+                <Text style={styles.countText}>🔢 Count: {count}</Text>
+              </FullSlide>
+            ),
+          });
+        }
       }
     } else {
       const today = new Date();
       const dayIndex = (today.getDay() + 6) % 7; // Monday = 0
-      const sessionIndex = await getTodaySessionCount(profile.id, week); // 0–2
+      const sessionIndex = await getTodaySessionCount(profile.id, week);
 
       const sum = data.addition?.[dayIndex]?.[sessionIndex];
       const difference = data.subtraction?.[dayIndex]?.[sessionIndex];
@@ -151,27 +155,26 @@ export async function generateSessionSlides(
       let equation = '';
 
       if (sum) {
-        operands = ['a', 'b', 'c'].map((k) => sum[k]).filter((n) => typeof n === 'number');
+        operands = ['a', 'b', 'c'].map((k) => sum[k]).filter(isValid);
         result = sum.sum;
         ops = sum.ops || Array(operands.length - 1).fill('+');
         label = 'Addition';
       } else if (difference) {
-        operands = ['a', 'b', 'c'].map((k) => difference[k]).filter((n) => typeof n === 'number');
+        operands = ['a', 'b', 'c'].map((k) => difference[k]).filter(isValid);
         result = difference.difference;
         ops = difference.ops || Array(operands.length - 1).fill('-');
         label = 'Subtraction';
       } else if (product) {
-        operands = ['a', 'b'].map((k) => product[k]).filter((n) => typeof n === 'number');
+        operands = ['a', 'b'].map((k) => product[k]).filter(isValid);
         result = product.product;
         ops = ['×'];
         label = 'Multiplication';
       } else if (quotient) {
-        operands = ['a', 'b'].map((k) => quotient[k]).filter((n) => typeof n === 'number');
+        operands = ['a', 'b'].map((k) => quotient[k]).filter(isValid);
         result = quotient.quotient;
         ops = ['÷'];
         label = 'Division';
       }
-      const isValid = (n: any) => typeof n === 'number' && Number.isInteger(n) && n >= 0;
 
       if (operands.every(isValid) && isValid(result)) {
         operands.forEach((value, i) => {
@@ -192,7 +195,7 @@ export async function generateSessionSlides(
           id: `math-res`,
           content: (
             <FullSlide key={`math-res`}>
-              {typeof result === 'number' && <DotBoard count={result} />}
+              <DotBoard count={result!} />
               <Text style={styles.countText}>🔵 Result: {result}</Text>
             </FullSlide>
           ),
@@ -214,11 +217,23 @@ export async function generateSessionSlides(
 
         console.log(`🧠 ${label}: Day ${dayIndex + 1}, Session ${sessionIndex + 1}: ${equation}`);
       } else {
-        console.warn(`⚠️ No math found for week ${week}, day ${dayIndex + 1}, session ${sessionIndex + 1}`);
+        console.warn(`⚠️ No valid math equation found for week ${week}, day ${dayIndex + 1}, session ${sessionIndex + 1}`);
+        mathSlides.push({
+          type: 'math',
+          id: 'math-fallback',
+          content: (
+            <FullSlide key="math-fallback">
+              <Text style={styles.equationText}>⚠️ No math equation found for today</Text>
+            </FullSlide>
+          ),
+        });
       }
     }
 
-    return [...languageSlides, ...encyclopediaSlides, ...mathSlides];
+    const finalSlides = [...languageSlides, ...encyclopediaSlides, ...mathSlides];
+
+    console.log(`✅ FINAL SLIDE COUNT: ${finalSlides.length} (Week ${week})`);
+    return finalSlides;
   } catch (err) {
     console.error('🔥 Failed to generate session slides:', err);
     return [];
