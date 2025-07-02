@@ -8,6 +8,12 @@ interface DotBoardProps {
 }
 
 const DotBoard: React.FC<DotBoardProps> = ({ count }) => {
+  // ❗️ Guard against invalid count values
+  if (!Number.isInteger(count) || count < 0 || count > 1000) {
+    console.warn('🚫 Invalid DotBoard count:', count);
+    return null;
+  }
+
   const dots = generateDotPositions(count);
 
   return (
@@ -21,6 +27,7 @@ const DotBoard: React.FC<DotBoardProps> = ({ count }) => {
     </View>
   );
 };
+
 
 const styles = StyleSheet.create({
   board: {

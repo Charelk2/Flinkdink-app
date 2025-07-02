@@ -18,3 +18,9 @@ export type ChildProfile = {
     [week: string]: ProgressEntry;
   };
   
+  export type Slide = {
+    id: string;
+    type: 'language' | 'math' | 'encyclopedia';
+    content: React.ReactNode;
+  };
+  

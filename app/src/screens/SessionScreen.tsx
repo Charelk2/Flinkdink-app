@@ -1,28 +1,42 @@
+//app/src/screens/SessionScreen.tsx
+
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ActivityIndicator, TouchableOpacity } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ActivityIndicator,
+  TouchableOpacity,
+} from 'react-native';
+import { useRoute, useNavigation } from '@react-navigation/native';
+import { RouteProp } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useActiveProfile } from '../context/ActiveProfileContext';
 import { generateSessionSlides, Slide } from '../../utils/generateSessionSlides';
 import {
   markWeekCompleted,
   getTodaySessionCount,
   incrementTodaySessionCount,
+  setLastViewedWeek,
 } from '../../utils/progress';
-import Toast from 'react-native-toast-message';
-import ConfettiCannon from 'react-native-confetti-cannon';
-import { useNavigation } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../navigation/types';
+import ConfettiCannon from 'react-native-confetti-cannon';
+import { PanGestureHandler, GestureHandlerRootView } from 'react-native-gesture-handler';
 
 export default function SessionScreen() {
-  const { activeProfile } = useActiveProfile();
+  const route = useRoute<RouteProp<RootStackParamList, 'Session'>>();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const { activeProfile } = useActiveProfile();
+
   const [slides, setSlides] = useState<Slide[]>([]);
   const [index, setIndex] = useState(0);
   const [loading, setLoading] = useState(true);
   const [completed, setCompleted] = useState(false);
   const [showConfetti, setShowConfetti] = useState(false);
 
-  const getWeekNumber = () => {
+  const overrideWeek = route.params?.overrideWeek;
+
+  const getDefaultWeek = () => {
     const start = new Date(activeProfile?.startDate ?? new Date());
     const now = new Date();
     const diff = Math.floor((now.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
@@ -33,21 +47,16 @@ export default function SessionScreen() {
     const load = async () => {
       if (!activeProfile) return;
 
-      const count = await getTodaySessionCount(activeProfile.id);
+      const week = overrideWeek ?? getDefaultWeek();
+      const count = await getTodaySessionCount(activeProfile.id, week);
       if (count >= 3) {
-        Toast.show({
-          type: 'info',
-          text1: '✅ Daily Limit Reached',
-          text2: 'You’ve already completed 3 sessions today.',
-          position: 'top',
-        });
         navigation.goBack();
         return;
       }
 
       try {
-        const week = getWeekNumber();
         const content = await generateSessionSlides(week, activeProfile);
+        console.log('✅ Slides generated:', content.map((s) => s.id));
         setSlides(content);
       } catch (e) {
         console.error('Failed to load session:', e);
@@ -62,41 +71,49 @@ export default function SessionScreen() {
   const handleNext = async () => {
     if (index < slides.length - 1) {
       setIndex(index + 1);
-    } else if (!completed && activeProfile) {
-      const week = getWeekNumber();
-      await markWeekCompleted(activeProfile.id, week);
-      await incrementTodaySessionCount(activeProfile.id);
-      const completedCount = (await getTodaySessionCount(activeProfile.id));
+      return;
+    }
 
+    if (!completed && activeProfile) {
+      const week = overrideWeek ?? getDefaultWeek();
       setCompleted(true);
       setShowConfetti(true);
 
-      Toast.show({
-        type: 'success',
-        text1: '🎉 Session Complete!',
-        text2: `Well done, ${activeProfile.name}!`,
-        position: 'top',
-      });
+      setTimeout(async () => {
+        await markWeekCompleted(activeProfile.id, week);
+        await incrementTodaySessionCount(activeProfile.id, week);
+        await setLastViewedWeek(activeProfile.id, week);
 
-      // Add final slide with celebration
-      setSlides([
-        ...slides,
-        {
-          id: 'final',
-          type: 'language',
-          content: (
-            <View style={styles.finalSlide}>
-              <Text style={styles.finalText}>🎉 Well done, {activeProfile.name}!</Text>
-              <Text style={styles.subText}>Session {completedCount} of 3 completed</Text>
-            </View>
-          ),
-        },
-      ]);
-      setIndex(slides.length); // Move to final slide
+        const completedCount = await getTodaySessionCount(activeProfile.id, week);
 
-      setTimeout(() => {
-        navigation.replace('SessionComplete');
-      }, 3000);
+        setSlides(prev => [
+          ...prev,
+          {
+            id: 'final',
+            type: 'language',
+            content: (
+              <View style={styles.finalSlide}>
+                <Text style={styles.finalText}>🎉 Well done, {activeProfile.name}!</Text>
+                <Text style={styles.subText}>Session {completedCount} of 3 completed</Text>
+              </View>
+            ),
+          },
+        ]);
+        setIndex(slides.length);
+
+        setTimeout(() => {
+          navigation.replace(completedCount === 3 ? 'SessionComplete' : 'Home');
+        }, 3000);
+      }, 300);
+    }
+  };
+
+  const handleSwipe = (event: any) => {
+    const { translationX } = event.nativeEvent;
+    if (translationX > 50 && index > 0) {
+      setIndex(index - 1); // swipe right
+    } else if (translationX < -50 && index < slides.length - 1) {
+      setIndex(index + 1); // swipe left
     }
   };
 
@@ -109,36 +126,37 @@ export default function SessionScreen() {
   }
 
   return (
-    <View style={styles.container}>
-      {slides[index]?.content}
+    <GestureHandlerRootView style={styles.container}>
+      <PanGestureHandler onGestureEvent={handleSwipe}>
+        <View style={styles.container}>
+          {slides[index]?.content}
 
-      {!completed && (
-        <TouchableOpacity onPress={handleNext} style={styles.button}>
-          <Text style={styles.buttonText}>Next</Text>
-        </TouchableOpacity>
-      )}
+          {!completed && (
+            <TouchableOpacity onPress={handleNext} style={styles.button}>
+              <Text style={styles.buttonText}>Next</Text>
+            </TouchableOpacity>
+          )}
 
-      {showConfetti && (
-        <View style={styles.confettiContainer} pointerEvents="none">
-          <ConfettiCannon
-            count={100}
-            origin={{ x: 200, y: 0 }}
-            fadeOut
-            autoStart
-            explosionSpeed={400}
-            fallSpeed={2800}
-          />
+          {showConfetti && (
+            <View style={styles.confettiContainer} pointerEvents="none">
+              <ConfettiCannon
+                count={100}
+                origin={{ x: 200, y: 0 }}
+                fadeOut
+                autoStart
+                explosionSpeed={400}
+                fallSpeed={2800}
+              />
+            </View>
+          )}
         </View>
-      )}
-    </View>
+      </PanGestureHandler>
+    </GestureHandlerRootView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#FFFBF2',
-  },
+  container: { flex: 1, backgroundColor: '#FFFBF2' },
   loading: {
     flex: 1,
     justifyContent: 'center',
