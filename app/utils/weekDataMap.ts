@@ -1,48 +1,48 @@
 // app/utils/weekDataMap.ts
 
-import * as week001 from '../src/data/curriculum/term1/weeks/week001';
-import * as week002 from '../src/data/curriculum/term1/weeks/week002';
-import * as week003 from '../src/data/curriculum/term1/weeks/week003';
-import * as week004 from '../src/data/curriculum/term1/weeks/week004';
-import * as week005 from '../src/data/curriculum/term1/weeks/week005';
-import * as week006 from '../src/data/curriculum/term1/weeks/week006';
-import * as week007 from '../src/data/curriculum/term1/weeks/week007';
-import * as week008 from '../src/data/curriculum/term1/weeks/week008';
-import * as week009 from '../src/data/curriculum/term1/weeks/week009';
-import * as week010 from '../src/data/curriculum/term1/weeks/week010';
+import week001 from '../src/data/curriculum/term1/weeks/week001';
+import week002 from '../src/data/curriculum/term1/weeks/week002';
+import week003 from '../src/data/curriculum/term1/weeks/week003';
+import week004 from '../src/data/curriculum/term1/weeks/week004';
+import week005 from '../src/data/curriculum/term1/weeks/week005';
+import week006 from '../src/data/curriculum/term1/weeks/week006';
+import week007 from '../src/data/curriculum/term1/weeks/week007';
+import week008 from '../src/data/curriculum/term1/weeks/week008';
+import week009 from '../src/data/curriculum/term1/weeks/week009';
+import week010 from '../src/data/curriculum/term1/weeks/week010';
 
-import * as week011 from '../src/data/curriculum/term2/weeks/week011';
-import * as week012 from '../src/data/curriculum/term2/weeks/week012';
-import * as week013 from '../src/data/curriculum/term2/weeks/week013';
-import * as week014 from '../src/data/curriculum/term2/weeks/week014';
-import * as week015 from '../src/data/curriculum/term2/weeks/week015';
-import * as week016 from '../src/data/curriculum/term2/weeks/week016';
-import * as week017 from '../src/data/curriculum/term2/weeks/week017';
-import * as week018 from '../src/data/curriculum/term2/weeks/week018';
-import * as week019 from '../src/data/curriculum/term2/weeks/week019';
-import * as week020 from '../src/data/curriculum/term2/weeks/week020';
+import week011 from '../src/data/curriculum/term2/weeks/week011';
+import week012 from '../src/data/curriculum/term2/weeks/week012';
+import week013 from '../src/data/curriculum/term2/weeks/week013';
+import week014 from '../src/data/curriculum/term2/weeks/week014';
+import week015 from '../src/data/curriculum/term2/weeks/week015';
+import week016 from '../src/data/curriculum/term2/weeks/week016';
+import week017 from '../src/data/curriculum/term2/weeks/week017';
+import week018 from '../src/data/curriculum/term2/weeks/week018';
+import week019 from '../src/data/curriculum/term2/weeks/week019';
+import week020 from '../src/data/curriculum/term2/weeks/week020';
 
-import * as week021 from '../src/data/curriculum/term3/weeks/week021';
-import * as week022 from '../src/data/curriculum/term3/weeks/week022';
-import * as week023 from '../src/data/curriculum/term3/weeks/week023';
-import * as week024 from '../src/data/curriculum/term3/weeks/week024';
-import * as week025 from '../src/data/curriculum/term3/weeks/week025';
-import * as week026 from '../src/data/curriculum/term3/weeks/week026';
-import * as week027 from '../src/data/curriculum/term3/weeks/week027';
-import * as week028 from '../src/data/curriculum/term3/weeks/week028';
-import * as week029 from '../src/data/curriculum/term3/weeks/week029';
-import * as week030 from '../src/data/curriculum/term3/weeks/week030';
+import week021 from '../src/data/curriculum/term3/weeks/week021';
+import week022 from '../src/data/curriculum/term3/weeks/week022';
+import week023 from '../src/data/curriculum/term3/weeks/week023';
+import week024 from '../src/data/curriculum/term3/weeks/week024';
+import week025 from '../src/data/curriculum/term3/weeks/week025';
+import week026 from '../src/data/curriculum/term3/weeks/week026';
+import week027 from '../src/data/curriculum/term3/weeks/week027';
+import week028 from '../src/data/curriculum/term3/weeks/week028';
+import week029 from '../src/data/curriculum/term3/weeks/week029';
+import week030 from '../src/data/curriculum/term3/weeks/week030';
 
-import * as week031 from '../src/data/curriculum/term4/weeks/week031';
-import * as week032 from '../src/data/curriculum/term4/weeks/week032';
-import * as week033 from '../src/data/curriculum/term4/weeks/week033';
-import * as week034 from '../src/data/curriculum/term4/weeks/week034';
-import * as week035 from '../src/data/curriculum/term4/weeks/week035';
-import * as week036 from '../src/data/curriculum/term4/weeks/week036';
-import * as week037 from '../src/data/curriculum/term4/weeks/week037';
-import * as week038 from '../src/data/curriculum/term4/weeks/week038';
-import * as week039 from '../src/data/curriculum/term4/weeks/week039';
-import * as week040 from '../src/data/curriculum/term4/weeks/week040';
+import week031 from '../src/data/curriculum/term4/weeks/week031';
+import week032 from '../src/data/curriculum/term4/weeks/week032';
+import week033 from '../src/data/curriculum/term4/weeks/week033';
+import week034 from '../src/data/curriculum/term4/weeks/week034';
+import week035 from '../src/data/curriculum/term4/weeks/week035';
+import week036 from '../src/data/curriculum/term4/weeks/week036';
+import week037 from '../src/data/curriculum/term4/weeks/week037';
+import week038 from '../src/data/curriculum/term4/weeks/week038';
+import week039 from '../src/data/curriculum/term4/weeks/week039';
+import week040 from '../src/data/curriculum/term4/weeks/week040';
 
 export const weekDataMap: Record<number, () => Promise<any>> = {
   1: async () => week001,

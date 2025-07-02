@@ -18,3 +18,10 @@ cause the old entry point configuration to persist.
 Curriculum week data references images using just the file name. When adding or
 editing week data, omit the `/images/` prefix. The `imageMap` utility maps these
 filenames to actual assets.
+
+## Curriculum Data
+
+Week content is bundled statically through `app/utils/weekDataMap.ts`. If you
+add or rename week files in `app/src/data/curriculum`, be sure to update the
+imports in `weekDataMap.ts` so the app can load the new data in both web and
+native builds.
