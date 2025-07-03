@@ -33,3 +33,9 @@ Run the unit test suite with:
 ```bash
 npm test
 ```
+
+## Debugging Progress Storage
+
+The `setLastViewedWeek` and `getLastViewedWeek` helpers now log the profile ID and week
+whenever progress is saved or retrieved. Check the Metro console while running the
+app to verify that week changes are persisted correctly.
