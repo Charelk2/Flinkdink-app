@@ -20,13 +20,16 @@ const pendingKey = (profileId: string) => `pending-${profileId}`;
 const CURRENT_WEEK_KEY = (profileId: string) => `current-week-${profileId}`;
 
 export async function setLastViewedWeek(profileId: string, week: number) {
+  console.log('[progress] setLastViewedWeek', { profileId, week });
   await AsyncStorage.setItem(CURRENT_WEEK_KEY(profileId), String(week));
 }
 
 export async function getLastViewedWeek(profileId: string): Promise<number> {
   const raw = await AsyncStorage.getItem(CURRENT_WEEK_KEY(profileId));
-  const parsed = raw ? parseInt(raw) : null;
-  return parsed && !isNaN(parsed) ? parsed : 1;
+  const parsed = raw ? parseInt(raw, 10) : null;
+  const week = parsed && !isNaN(parsed) ? parsed : 1;
+  console.log('[progress] getLastViewedWeek', { profileId, week });
+  return week;
 }
 
 
