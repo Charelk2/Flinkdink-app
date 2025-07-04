@@ -14,75 +14,74 @@ export default {
   "mathWindowStart": 41,
   "encyclopedia": [
     {
-      "id": "dalmation",
-      "title": "Dalmation",
-      "query": "Dalmatian",
-      "fact": "A spotted working dog.",
-      "image": "dog.svg"
+      "id": "tyrannosaurus-rex",
+      "title": "Tyrannosaurus Rex",
+      "query": "Tyrannosaurus Rex",
+      "fact": "One of the largest land predators ever.",
+      "image": "tyrannosaurus-rex.svg"
     },
     {
-      "id": "worshond",
-      "title": "Worshond",
-      "query": "Dachshund",
-      "fact": "Also called a sausage dog because of its shape.",
-      "image": "dog.svg"
+      "id": "triceratops",
+      "title": "Triceratops",
+      "query": "Triceratops",
+      "fact": "A herbivore known for its three horns and large frill.",
+      "image": "triceratops.svg"
     },
     {
-      "id": "bulhond",
-      "title": "Bulhond",
-      "query": "Bulldog",
-      "fact": "Bulldogs have a distinctive wrinkled face.",
-      "image": "dog.svg"
+      "id": "stegosaurus",
+      "title": "Stegosaurus",
+      "query": "Stegosaurus",
+      "fact": "Recognizable by its row of back plates and spiked tail.",
+      "image": "stegosaurus.svg"
     },
     {
-      "id": "bloedhond",
-      "title": "Bloedhond",
-      "query": "Bloodhound",
-      "fact": "Bloodhounds have an exceptional sense of smell.",
-      "image": "dog.svg"
+      "id": "velociraptor",
+      "title": "Velociraptor",
+      "query": "Velociraptor",
+      "fact": "A swift, bipedal predator with a sickle-shaped claw.",
+      "image": "velociraptor.svg"
     },
     {
-      "id": "golden-retriever",
-      "title": "Golden Retriever",
-      "query": "Golden Retriever",
-      "fact": "This retriever loves to fetch.",
-      "image": "dog.svg"
+      "id": "brachiosaurus",
+      "title": "Brachiosaurus",
+      "query": "Brachiosaurus",
+      "fact": "A long-necked dinosaur that browsed treetops.",
+      "image": "brachiosaurus.svg"
     },
     {
-      "id": "windhond",
-      "title": "Windhond",
-      "query": "greyhound",
-      "fact": "This sighthound can run very fast.",
-      "image": "dog.svg"
+      "id": "ankylosaurus",
+      "title": "Ankylosaurus",
+      "query": "Ankylosaurus",
+      "fact": "Armored dinosaur with a club-like tail.",
+      "image": "ankylosaurus.svg"
     },
     {
-      "id": "rifrug",
-      "title": "Rifrug",
-      "query": "Rhodesian Ridgeback",
-      "fact": "This dog has a ridge of hair along its back.",
-      "image": "dog.svg"
+      "id": "spinosaurus",
+      "title": "Spinosaurus",
+      "query": "Spinosaurus",
+      "fact": "Known for its sail-like spine and semi-aquatic habits.",
+      "image": "spinosaurus.svg"
     },
     {
-      "id": "ierse-wolfhond",
-      "title": "Ierse Wolfhond",
-      "query": "Irish Wolfhound",
-      "fact": "One of the tallest dog breeds.",
-      "image": "dog.svg"
+      "id": "diplodocus",
+      "title": "Diplodocus",
+      "query": "Diplodocus",
+      "fact": "A long-tailed herbivore with a slender build.",
+      "image": "diplodocus.svg"
     },
     {
-      "id": "vizsla",
-      "title": "Vizsla",
-      "query": "Vizsla",
-      "fact": "Vizslas are energetic hunting dogs.",
-      "image": "dog.svg"
+      "id": "allosaurus",
+      "title": "Allosaurus",
+      "query": "Allosaurus",
+      "fact": "A large carnivore from the Late Jurassic.",
+      "image": "allosaurus.svg"
     },
     {
-      "id": "skaaphond",
-      "title": "Skaaphond",
-      "query": "Sheepdog",
-      "fact": "Sheepdogs help herd livestock.",
-      "image": "dog.svg"
+      "id": "parasaurolophus",
+      "title": "Parasaurolophus",
+      "query": "Parasaurolophus",
+      "fact": "Had a distinctive long, curved head crest.",
+      "image": "parasaurolophus.svg"
     }
   ]
-}
-;
+};

@@ -1,15 +1,19 @@
+// app/src/screens/AddChildScreen.tsx
+
 import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
   TextInput,
   TouchableOpacity,
+  TouchableWithoutFeedback,
+  Keyboard,
   StyleSheet,
   Platform,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 import { auth } from '../../config/firebase';
@@ -18,16 +22,16 @@ import { getProfiles, saveProfiles } from '../../utils/storage';
 import uuid from 'react-native-uuid';
 
 import { RootStackParamList } from '../navigation/types';
-import { RouteProp } from '@react-navigation/native';
-import { ChildProfile } from '../../src/models/types'; // ✅ Needed for typing
+import { ChildProfile } from '../../src/models/types';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'AddChild'>;
+type RouteProps = RouteProp<RootStackParamList, 'AddChild'>;
 
 const avatarOptions = ['🧒', '👧', '🐸', '🐵', '😍'];
 
 export default function AddChildScreen() {
   const navigation = useNavigation<NavigationProp>();
-  const route = useRoute<RouteProp<RootStackParamList, 'AddChild'>>();
+  const route = useRoute<RouteProps>();
   const profileToEdit = route.params?.profileToEdit;
 
   const [name, setName] = useState('');
@@ -39,26 +43,28 @@ export default function AddChildScreen() {
     if (profileToEdit) {
       setName(profileToEdit.name);
       setBirthday(new Date(profileToEdit.birthday));
-      const index = avatarOptions.findIndex((a) => a === profileToEdit.avatar);
+      const index = avatarOptions.findIndex(a => a === profileToEdit.avatar);
       if (index !== -1) setAvatarIndex(index);
     }
-  }, []);
+  }, [profileToEdit]);
 
   const handleSave = async () => {
     const trimmed = name.trim();
     if (!trimmed) return;
 
+    const now = new Date();
     const updatedChild: ChildProfile = {
       id: profileToEdit?.id ?? (uuid.v4() as string),
       name: trimmed,
       birthday: birthday.toISOString(),
       avatar: avatarOptions[avatarIndex],
       createdAt: profileToEdit?.createdAt ?? Date.now(),
+      startDate: profileToEdit?.startDate ?? now.toISOString(),
     };
 
     const existing = await getProfiles();
     const updatedList = profileToEdit
-      ? existing.map((p) => (p.id === updatedChild.id ? updatedChild : p))
+      ? existing.map(p => p.id === updatedChild.id ? updatedChild : p)
       : [...existing, updatedChild];
 
     await saveProfiles(updatedList);
@@ -76,7 +82,7 @@ export default function AddChildScreen() {
   };
 
   const handleAvatarChange = (dir: 'left' | 'right') => {
-    setAvatarIndex((prev) =>
+    setAvatarIndex(prev =>
       dir === 'left'
         ? (prev - 1 + avatarOptions.length) % avatarOptions.length
         : (prev + 1) % avatarOptions.length
@@ -84,97 +90,103 @@ export default function AddChildScreen() {
   };
 
   return (
-    <View style={styles.container}>
-      <TouchableOpacity
-        style={styles.backButton}
-        onPress={() => {
-          if (navigation.canGoBack()) {
-            navigation.goBack();
-          } else {
-            navigation.navigate('ProfileSelector');
-          }
-        }}
-      >
-        <Ionicons name="arrow-back" size={28} color="#382E1C" />
-      </TouchableOpacity>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+      <View style={styles.container}>
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => {
+            if (navigation.canGoBack()) navigation.goBack();
+            else navigation.navigate('ProfileSelector');
+          }}
+        >
+          <Ionicons name="arrow-back" size={28} color="#382E1C" />
+        </TouchableOpacity>
 
-      <Text style={styles.title}>{profileToEdit ? 'Edit Child' : 'Add Child'}</Text>
+        <Text style={styles.title}>
+          {profileToEdit ? 'Edit Child' : 'Add Child'}
+        </Text>
 
-      <Text style={styles.label}>Child’s name</Text>
-      <TextInput
-        value={name}
-        onChangeText={setName}
-        placeholder="Enter name"
-        placeholderTextColor="#999"
-        style={styles.input}
-      />
+        <Text style={styles.label}>Child’s name</Text>
+        <TextInput
+          value={name}
+          onChangeText={setName}
+          placeholder="Enter name"
+          placeholderTextColor="#999"
+          style={styles.input}
+        />
 
-      <Text style={styles.label}>Birthday</Text>
-      {Platform.OS === 'web' ? (
-        <View style={[styles.input, { padding: 0 }]}>
-          <input
-            type="date"
-            value={birthday.toISOString().split('T')[0]}
-            onChange={(e) => {
-              const parsed = new Date(e.target.value);
-              if (!isNaN(parsed.getTime())) setBirthday(parsed);
-            }}
-            style={{
-              fontSize: 16,
-              fontFamily: 'ComicSans',
-              color: '#382E1C',
-              padding: 12,
-              border: 'none',
-              backgroundColor: 'transparent',
-              borderRadius: 10,
-            }}
-          />
-        </View>
-      ) : (
-        <>
-          <TouchableOpacity style={styles.input} onPress={() => setShowDatePicker(true)}>
-            <Text style={styles.dateText}>{birthday.toDateString()}</Text>
-          </TouchableOpacity>
-
-          {showDatePicker && (
-            <DateTimePicker
-              mode="date"
-              value={birthday}
-              display="spinner"
-              maximumDate={new Date()}
-              onChange={(event, selectedDate) => {
-                setShowDatePicker(false);
-                if (selectedDate) {
-                  setBirthday(selectedDate);
-                }
+        <Text style={styles.label}>Birthday</Text>
+        {Platform.OS === 'web' ? (
+          <View style={[styles.input, { padding: 0 }]}>
+            <input
+              type="date"
+              value={birthday.toISOString().split('T')[0]}
+              onChange={e => {
+                const d = new Date(e.target.value);
+                if (!isNaN(d.getTime())) setBirthday(d);
+              }}
+              style={{
+                fontSize: 16,
+                fontFamily: 'ComicSans',
+                color: '#382E1C',
+                padding: 12,
+                border: 'none',
+                backgroundColor: 'transparent',
+                borderRadius: 10,
               }}
             />
-          )}
-        </>
-      )}
+          </View>
+        ) : (
+          <>
+            <TouchableOpacity
+              style={styles.input}
+              onPress={() => setShowDatePicker(true)}
+            >
+              <Text style={styles.dateText}>{birthday.toDateString()}</Text>
+            </TouchableOpacity>
+            {showDatePicker && (
+              <DateTimePicker
+                mode="date"
+                value={birthday}
+                display="spinner"
+                maximumDate={new Date()}
+                onChange={(_, d) => {
+                  setShowDatePicker(false);
+                  if (d) setBirthday(d);
+                }}
+              />
+            )}
+          </>
+        )}
 
-      <Text style={styles.label}>Emoji avatar</Text>
-      <View style={styles.avatarRow}>
-        <TouchableOpacity onPress={() => handleAvatarChange('left')}>
-          <Text style={styles.navArrow}>←</Text>
-        </TouchableOpacity>
+        <Text style={styles.label}>Emoji avatar</Text>
+        <View style={styles.avatarRow}>
+          <TouchableOpacity onPress={() => handleAvatarChange('left')}>
+            <Text style={styles.navArrow}>←</Text>
+          </TouchableOpacity>
+          <Text style={styles.avatar}>{avatarOptions[avatarIndex]}</Text>
+          <TouchableOpacity onPress={() => handleAvatarChange('right')}>
+            <Text style={styles.navArrow}>→</Text>
+          </TouchableOpacity>
+        </View>
 
-        <Text style={styles.avatar}>{avatarOptions[avatarIndex]}</Text>
-
-        <TouchableOpacity onPress={() => handleAvatarChange('right')}>
-          <Text style={styles.navArrow}>→</Text>
+        <TouchableOpacity style={styles.button} onPress={handleSave}>
+          <Text style={styles.buttonText}>
+            {profileToEdit ? 'Update' : 'Save'}
+          </Text>
         </TouchableOpacity>
       </View>
-
-      <TouchableOpacity style={styles.button} onPress={handleSave}>
-        <Text style={styles.buttonText}>{profileToEdit ? 'Update' : 'Save'}</Text>
-      </TouchableOpacity>
-    </View>
+    </TouchableWithoutFeedback>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#FFFBF2', padding: 24, justifyContent: 'center' },
+  container: {
+    flex: 1,
+    backgroundColor: '#FFFBF2',
+    padding: 24,
+    justifyContent: 'center',
+  },
   title: {
     fontSize: 36,
     fontFamily: 'ComicSans',

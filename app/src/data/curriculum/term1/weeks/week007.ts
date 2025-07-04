@@ -14,75 +14,74 @@ export default {
   "mathWindowStart": 26,
   "encyclopedia": [
     {
-      "id": "afghaanse-hond",
-      "title": "Afgaanse hond",
-      "query": "Afghan hound",
-      "fact": "This hound has long, silky hair.",
-      "image": "dog.svg"
+      "id": "afrika",
+      "title": "Afrika",
+      "query": "Africa",
+      "fact": "The second-largest continent by land area.",
+      "image": "afrika.svg"
     },
     {
-      "id": "goudkleurige-apporteerhond",
-      "title": "Goudkleurige Apporteerhond",
-      "query": "Golden Retriever",
-      "fact": "This retriever loves to fetch.",
-      "image": "dog.svg"
+      "id": "europa",
+      "title": "Europa",
+      "query": "Europe",
+      "fact": "Known for its rich history and diversity of cultures.",
+      "image": "europa.svg"
     },
     {
-      "id": "dalmatiese-hond",
-      "title": "Dalmatiese hond",
-      "query": "Dalmatian",
-      "fact": "Known for its white coat with black spots.",
-      "image": "dog.svg"
+      "id": "asie",
+      "title": "Asië",
+      "query": "Asia",
+      "fact": "The largest and most populous continent.",
+      "image": "asie.svg"
     },
     {
-      "id": "dashond",
-      "title": "Dashond",
-      "query": "Dachshund",
-      "fact": "This breed has a long body and short legs.",
-      "image": "dog.svg"
+      "id": "noord-amerika",
+      "title": "Noord-Amerika",
+      "query": "North America",
+      "fact": "Home to countries like the USA, Canada, and Mexico.",
+      "image": "noord-amerika.svg"
     },
     {
-      "id": "franse-dashond",
-      "title": "Franse Dashond",
-      "query": "Basset Hound",
-      "fact": "A playful companion from France.",
-      "image": "dog.svg"
+      "id": "suid-amerika",
+      "title": "Suid-Amerika",
+      "query": "South America",
+      "fact": "Famous for the Amazon rainforest and Andes mountains.",
+      "image": "suid-amerika.svg"
     },
     {
-      "id": "jagwindhond",
-      "title": "Jagwindhond",
-      "query": "greyhound",
-      "fact": "This sighthound can run very fast.",
-      "image": "dog.svg"
+      "id": "antarktika",
+      "title": "Antarktika",
+      "query": "Antarctica",
+      "fact": "A frozen continent surrounding the South Pole.",
+      "image": "antarktika.svg"
     },
     {
-      "id": "bulhond",
-      "title": "Bulhond",
-      "query": "Bulldog",
-      "fact": "Bulldogs have a distinctive wrinkled face.",
-      "image": "dog.svg"
+      "id": "australie",
+      "title": "Australië",
+      "query": "Australia",
+      "fact": "Both a country and a continent, known for its Outback.",
+      "image": "australie.svg"
     },
     {
-      "id": "engelse-patryshond",
-      "title": "Engelse Patryshond",
-      "query": "English pointer",
-      "fact": "English Pointers excel at bird hunting.",
-      "image": "dog.svg"
+      "id": "atlantiese-oseaan",
+      "title": "Atlantiese Oseaan",
+      "query": "Atlantic Ocean",
+      "fact": "The second-largest ocean on Earth.",
+      "image": "atlantiese-oseaan.svg"
     },
     {
-      "id": "bloedhond",
-      "title": "Bloedhond",
-      "query": "Bloodhound",
-      "fact": "Bloodhounds have an exceptional sense of smell.",
-      "image": "dog.svg"
+      "id": "indiese-oseaan",
+      "title": "Indiese Oseaan",
+      "query": "Indian Ocean",
+      "fact": "The warm ocean between Africa, Asia, and Australia.",
+      "image": "indiese-oseaan.svg"
     },
     {
-      "id": "rhodesiese-rifrughond",
-      "title": "Rhodesiese Rifrughond",
-      "query": "Rhodesian Ridgeback",
-      "fact": "This dog has a ridge of hair along its back.",
-      "image": "dog.svg"
+      "id": "stille-oseaan",
+      "title": "Stille Oseaan",
+      "query": "Pacific Ocean",
+      "fact": "The largest and deepest of Earth’s oceans.",
+      "image": "stille-oseaan.svg"
     }
   ]
 }
-;

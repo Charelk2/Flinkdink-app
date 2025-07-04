@@ -14,75 +14,74 @@ export default {
   "mathWindowStart": 36,
   "encyclopedia": [
     {
-      "id": "afghaanse-hond",
-      "title": "Afgaanse hond",
-      "query": "Afghan hound",
-      "fact": "This hound has long, silky hair.",
-      "image": "dog.svg"
+      "id": "laptop",
+      "title": "Laptop",
+      "query": "Laptop",
+      "fact": "A portable personal computer for work and play.",
+      "image": "laptop.svg"
     },
     {
-      "id": "goudkleurige-apporteerhond",
-      "title": "Goudkleurige Apporteerhond",
-      "query": "Golden Retriever",
-      "fact": "This retriever loves to fetch.",
-      "image": "dog.svg"
+      "id": "selfoon",
+      "title": "Selfoon",
+      "query": "Mobile phone",
+      "fact": "A handheld device for calling, texting, and apps.",
+      "image": "selfoon.svg"
     },
     {
-      "id": "dalmatiese-hond",
-      "title": "Dalmatiese hond",
-      "query": "Dalmatian",
-      "fact": "Known for its white coat with black spots.",
-      "image": "dog.svg"
+      "id": "horlosie",
+      "title": "Horlosie",
+      "query": "Watch",
+      "fact": "A device worn on the wrist to keep track of time.",
+      "image": "horlosie.svg"
     },
     {
-      "id": "dashond",
-      "title": "Dashond",
-      "query": "Dachshund",
-      "fact": "This breed has a long body and short legs.",
-      "image": "dog.svg"
+      "id": "afstandbeheer",
+      "title": "Afstandbeheer",
+      "query": "Remote control",
+      "fact": "Used to operate TVs and other electronics from a distance.",
+      "image": "afstandbeheer.svg"
     },
     {
-      "id": "franse-dashond",
-      "title": "Franse Dashond",
-      "query": "Basset Hound",
-      "fact": "A playful companion from France.",
-      "image": "dog.svg"
+      "id": "generator",
+      "title": "Generator",
+      "query": "Generator",
+      "fact": "Converts mechanical energy into electrical power.",
+      "image": "generator.svg"
     },
     {
-      "id": "jagwindhond",
-      "title": "Jagwindhond",
-      "query": "greyhound",
-      "fact": "This sighthound can run very fast.",
-      "image": "dog.svg"
+      "id": "sonpaneel",
+      "title": "Sonpaneel",
+      "query": "Solar panel",
+      "fact": "Captures sunlight and turns it into electricity.",
+      "image": "sonpaneel.svg"
     },
     {
-      "id": "bulhond",
-      "title": "Bulhond",
-      "query": "Bulldog",
-      "fact": "Bulldogs have a distinctive wrinkled face.",
-      "image": "dog.svg"
+      "id": "3d-printer",
+      "title": "3D-printer",
+      "query": "3D printer",
+      "fact": "Builds three-dimensional objects layer by layer.",
+      "image": "3d-printer.svg"
     },
     {
-      "id": "engelse-patryshond",
-      "title": "Engelse Patryshond",
-      "query": "English pointer",
-      "fact": "English Pointers excel at bird hunting.",
-      "image": "dog.svg"
+      "id": "slimhuis",
+      "title": "Slimhuis",
+      "query": "Smart home",
+      "fact": "Automates lights, security, and appliances.",
+      "image": "slimhuis.svg"
     },
     {
-      "id": "bloedhond",
-      "title": "Bloedhond",
-      "query": "Bloodhound",
-      "fact": "Bloodhounds have an exceptional sense of smell.",
-      "image": "dog.svg"
+      "id": "televisie",
+      "title": "Televisie",
+      "query": "Television",
+      "fact": "Electronic device for watching video and broadcasts.",
+      "image": "televisie.svg"
     },
     {
-      "id": "rhodesiese-rifrughond",
-      "title": "Rhodesiese Rifrughond",
-      "query": "Rhodesian Ridgeback",
-      "fact": "This dog has a ridge of hair along its back.",
-      "image": "dog.svg"
+      "id": "robot",
+      "title": "Robot",
+      "query": "Robot",
+      "fact": "A programmable machine that can perform various tasks.",
+      "image": "robot.svg"
     }
   ]
 }
-;

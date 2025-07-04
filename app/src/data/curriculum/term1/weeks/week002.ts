@@ -18,70 +18,70 @@ export default {
       "title": "Kitaar",
       "query": "Guitar",
       "fact": "A popular string instrument used in many music styles.",
-      "image": "placeholder.png"
+      "image": "kitaar.svg"
     },
     {
       "id": "klavier",
       "title": "Klavier",
       "query": "Piano",
       "fact": "Produces sound when keys strike internal strings.",
-      "image": "placeholder.png"
+      "image": "klavier.svg"
     },
     {
       "id": "dromme",
       "title": "Dromme",
       "query": "Drums",
       "fact": "Percussion instrument played by striking skins or pads.",
-      "image": "placeholder.png"
+      "image": "dromme.svg"
     },
     {
       "id": "mandolien",
       "title": "Mandolien",
       "query": "Mandolin",
       "fact": "A small string instrument typically plucked with a pick.",
-      "image": "placeholder.png"
+      "image": "mandolien.svg"
     },
     {
       "id": "trompet",
       "title": "Trompet",
       "query": "Trumpet",
       "fact": "Brass instrument known for its bright, powerful sound.",
-      "image": "placeholder.png"
+      "image": "trompet.svg"
     },
     {
       "id": "viool",
       "title": "Viool",
       "query": "Violin",
       "fact": "The smallest high-pitched instrument in the string family.",
-      "image": "placeholder.png"
+      "image": "viool.svg"
     },
     {
       "id": "fluit",
       "title": "Fluit",
       "query": "Flute",
       "fact": "Woodwind instrument played by blowing across an opening.",
-      "image": "placeholder.png"
+      "image": "fluit.svg"
     },
     {
       "id": "saksofoon",
       "title": "Saksofoon",
       "query": "Saxophone",
       "fact": "Woodwind instrument commonly used in jazz music.",
-      "image": "placeholder.png"
+      "image": "saksofoon.svg"
     },
     {
       "id": "harp",
       "title": "Harp",
       "query": "Harp",
       "fact": "Large instrument with many strings plucked by hand.",
-      "image": "placeholder.png"
+      "image": "harp.svg"
     },
     {
       "id": "doedelsak",
       "title": "Doedelsak",
       "query": "Bagpipes",
       "fact": "Traditional instrument that uses air stored in a bag.",
-      "image": "placeholder.png"
+      "image": "doedelsak.svg"
     }
   ],
   "mathWindowLength": 10,

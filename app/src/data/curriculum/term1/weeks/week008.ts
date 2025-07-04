@@ -14,75 +14,74 @@ export default {
   "mathWindowStart": 31,
   "encyclopedia": [
     {
-      "id": "afghaanse-hond",
-      "title": "Afgaanse hond",
-      "query": "Afghan hound",
-      "fact": "This hound has long, silky hair.",
-      "image": "dog.svg"
+      "id": "tande",
+      "title": "Tande",
+      "query": "Teeth",
+      "fact": "Hard structures in the mouth used for biting and chewing.",
+      "image": "tande.svg"
     },
     {
-      "id": "goudkleurige-apporteerhond",
-      "title": "Goudkleurige Apporteerhond",
-      "query": "Golden Retriever",
-      "fact": "This retriever loves to fetch.",
-      "image": "dog.svg"
+      "id": "hart",
+      "title": "Hart",
+      "query": "Heart",
+      "fact": "The muscular organ that pumps blood throughout the body.",
+      "image": "hart.svg"
     },
     {
-      "id": "dalmatiese-hond",
-      "title": "Dalmatiese hond",
-      "query": "Dalmatian",
-      "fact": "Known for its white coat with black spots.",
-      "image": "dog.svg"
+      "id": "mond",
+      "title": "Mond",
+      "query": "Mouth",
+      "fact": "The opening in the face used for eating and speaking.",
+      "image": "mond.svg"
     },
     {
-      "id": "dashond",
-      "title": "Dashond",
-      "query": "Dachshund",
-      "fact": "This breed has a long body and short legs.",
-      "image": "dog.svg"
+      "id": "skelet",
+      "title": "Skelet",
+      "query": "Skeleton",
+      "fact": "The internal framework of bones that supports the body.",
+      "image": "skelet.svg"
     },
     {
-      "id": "franse-dashond",
-      "title": "Franse Dashond",
-      "query": "Basset Hound",
-      "fact": "A playful companion from France.",
-      "image": "dog.svg"
+      "id": "tong",
+      "title": "Tong",
+      "query": "Tongue",
+      "fact": "A muscular organ in the mouth used for tasting and swallowing.",
+      "image": "tong.svg"
     },
     {
-      "id": "jagwindhond",
-      "title": "Jagwindhond",
-      "query": "greyhound",
-      "fact": "This sighthound can run very fast.",
-      "image": "dog.svg"
+      "id": "spiere",
+      "title": "Spiere",
+      "query": "Muscles",
+      "fact": "Tissues that contract to enable movement.",
+      "image": "spiere.svg"
     },
     {
-      "id": "bulhond",
-      "title": "Bulhond",
-      "query": "Bulldog",
-      "fact": "Bulldogs have a distinctive wrinkled face.",
-      "image": "dog.svg"
+      "id": "oog",
+      "title": "Oog",
+      "query": "Eye",
+      "fact": "The organ of sight, allowing perception of light and color.",
+      "image": "oog.svg"
     },
     {
-      "id": "engelse-patryshond",
-      "title": "Engelse Patryshond",
-      "query": "English pointer",
-      "fact": "English Pointers excel at bird hunting.",
-      "image": "dog.svg"
+      "id": "neus",
+      "title": "Neus",
+      "query": "Nose",
+      "fact": "The organ for smelling and breathing.",
+      "image": "neus.svg"
     },
     {
-      "id": "bloedhond",
-      "title": "Bloedhond",
-      "query": "Bloodhound",
-      "fact": "Bloodhounds have an exceptional sense of smell.",
-      "image": "dog.svg"
+      "id": "oor",
+      "title": "Oor",
+      "query": "Ear",
+      "fact": "The organ for hearing and balance.",
+      "image": "oor.svg"
     },
     {
-      "id": "rhodesiese-rifrughond",
-      "title": "Rhodesiese Rifrughond",
-      "query": "Rhodesian Ridgeback",
-      "fact": "This dog has a ridge of hair along its back.",
-      "image": "dog.svg"
+      "id": "vel",
+      "title": "Vel",
+      "query": "Skin",
+      "fact": "The body's outer covering that protects against the environment.",
+      "image": "vel.svg"
     }
   ]
 }
-;

@@ -57,17 +57,26 @@ export default function ProfileSelectorScreen() {
     try {
       const cloudProfiles = await fetchAllChildProfiles(user.uid);
       console.log(`✅ Fetched ${cloudProfiles.length} profiles from Firestore.`);
-      if (cloudProfiles.length > 0) {
-        //console.log(`🧒 First profile: ${cloudProfiles[0].name}`);
-      }
-
-      setProfiles(cloudProfiles);
-      await saveProfiles(cloudProfiles);
+    
+      // 🩹 Patch missing startDate
+      const patched = cloudProfiles.map((p) => {
+        if (!p.startDate) {
+          return {
+            ...p,
+            startDate: new Date(p.createdAt ?? Date.now()).toISOString(),
+          };
+        }
+        return p;
+      });
+    
+      setProfiles(patched);
+      await saveProfiles(patched);
       console.log('💾 Updated AsyncStorage with latest profiles.');
     } catch (err) {
       console.warn('⚠️ Could not fetch from Firestore. Using cached data.');
       Toast.show({ type: 'info', text1: 'Offline mode', text2: 'Using saved profiles.' });
-    } finally {
+    }
+     finally {
       if (showLoader) setSyncing(false);
     }
   };

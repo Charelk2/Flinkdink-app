@@ -18,70 +18,70 @@ export default {
       "title": "Dalmation",
       "query": "Dalmatian",
       "fact": "A spotted working dog.",
-      "image": "dog.svg"
+      "image": "dalmatiese-hond.svg"
     },
     {
       "id": "worshond",
-      "title": "Worshond",
+      "title": "worshond",
       "query": "Dachshund",
       "fact": "Also called a sausage dog because of its shape.",
-      "image": "dog.svg"
+      "image": "worshond.svg"
     },
     {
       "id": "bulhond",
-      "title": "Bulhond",
+      "title": "bulhond",
       "query": "Bulldog",
       "fact": "Bulldogs have a distinctive wrinkled face.",
-      "image": "dog.svg"
+      "image": "bulhond.svg"
     },
     {
       "id": "bloedhond",
       "title": "Bloedhond",
       "query": "Bloodhound",
       "fact": "Bloodhounds have an exceptional sense of smell.",
-      "image": "dog.svg"
+      "image": "bloedhond.svg"
     },
     {
       "id": "golden-retriever",
       "title": "Golden Retriever",
       "query": "Golden Retriever",
       "fact": "This retriever loves to fetch.",
-      "image": "dog.svg"
+      "image": "golden-retriever.svg"
     },
     {
       "id": "windhond",
       "title": "Windhond",
       "query": "greyhound",
       "fact": "This sighthound can run very fast.",
-      "image": "dog.svg"
+      "image": "windhond.svg"
     },
     {
       "id": "rifrug",
       "title": "Rifrug",
       "query": "Rhodesian Ridgeback",
       "fact": "This dog has a ridge of hair along its back.",
-      "image": "dog.svg"
+      "image": "rifrug.svg"
     },
     {
       "id": "ierse-wolfhond",
       "title": "Ierse Wolfhond",
       "query": "Irish Wolfhound",
       "fact": "One of the tallest dog breeds.",
-      "image": "dog.svg"
+      "image": "ierse-wolfhond.svg"
     },
     {
       "id": "vizsla",
       "title": "Vizsla",
       "query": "Vizsla",
       "fact": "Vizslas are energetic hunting dogs.",
-      "image": "dog.svg"
+      "image": "vizsla.svg"
     },
     {
       "id": "skaaphond",
       "title": "Skaaphond",
       "query": "Sheepdog",
       "fact": "Sheepdogs help herd livestock.",
-      "image": "dog.svg"
+      "image": "skaaphond.svg"
     }
   ],
   "mathWindowLength": 5,

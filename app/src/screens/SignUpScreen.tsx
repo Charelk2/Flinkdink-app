@@ -1,10 +1,13 @@
-// ✅ SignUpScreen.tsx
+// app/src/screens/SignUpScreen.tsx
+
 import React, { useState } from 'react';
 import {
   View,
   Text,
   TextInput,
   TouchableOpacity,
+  TouchableWithoutFeedback,
+  Keyboard,
   StyleSheet,
   ActivityIndicator,
 } from 'react-native';
@@ -13,7 +16,7 @@ import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../../config/firebase';
 import Toast from 'react-native-toast-message';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../../src/navigation/types';
+import { RootStackParamList } from '../navigation/types';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'SignUp'>;
 
@@ -48,10 +51,14 @@ export default function SignUpScreen() {
       console.log('SIGN-UP ERROR:', error.code);
       const getMessage = (code: string) => {
         switch (code) {
-          case 'auth/email-already-in-use': return 'Account already exists. Redirecting to login...';
-          case 'auth/invalid-email': return 'Invalid email address.';
-          case 'auth/weak-password': return 'Password must be at least 6 characters.';
-          default: return 'Sign-up failed. Please try again.';
+          case 'auth/email-already-in-use':
+            return 'Account already exists. Redirecting to login...';
+          case 'auth/invalid-email':
+            return 'Invalid email address.';
+          case 'auth/weak-password':
+            return 'Password must be at least 6 characters.';
+          default:
+            return 'Sign-up failed. Please try again.';
         }
       };
       const message = getMessage(error.code);
@@ -65,53 +72,83 @@ export default function SignUpScreen() {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Sign Up</Text>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+      <View style={styles.container}>
+        <Text style={styles.title}>Sign Up</Text>
 
-      <Text style={styles.label}>Email</Text>
-      <TextInput
-        value={email}
-        onChangeText={setEmail}
-        placeholder="Enter your email"
-        placeholderTextColor="#999"
-        keyboardType="email-address"
-        autoCapitalize="none"
-        style={styles.input}
-      />
-
-      <Text style={styles.label}>Password</Text>
-      <View style={styles.passwordContainer}>
+        <Text style={styles.label}>Email</Text>
         <TextInput
-          value={password}
-          onChangeText={setPassword}
-          placeholder="Create a password"
+          value={email}
+          onChangeText={setEmail}
+          placeholder="Enter your email"
           placeholderTextColor="#999"
-          secureTextEntry={!showPassword}
-          style={[styles.input, { flex: 1, marginBottom: 0 }]}
+          keyboardType="email-address"
+          autoCapitalize="none"
+          style={styles.input}
         />
+
+        <Text style={styles.label}>Password</Text>
+        <View style={styles.passwordContainer}>
+          <TextInput
+            value={password}
+            onChangeText={setPassword}
+            placeholder="Create a password"
+            placeholderTextColor="#999"
+            secureTextEntry={!showPassword}
+            style={[styles.input, { flex: 1, marginBottom: 0 }]}
+          />
+          <TouchableOpacity
+            onPress={() => setShowPassword(!showPassword)}
+            style={styles.toggleButton}
+          >
+            <Text style={styles.toggleText}>
+              {showPassword ? 'Hide' : 'Show'}
+            </Text>
+          </TouchableOpacity>
+        </View>
+
         <TouchableOpacity
-          onPress={() => setShowPassword(!showPassword)}
-          style={styles.toggleButton}>
-          <Text style={styles.toggleText}>{showPassword ? 'Hide' : 'Show'}</Text>
+          style={styles.button}
+          onPress={handleSignUp}
+          disabled={loading}
+        >
+          {loading ? (
+            <ActivityIndicator color="#382E1C" />
+          ) : (
+            <Text style={styles.buttonText}>Create Account</Text>
+          )}
+        </TouchableOpacity>
+
+        <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+          <Text style={styles.footerText}>
+            Already have an account? Log in
+          </Text>
         </TouchableOpacity>
       </View>
-
-      <TouchableOpacity style={styles.button} onPress={handleSignUp} disabled={loading}>
-        {loading ? <ActivityIndicator color="#382E1C" /> : <Text style={styles.buttonText}>Create Account</Text>}
-      </TouchableOpacity>
-
-      <TouchableOpacity onPress={() => navigation.navigate('Login')}>
-        <Text style={styles.footerText}>Already have an account? Log in</Text>
-      </TouchableOpacity>
-    </View>
+    </TouchableWithoutFeedback>
   );
 }
 
-// Shared styles
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#FFFBF2', justifyContent: 'center', padding: 24 },
-  title: { fontSize: 36, fontFamily: 'ComicSans', textAlign: 'center', color: '#382E1C', marginBottom: 30 },
-  label: { fontSize: 18, fontFamily: 'ComicSans', color: '#382E1C', marginBottom: 6 },
+  container: {
+    flex: 1,
+    backgroundColor: '#FFFBF2',
+    justifyContent: 'center',
+    padding: 24,
+  },
+  title: {
+    fontSize: 36,
+    fontFamily: 'ComicSans',
+    textAlign: 'center',
+    color: '#382E1C',
+    marginBottom: 30,
+  },
+  label: {
+    fontSize: 18,
+    fontFamily: 'ComicSans',
+    color: '#382E1C',
+    marginBottom: 6,
+  },
   input: {
     backgroundColor: '#FFF8E7',
     borderWidth: 2,
@@ -129,8 +166,15 @@ const styles = StyleSheet.create({
     paddingRight: 12,
     marginBottom: 20,
   },
-  toggleButton: { paddingHorizontal: 10, paddingVertical: 8 },
-  toggleText: { fontFamily: 'ComicSans', fontSize: 14, color: '#555' },
+  toggleButton: {
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+  },
+  toggleText: {
+    fontFamily: 'ComicSans',
+    fontSize: 14,
+    color: '#555',
+  },
   button: {
     backgroundColor: '#FFC8A2',
     padding: 16,
@@ -138,7 +182,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 16,
   },
-  buttonText: { fontSize: 20, color: '#382E1C', fontFamily: 'ComicSans' },
-  forgotPasswordText: { fontSize: 12, fontFamily: 'ComicSans', color: '#555', textAlign: 'right' },
-  footerText: { fontSize: 16, marginTop: 50, fontFamily: 'ComicSans', textAlign: 'center', color: '#555', textDecorationLine: 'underline' },
+  buttonText: {
+    fontSize: 20,
+    color: '#382E1C',
+    fontFamily: 'ComicSans',
+  },
+  footerText: {
+    fontSize: 16,
+    marginTop: 50,
+    fontFamily: 'ComicSans',
+    textAlign: 'center',
+    color: '#555',
+    textDecorationLine: 'underline',
+  },
 });

@@ -7,6 +7,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import * as Font from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import Toast from 'react-native-toast-message';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 // Screens
 import OnboardingScreen from './app/src/screens/OnboardingScreen';
@@ -123,11 +124,13 @@ export default function App() {
 
   return (
     <AuthProvider>
+      <SafeAreaProvider>
       <ActiveProfileProvider>
         <NavigationContainer onReady={onLayoutRootView}>
           <AppWithSync />
         </NavigationContainer>
       </ActiveProfileProvider>
+      </SafeAreaProvider>
     </AuthProvider>
   );
 }

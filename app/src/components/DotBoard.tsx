@@ -9,12 +9,16 @@ interface DotBoardProps {
 
 const DotBoard: React.FC<DotBoardProps> = ({ count }) => {
   // ❗️ Guard against invalid count values
+  const numericCount = Number(count);if (!Number.isInteger(numericCount) || numericCount < 0 || numericCount > 1000) {
+    console.warn('🚫 Invalid DotBoard count:', count);
+    return null;
+  }
   if (!Number.isInteger(count) || count < 0 || count > 1000) {
     console.warn('🚫 Invalid DotBoard count:', count);
     return null;
   }
 
-  const dots = generateDotPositions(count);
+  const dots = generateDotPositions(numericCount);
 
   return (
     <View style={styles.board}>
@@ -31,12 +35,12 @@ const DotBoard: React.FC<DotBoardProps> = ({ count }) => {
 
 const styles = StyleSheet.create({
   board: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
     width: '100%',
-    height: 200,
-    position: 'relative',
-    backgroundColor: '#FFF8E7',
-    borderRadius: 12,
-    overflow: 'hidden',
+    paddingVertical: 40, // optional
+    paddingBottom: 40,
   },
   dot: {
     position: 'absolute',
@@ -45,6 +49,10 @@ const styles = StyleSheet.create({
     borderRadius: 7,
     backgroundColor: '#EF4444',
   },
+  container: {
+    maxWidth: 500,
+    width: '100%',
+  }
 });
 
 export default DotBoard;

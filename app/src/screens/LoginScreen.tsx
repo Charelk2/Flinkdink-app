@@ -1,9 +1,13 @@
+// app/src/screens/LoginScreen.tsx
+
 import React, { useState } from 'react';
 import {
   View,
   Text,
   TextInput,
   TouchableOpacity,
+  TouchableWithoutFeedback,
+  Keyboard,
   StyleSheet,
   ActivityIndicator,
 } from 'react-native';
@@ -30,22 +34,17 @@ export default function LoginScreen() {
   const handleLogin = async () => {
     const cleanEmail = email.trim().toLowerCase();
     const cleanPassword = password.trim();
-  
+
     if (!cleanEmail || !cleanPassword) {
-      console.log('❌ Missing email or password.');
       return showToast('error', 'Please enter both email and password.');
     }
-  
-    //console.log(`🔐 Attempting login for: ${cleanEmail}`);
+
     setLoading(true);
-  
     try {
       await signInWithEmailAndPassword(auth, cleanEmail, cleanPassword);
-      //console.log('✅ Logged in ${cleanEmail}. -> ProfileSelector...');
       showToast('success', 'Welcome back!');
       setTimeout(() => navigation.navigate('ProfileSelector'), 500);
     } catch (error: any) {
-      console.log(`❌ Login error [${error.code}]: ${error.message}`);
       const getMessage = (code: string) => {
         switch (code) {
           case 'auth/invalid-email':
@@ -64,58 +63,80 @@ export default function LoginScreen() {
       showToast('error', getMessage(error.code));
     } finally {
       setLoading(false);
-      //console.log('🔄 Logged in.');
     }
-  };  
+  };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Log In</Text>
-      <Text style={styles.label}>Email</Text>
-      <TextInput
-        value={email}
-        onChangeText={setEmail}
-        placeholder="Enter your email"
-        placeholderTextColor="#999"
-        keyboardType="email-address"
-        autoCapitalize="none"
-        style={styles.input}
-      />
-
-      <Text style={styles.label}>Password</Text>
-      <View style={styles.passwordContainer}>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+      <View style={styles.container}>
+        <Text style={styles.title}>Log In</Text>
+        <Text style={styles.label}>Email</Text>
         <TextInput
-          value={password}
-          onChangeText={setPassword}
-          placeholder="Enter your password"
+          value={email}
+          onChangeText={setEmail}
+          placeholder="Enter your email"
           placeholderTextColor="#999"
-          secureTextEntry={!showPassword}
-          style={[styles.input, { flex: 1, marginBottom: 0 }]}
+          keyboardType="email-address"
+          autoCapitalize="none"
+          style={styles.input}
         />
+
+        <Text style={styles.label}>Password</Text>
+        <View style={styles.passwordContainer}>
+          <TextInput
+            value={password}
+            onChangeText={setPassword}
+            placeholder="Enter your password"
+            placeholderTextColor="#999"
+            secureTextEntry={!showPassword}
+            style={[styles.input, { flex: 1, marginBottom: 0 }]}
+          />
+          <TouchableOpacity
+            onPress={() => setShowPassword(!showPassword)}
+            style={styles.toggleButton}
+          >
+            <Text style={styles.toggleText}>
+              {showPassword ? 'Hide' : 'Show'}
+            </Text>
+          </TouchableOpacity>
+        </View>
+
         <TouchableOpacity
-          onPress={() => setShowPassword(!showPassword)}
-          style={styles.toggleButton}>
-          <Text style={styles.toggleText}>{showPassword ? 'Hide' : 'Show'}</Text>
+          style={styles.button}
+          onPress={handleLogin}
+          disabled={loading}
+        >
+          {loading
+            ? <ActivityIndicator color="#382E1C" />
+            : <Text style={styles.buttonText}>Log In</Text>
+          }
         </TouchableOpacity>
+
+        <Text
+          onPress={() => navigation.navigate('ForgotPassword')}
+          style={styles.forgotPasswordText}
+        >
+          Forgot Password?
+        </Text>
+
+        <Text
+          onPress={() => navigation.navigate('SignUp')}
+          style={styles.footerText}
+        >
+          Not a member? Sign up now
+        </Text>
       </View>
-
-      <TouchableOpacity style={styles.button} onPress={handleLogin} disabled={loading}>
-        {loading ? <ActivityIndicator color="#382E1C" /> : <Text style={styles.buttonText}>Log In</Text>}
-      </TouchableOpacity>
-
-      <Text onPress={() => navigation.navigate('ForgotPassword')} style={styles.forgotPasswordText}>
-        Forgot Password?
-      </Text>
-
-      <Text onPress={() => navigation.navigate('SignUp')} style={styles.footerText}>
-        Not a member? Sign up now
-      </Text>
-    </View>
+    </TouchableWithoutFeedback>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#FFFBF2', justifyContent: 'center', padding: 24 },
+  container: {
+    flex: 1,
+    backgroundColor: '#FFFBF2',
+    justifyContent: 'center',
+    padding: 24,
+  },
   title: {
     fontSize: 36,
     fontFamily: 'ComicSans',

@@ -1,5 +1,12 @@
 import type * as React from 'react';
-import { View, Text, Image, StyleSheet, useWindowDimensions } from 'react-native';
+import {
+  SafeAreaView,
+  View,
+  Text,
+  Image,
+  StyleSheet,
+  useWindowDimensions,
+} from 'react-native';
 import { loadWeekData } from './loadWeekData';
 import DotBoard from '../src/components/DotBoard';
 import { imageMap } from './imageMap';
@@ -12,53 +19,72 @@ export interface Slide {
   content: React.JSX.Element;
 }
 
+interface EncyclopediaItem {
+  id?: string;
+  image: string;
+  title: string;
+  fact: string;
+}
+
 function FullSlide({ children }: { children: React.ReactNode }) {
   const { width, height } = useWindowDimensions();
+
   return (
-    <View style={[styles.slide, { width, height }]}>
-      {children}
-    </View>
+    <SafeAreaView style={[styles.slide, { width, height }]}>      
+      <View style={styles.slideInner}>        
+        {children}
+      </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   slide: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#FFFBF2',
+    flex: 1,
+    backgroundColor: '#FFFFFF',
     paddingHorizontal: 24,
   },
+  slideInner: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 24, // consistent top and bottom inset
+  },
   languageText: {
+    fontSize: 60,
+    fontFamily: 'ComicSans',
+    color: '#382E1C',
+    textAlign: 'center',
+    marginBottom: 24,
+  },
+  image: {
+    width: '200%',
+    height: '70%',
+    borderRadius: 20,
+    resizeMode: 'contain',
+    marginBottom: 16,
+  },
+  title: {
     fontSize: 40,
     fontFamily: 'ComicSans',
     color: '#382E1C',
     textAlign: 'center',
-  },
-  image: {
-    width: 220,
-    height: 220,
-    borderRadius: 20,
-    marginBottom: 16,
-  },
-  title: {
-    fontSize: 24,
-    fontFamily: 'ComicSans',
-    color: '#382E1C',
     marginBottom: 8,
-    textAlign: 'center',
   },
   fact: {
-    fontSize: 16,
+    fontSize: 12,
     fontFamily: 'ComicSans',
     color: '#555',
     textAlign: 'center',
+    marginBottom: 24,
   },
   countText: {
     fontSize: 18,
-    marginTop: 10,
     fontFamily: 'ComicSans',
     color: '#382E1C',
     textAlign: 'center',
+    marginTop: 12,
+    marginBottom: 24,
   },
   equationText: {
     fontSize: 20,
@@ -66,6 +92,7 @@ const styles = StyleSheet.create({
     color: '#382E1C',
     textAlign: 'center',
     marginTop: 12,
+    marginBottom: 24,
   },
 });
 
@@ -75,7 +102,7 @@ export async function generateSessionSlides(
 ): Promise<Slide[]> {
   try {
     const data = await loadWeekData(week);
-    if (!data) throw new Error(`No data found for week ${week}`);
+    if (!data) throw new Error(`No data for week ${week}`);
 
     const shuffleArray = <T,>(array: T[]): T[] => {
       const arr = [...array];
@@ -86,6 +113,7 @@ export async function generateSessionSlides(
       return arr;
     };
 
+    // Language slides
     const languageSlides: Slide[] = shuffleArray(
       (data.language ?? []).map((word: string, i: number) => ({
         type: 'language',
@@ -98,8 +126,9 @@ export async function generateSessionSlides(
       }))
     );
 
+    // Encyclopedia slides
     const encyclopediaSlides: Slide[] = shuffleArray(
-      (data.encyclopedia ?? []).map((item: any, i: number) => ({
+      (data.encyclopedia ?? [] as EncyclopediaItem[]).map((item: EncyclopediaItem, i: number) => ({
         type: 'encyclopedia',
         id: item.id || `ency-${i}`,
         content: (
@@ -107,7 +136,6 @@ export async function generateSessionSlides(
             <Image
               source={imageMap[item.image] || imageMap['dog.svg']}
               style={styles.image}
-              resizeMode="contain"
             />
             <Text style={styles.title}>{item.title}</Text>
             <Text style={styles.fact}>{item.fact}</Text>
@@ -116,8 +144,8 @@ export async function generateSessionSlides(
       }))
     );
 
+    // Math slides
     const mathSlides: Slide[] = [];
-
     const isValid = (n: any) => typeof n === 'number' && Number.isInteger(n) && n >= 0;
 
     if (week <= 10) {
@@ -132,7 +160,7 @@ export async function generateSessionSlides(
             content: (
               <FullSlide key={`count-${count}`}>
                 <DotBoard count={count} />
-                <Text style={styles.countText}>🔢 Count: {count}</Text>
+                <Text style={styles.countText}>Count: {count}</Text>
               </FullSlide>
             ),
           });
@@ -140,51 +168,45 @@ export async function generateSessionSlides(
       }
     } else {
       const today = new Date();
-      const dayIndex = (today.getDay() + 6) % 7; // Monday = 0
+      const dayIndex = (today.getDay() + 6) % 7;
       const sessionIndex = await getTodaySessionCount(profile.id, week);
 
       const sum = data.addition?.[dayIndex]?.[sessionIndex];
-      const difference = data.subtraction?.[dayIndex]?.[sessionIndex];
-      const product = data.multiplication?.[dayIndex]?.[sessionIndex];
-      const quotient = data.division?.[dayIndex]?.[sessionIndex];
+      const diff = data.subtraction?.[dayIndex]?.[sessionIndex];
+      const prod = data.multiplication?.[dayIndex]?.[sessionIndex];
+      const quot = data.division?.[dayIndex]?.[sessionIndex];
 
       let operands: number[] = [];
       let result: number | undefined;
       let ops: string[] = [];
-      let label = '';
-      let equation = '';
 
       if (sum) {
-        operands = ['a', 'b', 'c'].map((k) => sum[k]).filter(isValid);
+        operands = ['a','b','c'].map(k => sum[k]).filter(isValid);
         result = sum.sum;
         ops = sum.ops || Array(operands.length - 1).fill('+');
-        label = 'Addition';
-      } else if (difference) {
-        operands = ['a', 'b', 'c'].map((k) => difference[k]).filter(isValid);
-        result = difference.difference;
-        ops = difference.ops || Array(operands.length - 1).fill('-');
-        label = 'Subtraction';
-      } else if (product) {
-        operands = ['a', 'b'].map((k) => product[k]).filter(isValid);
-        result = product.product;
+      } else if (diff) {
+        operands = ['a','b','c'].map(k => diff[k]).filter(isValid);
+        result = diff.difference;
+        ops = diff.ops || Array(operands.length - 1).fill('-');
+      } else if (prod) {
+        operands = ['a','b'].map(k => prod[k]).filter(isValid);
+        result = prod.product;
         ops = ['×'];
-        label = 'Multiplication';
-      } else if (quotient) {
-        operands = ['a', 'b'].map((k) => quotient[k]).filter(isValid);
-        result = quotient.quotient;
+      } else if (quot) {
+        operands = ['a','b'].map(k => quot[k]).filter(isValid);
+        result = quot.quotient;
         ops = ['÷'];
-        label = 'Division';
       }
 
       if (operands.every(isValid) && isValid(result)) {
-        operands.forEach((value, i) => {
+        operands.forEach((val, i) => {
           mathSlides.push({
             type: 'math',
             id: `math-op${i}`,
             content: (
               <FullSlide key={`math-op${i}`}>
-                <DotBoard count={value} />
-                <Text style={styles.countText}>🔵 Operand {i + 1}: {value}</Text>
+                <DotBoard count={val} />
+                <Text style={styles.countText}>🔵 Operand {i+1}: {val}</Text>
               </FullSlide>
             ),
           });
@@ -192,32 +214,29 @@ export async function generateSessionSlides(
 
         mathSlides.push({
           type: 'math',
-          id: `math-res`,
+          id: 'math-res',
           content: (
-            <FullSlide key={`math-res`}>
+            <FullSlide key="math-res">
               <DotBoard count={result!} />
               <Text style={styles.countText}>🔵 Result: {result}</Text>
             </FullSlide>
           ),
         });
 
-        equation = operands.map((val, i) =>
-          i === 0 ? `${val}` : `${ops[i - 1]} ${val}`
-        ).join(' ') + ` = ${result}`;
+        const equation = operands
+          .map((v,i) => (i===0 ? `${v}` : `${ops[i-1]} ${v}`))
+          .join(' ') + ` = ${result}`;
 
         mathSlides.push({
           type: 'math',
-          id: `math-eq`,
+          id: 'math-eq',
           content: (
-            <FullSlide key={`math-eq`}>
+            <FullSlide key="math-eq">
               <Text style={styles.equationText}>🧮 {equation}</Text>
             </FullSlide>
           ),
         });
-
-        console.log(`🧠 ${label}: Day ${dayIndex + 1}, Session ${sessionIndex + 1}: ${equation}`);
       } else {
-        console.warn(`⚠️ No valid math equation found for week ${week}, day ${dayIndex + 1}, session ${sessionIndex + 1}`);
         mathSlides.push({
           type: 'math',
           id: 'math-fallback',
@@ -230,12 +249,9 @@ export async function generateSessionSlides(
       }
     }
 
-    const finalSlides = [...languageSlides, ...encyclopediaSlides, ...mathSlides];
-
-    console.log(`✅ FINAL SLIDE COUNT: ${finalSlides.length} (Week ${week})`);
-    return finalSlides;
+    return [...languageSlides, ...encyclopediaSlides, ...mathSlides];
   } catch (err) {
-    console.error('🔥 Failed to generate session slides:', err);
+    console.error('Failed to generate session slides:', err);
     return [];
   }
 }

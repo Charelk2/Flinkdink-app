@@ -1,4 +1,4 @@
-//app/src/screens/SessionScreen.tsx
+// app/src/screens/SessionScreen.tsx
 
 import React, { useEffect, useState } from 'react';
 import {
@@ -6,7 +6,8 @@ import {
   Text,
   StyleSheet,
   ActivityIndicator,
-  TouchableOpacity,
+  Pressable,
+  useWindowDimensions,
 } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import { RouteProp } from '@react-navigation/native';
@@ -21,7 +22,12 @@ import {
 } from '../../utils/progress';
 import { RootStackParamList } from '../navigation/types';
 import ConfettiCannon from 'react-native-confetti-cannon';
-import { PanGestureHandler, GestureHandlerRootView } from 'react-native-gesture-handler';
+import {
+  PanGestureHandler,
+  GestureHandlerRootView,
+  GestureHandlerStateChangeEvent,
+  State,
+} from 'react-native-gesture-handler';
 
 export default function SessionScreen() {
   const route = useRoute<RouteProp<RootStackParamList, 'Session'>>();
@@ -33,6 +39,9 @@ export default function SessionScreen() {
   const [loading, setLoading] = useState(true);
   const [completed, setCompleted] = useState(false);
   const [showConfetti, setShowConfetti] = useState(false);
+
+  const { width } = useWindowDimensions();
+  const BACK_ZONE_WIDTH = 48; // dp from left edge to go back
 
   const overrideWeek = route.params?.overrideWeek;
 
@@ -56,7 +65,6 @@ export default function SessionScreen() {
 
       try {
         const content = await generateSessionSlides(week, activeProfile);
-        console.log('✅ Slides generated:', content.map((s) => s.id));
         setSlides(content);
       } catch (e) {
         console.error('Failed to load session:', e);
@@ -70,7 +78,7 @@ export default function SessionScreen() {
 
   const handleNext = async () => {
     if (index < slides.length - 1) {
-      setIndex(index + 1);
+      setIndex((i) => i + 1);
       return;
     }
 
@@ -86,15 +94,19 @@ export default function SessionScreen() {
 
         const completedCount = await getTodaySessionCount(activeProfile.id, week);
 
-        setSlides(prev => [
+        setSlides((prev) => [
           ...prev,
           {
             id: 'final',
             type: 'language',
             content: (
               <View style={styles.finalSlide}>
-                <Text style={styles.finalText}>🎉 Well done, {activeProfile.name}!</Text>
-                <Text style={styles.subText}>Session {completedCount} of 3 completed</Text>
+                <Text style={styles.finalText}>
+                  🎉 Well done, {activeProfile.name}!
+                </Text>
+                <Text style={styles.subText}>
+                  Session {completedCount} of 3 completed
+                </Text>
               </View>
             ),
           },
@@ -108,15 +120,6 @@ export default function SessionScreen() {
     }
   };
 
-  const handleSwipe = (event: any) => {
-    const { translationX } = event.nativeEvent;
-    if (translationX > 50 && index > 0) {
-      setIndex(index - 1); // swipe right
-    } else if (translationX < -50 && index < slides.length - 1) {
-      setIndex(index + 1); // swipe left
-    }
-  };
-
   if (loading || !activeProfile) {
     return (
       <View style={styles.loading}>
@@ -125,17 +128,32 @@ export default function SessionScreen() {
     );
   }
 
+  const onHandlerStateChange = (event: GestureHandlerStateChangeEvent) => {
+    if (event.nativeEvent.state === State.END) {
+        const dx = (event.nativeEvent as any).translationX;
+      if (dx > 50 && index > 0) {
+        setIndex((i) => i - 1);
+      } else if (dx < -50 && index < slides.length - 1) {
+        handleNext();
+      }
+    }
+  };
+
   return (
     <GestureHandlerRootView style={styles.container}>
-      <PanGestureHandler onGestureEvent={handleSwipe}>
-        <View style={styles.container}>
+      <PanGestureHandler onHandlerStateChange={onHandlerStateChange}>
+        <Pressable
+          style={styles.container}
+          onPress={({ nativeEvent }) => {
+            const { locationX } = nativeEvent;
+            if (locationX <= BACK_ZONE_WIDTH && index > 0) {
+              setIndex((i) => i - 1);
+            } else {
+              handleNext();
+            }
+          }}
+        >
           {slides[index]?.content}
-
-          {!completed && (
-            <TouchableOpacity onPress={handleNext} style={styles.button}>
-              <Text style={styles.buttonText}>Next</Text>
-            </TouchableOpacity>
-          )}
 
           {showConfetti && (
             <View style={styles.confettiContainer} pointerEvents="none">
@@ -149,7 +167,7 @@ export default function SessionScreen() {
               />
             </View>
           )}
-        </View>
+        </Pressable>
       </PanGestureHandler>
     </GestureHandlerRootView>
   );
@@ -162,21 +180,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#FFFBF2',
-  },
-  button: {
-    backgroundColor: '#FBD278',
-    paddingVertical: 14,
-    paddingHorizontal: 30,
-    borderRadius: 30,
-    alignSelf: 'center',
-    marginBottom: 50,
-    position: 'absolute',
-    bottom: 40,
-  },
-  buttonText: {
-    fontSize: 20,
-    fontFamily: 'ComicSans',
-    color: '#382E1C',
   },
   finalSlide: {
     flex: 1,

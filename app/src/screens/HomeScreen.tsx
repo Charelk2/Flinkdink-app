@@ -1,6 +1,7 @@
-// app/screens/HomeScreen.tsx
+// app/src/screens/HomeScreen.tsx
 
 import React, { useEffect, useState } from 'react';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
 import { signOut } from 'firebase/auth';
 import { auth } from '../../config/firebase';
@@ -26,6 +27,7 @@ export default function HomeScreen() {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const { activeProfile } = useActiveProfile();
   const isFocused = useIsFocused();
+  const insets = useSafeAreaInsets();
 
   const [menuVisible, setMenuVisible] = useState(false);
   const [completedWeeks, setCompletedWeeks] = useState<number[]>([]);
@@ -42,7 +44,10 @@ export default function HomeScreen() {
 
     const now = new Date();
     const start = new Date(activeProfile.startDate ?? now);
-    const defaultWeek = Math.min(Math.floor((now.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) / 7 + 1, 40);
+    const defaultWeek = Math.min(
+      Math.floor((now.getTime() - start.getTime()) / (1000 * 60 * 60 * 24) / 7) + 1,
+      40
+    );
     const stored = await getLastViewedWeek(activeProfile.id);
     const week = weekOverride ?? stored ?? defaultWeek;
 
@@ -118,7 +123,10 @@ export default function HomeScreen() {
   return (
     <>
       <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-        <TouchableOpacity style={styles.menuIcon} onPress={handleMenu}>
+        <TouchableOpacity
+          style={[styles.menuIcon, { top: insets.top + 10 }]}
+          onPress={handleMenu}
+        >
           <Ionicons name="menu" size={28} color="#382E1C" />
         </TouchableOpacity>
 
@@ -137,12 +145,18 @@ export default function HomeScreen() {
           </Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={[styles.button, styles.yellow]} onPress={() => navigation.navigate('Progress')}>
+        <TouchableOpacity
+          style={[styles.button, styles.yellow]}
+          onPress={() => navigation.navigate('Progress')}
+        >
           <Ionicons name="calendar" size={24} color="#fff" style={styles.icon} />
           <Text style={styles.buttonText}>View Progress</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={[styles.button, styles.red]} onPress={() => navigation.navigate('Curriculum')}>
+        <TouchableOpacity
+          style={[styles.button, styles.red]}
+          onPress={() => navigation.navigate('Curriculum')}
+        >
           <Ionicons name="book" size={24} color="#fff" style={styles.icon} />
           <Text style={styles.buttonText}>Curriculum Outline</Text>
         </TouchableOpacity>
@@ -190,7 +204,7 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#FFFBF2' },
   content: { padding: 24, paddingTop: 60 },
-  menuIcon: { position: 'absolute', top: 30, left: 20, zIndex: 10 },
+  menuIcon: { position: 'absolute', left: 20, zIndex: 10 },
   greeting: {
     fontSize: 32,
     fontFamily: 'ComicSans',
