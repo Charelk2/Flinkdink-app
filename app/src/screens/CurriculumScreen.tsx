@@ -42,9 +42,24 @@ const weeksData: Record<Category, Record<number, { id: number; subtitle: string 
       { id: 7, subtitle: 'Kontinente' }, { id: 8, subtitle: 'Anatomie' }, { id: 9, subtitle: 'Tegnologie' },
       { id: 10, subtitle: 'Dinosourusse' },
     ],
-    2: Array.from({ length: 10 }, (_, i) => ({ id: i + 1, subtitle: `Honde – feit ${i + 1}` })),
-    3: Array.from({ length: 10 }, (_, i) => ({ id: i + 1, subtitle: `Honde – feit ${i + 2}` })),
-    4: Array.from({ length: 10 }, (_, i) => ({ id: i + 1, subtitle: `Honde – feit ${i + 3}` })),
+    2: [
+      { id: 1, subtitle: 'Honde - feit 1' }, { id: 2, subtitle: 'Instrumente - feit 1' }, { id: 3, subtitle: 'Voëls - feit 1' },
+      { id: 4, subtitle: 'Bou-Implemente - feit 1' }, { id: 5, subtitle: 'Insekte - feit 1' }, { id: 6, subtitle: 'Blomme - feit 1' },
+      { id: 7, subtitle: 'Kontinente - feit 1' }, { id: 8, subtitle: 'Anatomie - feit 1' }, { id: 9, subtitle: 'Tegnologie - feit 1' },
+      { id: 10, subtitle: 'Dinosourusse - feit 1' },
+    ],
+    3: [
+      { id: 1, subtitle: 'Honde - feit 2' }, { id: 2, subtitle: 'Instrumente - feit 2' }, { id: 3, subtitle: 'Voëls - feit 2' },
+      { id: 4, subtitle: 'Bou-Implemente - feit 2' }, { id: 5, subtitle: 'Insekte - feit 2' }, { id: 6, subtitle: 'Blomme - feit 2' },
+      { id: 7, subtitle: 'Kontinente - feit 2' }, { id: 8, subtitle: 'Anatomie - feit 2' }, { id: 9, subtitle: 'Tegnologie - feit 2' },
+      { id: 10, subtitle: 'Dinosourusse - feit 2' },
+    ],
+    4: [
+      { id: 1, subtitle: 'Honde - feit 3' }, { id: 2, subtitle: 'Instrumente - feit 3' }, { id: 3, subtitle: 'Voëls - feit 3' },
+      { id: 4, subtitle: 'Bou-Implemente - feit 3' }, { id: 5, subtitle: 'Insekte - feit 3' }, { id: 6, subtitle: 'Blomme - feit 3' },
+      { id: 7, subtitle: 'Kontinente - feit 3' }, { id: 8, subtitle: 'Anatomie - feit 3' }, { id: 9, subtitle: 'Tegnologie - feit 3' },
+      { id: 10, subtitle: 'Dinosourusse - feit 3' },
+    ],
   },
   Math: {
     1: [
@@ -155,9 +170,6 @@ export default function CurriculumScreen() {
             <View style={styles.weekCard}>
               <View style={[ styles.weekCardHeader, { backgroundColor: categoryColors[activeCategory] } ]}>
                 <Text style={styles.weekCardHeaderText}>Week {item.id}</Text>
-                {completedWeeks.includes(item.id) && (
-                  <Ionicons name="checkmark-circle" size={20} color="#fff" />
-                )}
               </View>
               <View style={styles.weekCardBody}>
                 <Text style={styles.weekCardSubtitle}>{item.subtitle}</Text>
