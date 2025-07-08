@@ -1,4 +1,4 @@
-// app/src/screens/ProfileSelector.tsx
+//app/src/screens/ProfileSelector.tsx
 
 import React, { useState, useCallback } from 'react';
 import {
@@ -29,6 +29,7 @@ import { fetchAllChildProfiles } from '../../utils/firebaseSync';
 import * as Animatable from 'react-native-animatable';
 import { useActiveProfile } from '../../src/context/ActiveProfileContext';
 import FlinkDinkBackground from '../components/FlinkDinkBackground';
+import i18n from '../i18n'; // ✅ 1. IMPORT i18n
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'ProfileSelector'>;
 
@@ -137,7 +138,7 @@ export default function ProfileSelectorScreen() {
         <TouchableOpacity onPress={() => handleSelect(item)} style={styles.content}>
           <Text style={styles.avatar}>{item.avatar}</Text>
           <Text style={styles.name}>{item.name}</Text>
-          <Text style={styles.age}>{getAge(item.birthday)} years old</Text>
+          <Text style={styles.age}>{`${getAge(item.birthday)} ${i18n.t('yearsOld')}`}</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -154,12 +155,12 @@ export default function ProfileSelectorScreen() {
     <View style={styles.container}>
       <FlinkDinkBackground />
       <SafeAreaView style={styles.safeArea}>
-        <Text style={styles.title}>Who's Learning Today?</Text>
+        <Text style={styles.title}>{i18n.t('whosLearningToday')}</Text>
 
         {syncing && !refreshing && (
           <View style={styles.syncing}>
             <ActivityIndicator size="small" color="#382E1C" />
-            <Text style={styles.syncText}>Syncing profiles...</Text>
+            <Text style={styles.syncText}>{i18n.t('syncingProfiles')}</Text>
           </View>
         )}
 
@@ -175,9 +176,9 @@ export default function ProfileSelectorScreen() {
           ListEmptyComponent={
             !syncing ? (
               <View style={styles.empty}>
-                <Text style={styles.emptyText}>No profiles found.</Text>
+                <Text style={styles.emptyText}>{i18n.t('noProfilesFound')}</Text>
                 <TouchableOpacity style={styles.emptyBtn} onPress={handleAdd}>
-                  <Text style={styles.emptyBtnText}>＋ Add Your First Child</Text>
+                  <Text style={styles.emptyBtnText}>{i18n.t('addFirstChild')}</Text>
                 </TouchableOpacity>
               </View>
             ) : null
@@ -199,16 +200,16 @@ export default function ProfileSelectorScreen() {
       >
         <View style={styles.modalOverlay}>
           <View style={styles.modalBox}>
-            <Text style={styles.modalTitle}>Delete Profile</Text>
+            <Text style={styles.modalTitle}>{i18n.t('deleteProfileTitle')}</Text>
             <Text style={styles.modalText}>
-              Are you sure you want to delete {deleting?.name}? This cannot be undone.
+              {i18n.t('deleteProfileConfirmation', { profileName: deleting?.name })}
             </Text>
             <View style={styles.modalBtns}>
               <TouchableOpacity onPress={cancelDelete} style={[styles.btn, styles.btnCancel]}>
-                <Text style={styles.btnText}>Cancel</Text>
+                <Text style={styles.btnText}>{i18n.t('cancel')}</Text>
               </TouchableOpacity>
               <TouchableOpacity onPress={confirmDelete} style={[styles.btn, styles.btnDelete]}>
-                <Text style={[styles.btnText, styles.btnTextDelete]}>Delete</Text>
+                <Text style={[styles.btnText, styles.btnTextDelete]}>{i18n.t('delete')}</Text>
               </TouchableOpacity>
             </View>
           </View>

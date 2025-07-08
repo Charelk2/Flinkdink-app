@@ -1,5 +1,3 @@
-// app/src/screens/ProgressScreen.tsx
-
 import React, { useState, useEffect, useRef } from 'react';
 import {
   View,
@@ -28,6 +26,8 @@ import {
 
 import FlinkDinkBackground from '../components/FlinkDinkBackground';
 import HamburgerMenu from '../components/HamburgerMenu';
+import i18n from '../i18n'; // ✅ 1. IMPORT i18n
+const { width } = Dimensions.get('window');
 
 const TERM_COUNT = 4;
 const WEEKS_PER_TERM = 10;
@@ -45,14 +45,12 @@ export default function ProgressScreen() {
   const [currentWeek, setCurrentWeek] = useState(1);
   const [completedWeeks, setCompletedWeeks] = useState<number[]>([]);
   
-  // State for the details modal
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedWeek, setSelectedWeek] = useState(0);
   const [weekData, setWeekData] = useState<Record<string, number>>({});
 
   const progressAnim = useRef(new Animated.Value(0)).current;
   
-  // Determine which term is active based on the current week
   const activeTermIndex = Math.max(0, Math.ceil(currentWeek / WEEKS_PER_TERM) - 1);
   const [viewingTermIndex, setViewingTermIndex] = useState(activeTermIndex);
 
@@ -68,7 +66,6 @@ export default function ProgressScreen() {
     const initialWeek = stored ?? defaultWeek;
     setCurrentWeek(initialWeek);
 
-    // Set the initial term view based on the current week
     const initialTermIndex = Math.max(0, Math.ceil(initialWeek / WEEKS_PER_TERM) - 1);
     setViewingTermIndex(initialTermIndex);
 
@@ -79,7 +76,6 @@ export default function ProgressScreen() {
     }
     setCompletedWeeks(done);
 
-    // Animate the progress bar
     Animated.timing(progressAnim, {
       toValue: done.length / TOTAL_WEEKS,
       duration: 500,
@@ -93,7 +89,6 @@ export default function ProgressScreen() {
     }
   }, [isFocused, activeProfile]);
 
-  // Handler to open the details modal
   const handleWeekPress = async (week: number) => {
     if (!activeProfile) return;
     const data = await getWeekSessionData(activeProfile.id, week);
@@ -102,7 +97,6 @@ export default function ProgressScreen() {
     setModalVisible(true);
   };
 
-  // Menu navigation actions
   const onSignOut = async () => {
     await signOut(auth);
     setMenuVisible(false);
@@ -117,7 +111,6 @@ export default function ProgressScreen() {
     <View style={styles.container}>
       <FlinkDinkBackground />
       <SafeAreaView style={styles.safeArea}>
-        {/* Header Icons */}
         <View style={styles.header}>
           <TouchableOpacity onPress={() => setMenuVisible(true)} style={styles.headerIcon}>
             <Ionicons name="menu" size={28} color="#382E1C" />
@@ -134,12 +127,19 @@ export default function ProgressScreen() {
           contentContainerStyle={styles.listContentContainer}
           ListHeaderComponent={
             <View style={styles.cardHeader}>
-              <Text style={styles.title}>My Progress</Text>
+              <View style={styles.centeredRow}>
+  <Text
+    style={styles.title}
+    numberOfLines={2}
+    ellipsizeMode="tail"
+  >
+    {i18n.t('myProgressTitle')}
+  </Text>
+</View>
               
-              {/* Progress Bar */}
               <View style={styles.progressContainer}>
                 <Text style={styles.progressText}>
-                  {completedWeeks.length} / {TOTAL_WEEKS} Weeks Complete
+                  {i18n.t('weeksCompleteProgress', { completed: completedWeeks.length, total: TOTAL_WEEKS })}
                 </Text>
                 <View style={styles.progressBarBackground}>
                   <Animated.View
@@ -156,7 +156,6 @@ export default function ProgressScreen() {
                 </View>
               </View>
 
-              {/* Term Tabs */}
               <View style={styles.termRow}>
                 {Array.from({ length: TERM_COUNT }).map((_, i) => (
                   <TouchableOpacity
@@ -171,7 +170,7 @@ export default function ProgressScreen() {
                         styles.termText,
                         viewingTermIndex === i && styles.termTextActive,
                       ]}>
-                      Term {i + 1}
+                      {i18n.t('termTab', { term: i + 1 })}
                     </Text>
                   </TouchableOpacity>
                 ))}
@@ -196,7 +195,6 @@ export default function ProgressScreen() {
         />
       </SafeAreaView>
 
-      {/* Details Modal */}
       <Modal
         visible={modalVisible}
         transparent
@@ -207,25 +205,25 @@ export default function ProgressScreen() {
           activeOpacity={1}
           onPressOut={() => setModalVisible(false)}>
           <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Week {selectedWeek} Details</Text>
+            <Text style={styles.modalTitle}>{i18n.t('weekDetailsTitle', { week: selectedWeek })}</Text>
             {Object.entries(weekData).map(([day, count]) => (
               <Text key={day} style={styles.modalText}>
-                {day}: {count} session{count === 1 ? '' : 's'}
+                {i18n.t(count === 1 ? 'sessionsCount' : 'sessionsCountPlural', { day: day, count: count })}
               </Text>
             ))}
             {Object.keys(weekData).length === 0 && (
-              <Text style={styles.modalText}>No sessions recorded for this week.</Text>
+              <Text style={styles.modalText}>{i18n.t('noSessionsRecorded')}</Text>
             )}
             <TouchableOpacity
               style={styles.modalCloseButton}
               onPress={() => setModalVisible(false)}>
-              <Text style={styles.modalCloseButtonText}>Close</Text>
+              <Text style={styles.modalCloseButtonText}>{i18n.t('closeButton')}</Text>
             </TouchableOpacity>
           </View>
         </TouchableOpacity>
       </Modal>
 
-      {/* Hamburger Menu */}
+      {/* ✅ Pass the required text props */}
       <HamburgerMenu
         visible={menuVisible}
         onClose={() => setMenuVisible(false)}
@@ -238,12 +236,22 @@ export default function ProgressScreen() {
           navigation.navigate('MyAccount');
         }}
         onSignOut={onSignOut}
+        switchProfileText={i18n.t('switchProfile')}
+        myAccountText={i18n.t('myAccount')}
+        signOutText={i18n.t('signOut')}
       />
     </View>
   );
 }
 
+// Styles remain the same
 const styles = StyleSheet.create({
+  centeredRow: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 24,
+    width: '100%',
+  },
   container: {
     flex: 1,
     backgroundColor: '#FFFBF2',
@@ -267,7 +275,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingBottom: 40,
   },
-  // Card Styles
   cardHeader: {
     backgroundColor: 'rgba(255, 255, 255, 0.9)',
     borderRadius: 24,
@@ -284,8 +291,9 @@ const styles = StyleSheet.create({
     color: '#382E1C',
     textAlign: 'center',
     marginBottom: 16,
+    maxWidth: '90%',
+    alignSelf: 'center',
   },
-  // Progress Bar Styles
   progressContainer: {
     marginBottom: 20,
   },
@@ -307,20 +315,23 @@ const styles = StyleSheet.create({
     backgroundColor: '#00C896',
     borderRadius: 6,
   },
-  // Term Tabs Styles
   termRow: {
     flexDirection: 'row',
     justifyContent: 'center',
     marginBottom: 8,
+    flexWrap: 'wrap', 
   },
   termTab: {
+    minWidth: 72,  
     paddingVertical: 8,
-    paddingHorizontal: 16,
+    paddingHorizontal: 12,
     borderRadius: 16,
+    marginVertical: 4,  
     marginHorizontal: 4,
     backgroundColor: '#FFF',
     borderWidth: 1,
     borderColor: '#E0E0E0',
+    alignItems: 'center',
   },
   termTabActive: {
     backgroundColor: '#4D96FF',
@@ -329,12 +340,12 @@ const styles = StyleSheet.create({
   termText: {
     fontFamily: 'ComicSans',
     color: '#382E1C',
-    fontSize: 14,
+    fontSize: width < 350 ? 12 : 14,
+    flexShrink: 1,   
   },
   termTextActive: {
     color: '#FFF',
   },
-  // Week Grid Styles
   weekBlock: {
     flex: 1,
     aspectRatio: 1,
@@ -361,7 +372,6 @@ const styles = StyleSheet.create({
     top: 4,
     right: 4,
   },
-  // Modal Styles
   modalOverlay: {
     flex: 1,
     backgroundColor: 'rgba(0,0,0,0.4)',

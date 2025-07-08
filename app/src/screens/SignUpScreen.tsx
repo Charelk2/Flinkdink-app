@@ -1,5 +1,3 @@
-// app/src/screens/SignUpScreen.tsx
-
 import React, { useState } from 'react';
 import {
   View,
@@ -20,6 +18,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../navigation/types';
 import FlinkDinkBackground from '../components/FlinkDinkBackground';
 import { Ionicons } from '@expo/vector-icons';
+import i18n from '../i18n'; // ✅ 1. IMPORT i18n
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'SignUp'>;
 
@@ -53,7 +52,6 @@ export default function SignUpScreen() {
     try {
       await createUserWithEmailAndPassword(auth, cleanEmail, cleanPassword);
       showToast('success', 'Account created! Please add your first child.');
-      // After success, reset the navigation stack to the AddChild screen
       navigation.reset({
         index: 0,
         routes: [{ name: 'AddChild', params: {} }],
@@ -101,25 +99,25 @@ export default function SignUpScreen() {
 
           {/* Sign Up Card */}
           <View style={styles.card}>
-            <Text style={styles.title}>Create Account</Text>
+            <Text style={styles.title}>{i18n.t('signUpTitle')}</Text>
 
-            <Text style={styles.label}>Email Address</Text>
+            <Text style={styles.label}>{i18n.t('emailLabel')}</Text>
             <TextInput
               value={email}
               onChangeText={setEmail}
-              placeholder="Enter your email"
+              placeholder={i18n.t('emailPlaceholder')}
               placeholderTextColor="#A1A1AA"
               keyboardType="email-address"
               autoCapitalize="none"
               style={styles.input}
             />
 
-            <Text style={styles.label}>Password</Text>
+            <Text style={styles.label}>{i18n.t('passwordLabel')}</Text>
             <View style={styles.passwordContainer}>
               <TextInput
                 value={password}
                 onChangeText={setPassword}
-                placeholder="Create a password (min. 6 characters)"
+                placeholder={i18n.t('passwordPlaceholderSignUp')}
                 placeholderTextColor="#A1A1AA"
                 secureTextEntry={!showPassword}
                 style={styles.passwordInput}
@@ -139,13 +137,13 @@ export default function SignUpScreen() {
             >
               {loading
                 ? <ActivityIndicator color="#FFFFFF" />
-                : <Text style={styles.buttonText}>Create Account</Text>
+                : <Text style={styles.buttonText}>{i18n.t('createAccountButton')}</Text>
               }
             </TouchableOpacity>
 
             <View style={styles.divider}>
               <View style={styles.dividerLine} />
-              <Text style={styles.dividerText}>or</Text>
+              <Text style={styles.dividerText}>{i18n.t('dividerOr')}</Text>
               <View style={styles.dividerLine} />
             </View>
 
@@ -154,7 +152,7 @@ export default function SignUpScreen() {
               onPress={() => navigation.navigate('Login')}
               disabled={loading}
             >
-              <Text style={styles.secondaryButtonText}>I Already Have an Account</Text>
+              <Text style={styles.secondaryButtonText}>{i18n.t('alreadyHaveAccountButton')}</Text>
             </TouchableOpacity>
           </View>
         </ScrollView>

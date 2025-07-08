@@ -1,5 +1,4 @@
 // app/src/screens/AddChildScreen.tsx
-
 import React, { useState, useEffect, useRef } from 'react';
 import {
   View,
@@ -27,6 +26,7 @@ import uuid from 'react-native-uuid';
 import { RootStackParamList } from '../navigation/types';
 import { ChildProfile } from '../../src/models/types';
 import FlinkDinkBackground from '../components/FlinkDinkBackground';
+import i18n from '../i18n'; // ✅ 1. IMPORT i18n
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'AddChild'>;
 type RouteProps = RouteProp<RootStackParamList, 'AddChild'>;
@@ -127,19 +127,19 @@ export default function AddChildScreen() {
           <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
             <Animatable.View animation="fadeInUp" duration={600} style={styles.card}>
               <Text style={styles.title}>
-                {profileToEdit ? 'Edit Profile' : 'New Profile'}
+                {profileToEdit ? i18n.t('editProfileTitle') : i18n.t('newProfileTitle')}
               </Text>
 
-              <Text style={styles.label}>Child’s Name</Text>
+              <Text style={styles.label}>{i18n.t('childsNameLabel')}</Text>
               <TextInput
                 value={name}
                 onChangeText={setName}
-                placeholder="Enter a name"
+                placeholder={i18n.t('enterNamePlaceholder')}
                 placeholderTextColor="#A1A1AA"
                 style={styles.input}
               />
 
-              <Text style={styles.label}>Birthday</Text>
+              <Text style={styles.label}>{i18n.t('birthdayLabel')}</Text>
               {Platform.OS === 'web' ? (
                  <input
                     type="date"
@@ -173,7 +173,7 @@ export default function AddChildScreen() {
                 </>
               )}
 
-              <Text style={styles.label}>Choose an Avatar</Text>
+              <Text style={styles.label}>{i18n.t('chooseAvatarLabel')}</Text>
               <View style={styles.avatarRow}>
                 <TouchableOpacity onPress={() => handleAvatarChange('left')}>
                   <Ionicons name="chevron-back-circle-sharp" size={48} color="#4D96FF" />
@@ -188,7 +188,7 @@ export default function AddChildScreen() {
 
               <TouchableOpacity style={styles.button} onPress={handleSave}>
                 <Text style={styles.buttonText}>
-                  {profileToEdit ? 'Update Profile' : 'Save Profile'}
+                  {profileToEdit ? i18n.t('updateProfileButton') : i18n.t('saveProfileButton')}
                 </Text>
               </TouchableOpacity>
             </Animatable.View>

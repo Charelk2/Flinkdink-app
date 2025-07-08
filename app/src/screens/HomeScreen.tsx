@@ -1,5 +1,3 @@
-// app/src/screens/HomeScreen.tsx
-
 import React, { useEffect, useState } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
@@ -10,6 +8,7 @@ import {
   ScrollView,
   Platform,
   useWindowDimensions,
+  ActivityIndicator,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { signOut } from 'firebase/auth';
@@ -30,6 +29,7 @@ import {
   setLastViewedWeek,
   getLastViewedWeek,
 } from '../../utils/progress';
+import { useTranslation } from 'react-i18next';
 
 export default function HomeScreen() {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
@@ -37,28 +37,38 @@ export default function HomeScreen() {
   const isFocused = useIsFocused();
   const insets = useSafeAreaInsets();
   const { width } = useWindowDimensions();
+  const { t } = useTranslation();
 
   // Responsive title size
   const titleFontSize = width > 1000 ? 64 : width > 600 ? 48 : 18;
 
+  // Responsive logo: one or two rows
+  const logoThreshold = 350;
+  const isNarrow = width < logoThreshold;
+  const flink = 'FLINK'.split('');
+  const dink = 'DINK'.split('');
+
+  // Colors for letter blocks
+  const colors = ['#FF6B6B', '#FF9B1C', '#4D96FF', '#38B000', '#6A4C93', '#FF6B6B', '#FF9B1C', '#4D96FF', '#38B000'];
+
+  // State
   const [menuVisible, setMenuVisible] = useState(false);
   const [completedWeeks, setCompletedWeeks] = useState<number[]>([]);
   const [todayCount, setTodayCount] = useState(0);
   const [currentWeek, setCurrentWeek] = useState(1);
+  const [completedDays, setCompletedDays] = useState(0);
+  const [loading, setLoading] = useState(true);
   const [showConfirm, setShowConfirm] = useState(false);
   const [pendingWeek, setPendingWeek] = useState<number | null>(null);
-  const [completedDays, setCompletedDays] = useState(0);
-
-  // Color palette for letters
-  const colors = ['#FF6B6B', '#FF9B1C', '#4D96FF', '#38B000', '#6A4C93', '#FF6B6B', '#FF9B1C', '#4D96FF', '#38B000'];
-  const title = 'FLINKDINK'.split('');
 
   useEffect(() => {
     if (isFocused && activeProfile) loadWeekData();
+    // eslint-disable-next-line
   }, [isFocused, activeProfile]);
 
   const loadWeekData = async (weekOverride?: number) => {
     if (!activeProfile) return;
+    setLoading(true);
     const now = new Date();
     const start = new Date(activeProfile.startDate ?? now);
     const defaultWeek = Math.min(
@@ -68,9 +78,11 @@ export default function HomeScreen() {
     const stored = await getLastViewedWeek(activeProfile.id);
     const week = weekOverride ?? stored ?? defaultWeek;
 
+    // Load async session data
     const tCount = await getTodaySessionCount(activeProfile.id, week);
     const cDays = await getCompletedDaysThisWeek(activeProfile.id, week);
 
+    // Build completed weeks array
     const comp: number[] = [];
     for (let w = 1; w <= 40; w++) {
       const data = await getWeekSessionData(activeProfile.id, w);
@@ -81,6 +93,7 @@ export default function HomeScreen() {
     setTodayCount(tCount);
     setCompletedDays(cDays);
     setCompletedWeeks(comp);
+    setLoading(false);
   };
 
   const handleSessionStart = async () => {
@@ -106,11 +119,18 @@ export default function HomeScreen() {
     setPendingWeek(null);
   };
 
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#FFFBF2' }}>
+        <ActivityIndicator size="large" color="#4D96FF" />
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
       <FlinkDinkBackground />
 
-      {/* Menu Icon (placed outside ScrollView for fixed positioning) */}
       <TouchableOpacity
         style={[styles.menuIcon, { top: Platform.OS === 'web' ? 20 : insets.top + 10 }]}
         onPress={() => setMenuVisible(true)}
@@ -123,54 +143,72 @@ export default function HomeScreen() {
         contentContainerStyle={[
           styles.content,
           {
-            // This ensures the content is pushed down below the icon on all platforms
             paddingTop: Platform.select({
-              ios: insets.top + 50, // Use safe area inset + margin for iOS
-              android: 60, // Keep original padding for Android
-              web: 100, // Keep original padding for Web
+              ios: insets.top + 50,
+              android: 60,
+              web: 100,
             }),
           },
         ]}
       >
-        {/* Title with pill backgrounds */}
-        <View style={styles.titleContainer}>
-          {title.map((char, i) => (
-            <View key={i} style={[styles.letterBox, { backgroundColor: colors[i % colors.length] }]}>
-              <Text
-                style={[styles.char, { fontSize: titleFontSize, color: '#fff' }]}
-              >
-                {char}
-              </Text>
+        {/* FLINK DINK LOGO - Responsive! */}
+        <View style={styles.logoWrapper}>
+          {isNarrow ? (
+            <>
+              <View style={styles.titleContainer}>
+                {flink.map((char, i) => (
+                  <View key={i} style={[styles.letterBox, { backgroundColor: colors[i % colors.length] }]}>
+                    <Text style={[styles.char, { fontSize: titleFontSize, color: '#fff' }]}>{char}</Text>
+                  </View>
+                ))}
+              </View>
+              <View style={[styles.titleContainer, styles.dinkRow]}>
+                <View style={{ width: titleFontSize * 0.75 }} /> {/* Spacer for centering DINK */}
+                {dink.map((char, i) => (
+                  <View key={i} style={[styles.letterBox, { backgroundColor: colors[(i + flink.length) % colors.length] }]}>
+                    <Text style={[styles.char, { fontSize: titleFontSize, color: '#fff' }]}>{char}</Text>
+                  </View>
+                ))}
+              </View>
+            </>
+          ) : (
+            <View style={styles.titleContainer}>
+              {[...flink, ...dink].map((char, i) => (
+                <View key={i} style={[styles.letterBox, { backgroundColor: colors[i % colors.length] }]}>
+                  <Text style={[styles.char, { fontSize: titleFontSize, color: '#fff' }]}>{char}</Text>
+                </View>
+              ))}
             </View>
-          ))}
+          )}
         </View>
+
         <Text style={[styles.childName, { fontSize: titleFontSize * 1.5 }]}>
           {activeProfile?.name}
         </Text>
 
-        {/* Action Grid */}
         <View style={styles.actionGrid}>
           <TouchableOpacity style={[styles.actionBlock, styles.yellow]} onPress={handleSessionStart}>
             <Ionicons name="play-circle" size={48} color="#fff" />
-            <Text style={styles.actionText}>Start Session</Text>
-            <Text style={styles.subActionText}>{todayCount}/3 sessions today</Text>
+            <Text style={styles.actionText}>{t('startSession')}</Text>
+            <Text style={styles.subActionText}>{t('sessionsToday', { count: todayCount ?? 0 })}</Text>
           </TouchableOpacity>
           <TouchableOpacity style={[styles.actionBlock, styles.purple]} onPress={() => navigation.navigate('Curriculum')}>
             <Ionicons name="book" size={48} color="#fff" />
-            <Text style={styles.actionText}>Outline</Text>
+            <Text style={styles.actionText}>{t('outline')}</Text>
           </TouchableOpacity>
           <TouchableOpacity style={[styles.actionBlock, styles.teal]} onPress={() => navigation.navigate('Progress')}>
             <Ionicons name="calendar" size={48} color="#fff" />
-            <Text style={styles.actionText}>Progress</Text>
+            <Text style={styles.actionText}>{t('progress')}</Text>
           </TouchableOpacity>
           <TouchableOpacity style={[styles.actionBlock, styles.green]} onPress={() => navigation.navigate('Instructions')}>
             <Ionicons name="information-circle-outline" size={48} color="#fff" />
-            <Text style={styles.actionText}>Instructions</Text>
+            <Text style={styles.actionText}>{t('instructions')}</Text>
           </TouchableOpacity>
         </View>
 
-        {/* Progress Grid */}
-        <Text style={styles.sectionTitle}>Weeks Completed: {completedWeeks.length}/40</Text>
+        <Text style={styles.sectionTitle}>
+          {t('weeksCompleted', { completed: completedWeeks.length })}
+        </Text>
         <View style={styles.grid}>
           {Array.from({ length: 40 }).map((_, idx) => {
             const n = idx + 1;
@@ -187,7 +225,6 @@ export default function HomeScreen() {
         </View>
       </ScrollView>
 
-      {/* Menus & Modals */}
       <HamburgerMenu
         visible={menuVisible}
         onClose={() => setMenuVisible(false)}
@@ -197,14 +234,23 @@ export default function HomeScreen() {
           await signOut(auth);
           setMenuVisible(false);
         }}
+        switchProfileText={t('switchProfile')}
+        myAccountText={t('myAccount')}
+        signOutText={t('signOut')}
       />
-      <ConfirmModal visible={showConfirm} week={pendingWeek ?? 1} onCancel={() => setShowConfirm(false)} onConfirm={confirmSkip} />
+      <ConfirmModal
+        visible={showConfirm}
+        week={pendingWeek ?? 1}
+        onCancel={() => setShowConfirm(false)}
+        onConfirm={confirmSkip}
+      />
     </View>
   );
 }
 
+// ---- STYLES ----
+
 const styles = StyleSheet.create({
-  // This clean container style ensures the background component is visible
   container: {
     flex: 1,
     backgroundColor: 'transparent',
@@ -223,11 +269,19 @@ const styles = StyleSheet.create({
     left: 20,
     zIndex: 10,
   },
+  logoWrapper: {
+    alignItems: 'center',
+    marginBottom: 16,
+  },
   titleContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
-    flexWrap: 'wrap',
-    marginBottom: 16,
+    flexWrap: 'nowrap',
+    marginBottom: 0,
+  },
+  dinkRow: {
+    marginTop: 4,
+    // Spacer handled in JSX for indentation
   },
   char: {
     fontFamily: 'ComicSans',

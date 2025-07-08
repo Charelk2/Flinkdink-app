@@ -1,5 +1,3 @@
-// app/src/screens/SessionScreen.tsx
-
 import React, { useEffect, useState } from 'react';
 import {
   View,
@@ -7,7 +5,6 @@ import {
   StyleSheet,
   ActivityIndicator,
   Pressable,
-  useWindowDimensions,
   Platform,
 } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
@@ -30,6 +27,7 @@ import {
   GestureHandlerStateChangeEvent,
   State,
 } from 'react-native-gesture-handler';
+import i18n from '../i18n'; // ✅ IMPORT i18n
 
 export default function SessionScreen() {
   const route = useRoute<RouteProp<RootStackParamList, 'Session'>>();
@@ -42,8 +40,7 @@ export default function SessionScreen() {
   const [completed, setCompleted] = useState(false);
   const [showConfetti, setShowConfetti] = useState(false);
 
-  const { width } = useWindowDimensions();
-  const BACK_ZONE_WIDTH = 48; // dp from left edge to go back
+  const BACK_ZONE_WIDTH = 48;
 
   const overrideWeek = route.params?.overrideWeek;
 
@@ -108,7 +105,7 @@ export default function SessionScreen() {
                   duration={1200}
                   style={styles.finalTitle}
                 >
-                  Well done, {activeProfile.name}!
+                  {i18n.t('wellDone', { name: activeProfile.name })}
                 </Animatable.Text>
                 <Animatable.Text
                   animation="fadeInUp"
@@ -116,7 +113,7 @@ export default function SessionScreen() {
                   duration={1000}
                   style={styles.finalSubtitle}
                 >
-                  Session {completedCount} of 3 completed
+                  {i18n.t('sessionNumberOfThreeComplete', { count: completedCount })}
                 </Animatable.Text>
               </View>
             ),
@@ -144,7 +141,7 @@ export default function SessionScreen() {
         const dx = (event.nativeEvent as any).translationX;
       if (dx > 50 && index > 0) {
         setIndex((i) => i - 1);
-      } else if (dx < -50) { // Removed condition to allow swiping on final slide
+      } else if (dx < -50) {
         handleNext();
       }
     }
@@ -184,6 +181,7 @@ export default function SessionScreen() {
   );
 }
 
+// Styles remain the same
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#FFFBF2' },
   loading: {
@@ -196,7 +194,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#38B000', // A nice, celebratory green
+    backgroundColor: '#38B000',
     paddingHorizontal: 24,
   },
   finalTitle: {

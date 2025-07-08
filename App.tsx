@@ -1,5 +1,3 @@
-// App.tsx
-
 import React, { useCallback, useEffect, useState } from 'react';
 import { View, ActivityIndicator } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
@@ -8,6 +6,9 @@ import * as Font from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import Toast from 'react-native-toast-message';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+
+// i18n config import (must be at top)
+import './app/src/i18n';
 
 // Screens
 import OnboardingScreen from './app/src/screens/OnboardingScreen';
@@ -21,8 +22,8 @@ import MyAccountScreen from './app/src/screens/MyAccountScreen';
 import SessionScreen from './app/src/screens/SessionScreen';
 import ProgressScreen from './app/src/screens/ProgressScreen';
 import CurriculumScreen from './app/src/screens/CurriculumScreen';
-import SessionCompleteScreen from './app/src/screens/SessionCompleteScreen'; // ✅ NEW
-import InstructionScreen   from './app/src/screens/InstructionScreen'
+import SessionCompleteScreen from './app/src/screens/SessionCompleteScreen';
+import InstructionScreen from './app/src/screens/InstructionScreen';
 
 // Types
 import { RootStackParamList } from './app/src/navigation/types';
@@ -30,8 +31,8 @@ import { RootStackParamList } from './app/src/navigation/types';
 // Context
 import { AuthProvider, useAuth } from './app/src/context/AuthContext';
 import { ActiveProfileProvider, useActiveProfile } from './app/src/context/ActiveProfileContext';
+import { LanguageProvider } from './app/src/context/LanguageContext';
 
-// Utils
 import { syncPendingProgress } from './app/utils/progress';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -54,7 +55,6 @@ function AppNavigator() {
       ) : (
         <Stack.Screen name="Onboarding" component={OnboardingScreen} />
       )}
-  
       {!user && (
         <>
           <Stack.Screen name="Login" component={LoginScreen} />
@@ -62,7 +62,6 @@ function AppNavigator() {
           <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
         </>
       )}
-  
       {user && (
         <>
           <Stack.Screen name="Home" component={HomeScreen} />
@@ -76,7 +75,7 @@ function AppNavigator() {
         </>
       )}
     </Stack.Navigator>
-  );  
+  );
 }
 
 function AppWithSync() {
@@ -126,13 +125,15 @@ export default function App() {
 
   return (
     <AuthProvider>
-      <SafeAreaProvider>
-      <ActiveProfileProvider>
-        <NavigationContainer onReady={onLayoutRootView}>
-          <AppWithSync />
-        </NavigationContainer>
-      </ActiveProfileProvider>
-      </SafeAreaProvider>
+      <LanguageProvider>
+        <SafeAreaProvider>
+          <ActiveProfileProvider>
+            <NavigationContainer onReady={onLayoutRootView}>
+              <AppWithSync />
+            </NavigationContainer>
+          </ActiveProfileProvider>
+        </SafeAreaProvider>
+      </LanguageProvider>
     </AuthProvider>
   );
 }

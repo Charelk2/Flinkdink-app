@@ -1,5 +1,3 @@
-// app/src/screens/LoginScreen.tsx
-
 import React, { useState } from 'react';
 import {
   View,
@@ -21,6 +19,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../navigation/types';
 import FlinkDinkBackground from '../components/FlinkDinkBackground';
 import { Ionicons } from '@expo/vector-icons';
+import i18n from '../i18n'; // ✅ 1. IMPORT i18n
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'Login'>;
 
@@ -79,7 +78,7 @@ export default function LoginScreen() {
       <SafeAreaView style={styles.safeArea}>
         <ScrollView
           contentContainerStyle={styles.scrollContainer}
-          keyboardShouldPersistTaps="handled" // <-- THE FIX IS HERE
+          keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
           {/* FlinkDink Title */}
@@ -93,25 +92,25 @@ export default function LoginScreen() {
 
           {/* Login Card */}
           <View style={styles.card}>
-            <Text style={styles.title}>Log In</Text>
+            <Text style={styles.title}>{i18n.t('loginTitle')}</Text>
 
-            <Text style={styles.label}>Email Address</Text>
+            <Text style={styles.label}>{i18n.t('emailLabel')}</Text>
             <TextInput
               value={email}
               onChangeText={setEmail}
-              placeholder="Enter your email"
+              placeholder={i18n.t('emailPlaceholder')}
               placeholderTextColor="#A1A1AA"
               keyboardType="email-address"
               autoCapitalize="none"
               style={styles.input}
             />
 
-            <Text style={styles.label}>Password</Text>
+            <Text style={styles.label}>{i18n.t('passwordLabel')}</Text>
             <View style={styles.passwordContainer}>
               <TextInput
                 value={password}
                 onChangeText={setPassword}
-                placeholder="Enter your password"
+                placeholder={i18n.t('passwordPlaceholder')}
                 placeholderTextColor="#A1A1AA"
                 secureTextEntry={!showPassword}
                 style={styles.passwordInput}
@@ -125,7 +124,7 @@ export default function LoginScreen() {
             </View>
             
             <TouchableOpacity onPress={() => navigation.navigate('ForgotPassword')} >
-              <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
+              <Text style={styles.forgotPasswordText}>{i18n.t('forgotPasswordLink')}</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
@@ -135,13 +134,13 @@ export default function LoginScreen() {
             >
               {loading
                 ? <ActivityIndicator color="#FFFFFF" />
-                : <Text style={styles.buttonText}>Log In</Text>
+                : <Text style={styles.buttonText}>{i18n.t('loginButton')}</Text>
               }
             </TouchableOpacity>
 
             <View style={styles.divider}>
               <View style={styles.dividerLine} />
-              <Text style={styles.dividerText}>or</Text>
+              <Text style={styles.dividerText}>{i18n.t('dividerOr')}</Text>
               <View style={styles.dividerLine} />
             </View>
 
@@ -150,7 +149,7 @@ export default function LoginScreen() {
               onPress={() => navigation.navigate('SignUp')}
               disabled={loading}
             >
-              <Text style={styles.secondaryButtonText}>Create a New Account</Text>
+              <Text style={styles.secondaryButtonText}>{i18n.t('createNewAccountButton')}</Text>
             </TouchableOpacity>
           </View>
         </ScrollView>

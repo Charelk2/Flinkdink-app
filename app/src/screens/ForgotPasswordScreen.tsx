@@ -1,11 +1,10 @@
-
-//app/src/screens/ForgotPasswordScreen.tsx
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import { sendPasswordResetEmail } from 'firebase/auth';
 import { auth } from '../../config/firebase';
 import { useNavigation } from '@react-navigation/native';
 import Toast from 'react-native-toast-message';
+import i18n from '../i18n'; // ✅ 1. IMPORT i18n
 
 export default function ForgotPasswordScreen() {
   const [email, setEmail] = useState('');
@@ -45,13 +44,13 @@ export default function ForgotPasswordScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Reset Password</Text>
+      <Text style={styles.title}>{i18n.t('resetPasswordTitle')}</Text>
 
-      <Text style={styles.label}>Enter your email</Text>
+      <Text style={styles.label}>{i18n.t('enterYourEmailLabel')}</Text>
       <TextInput
         value={email}
         onChangeText={setEmail}
-        placeholder="your@email.com"
+        placeholder={i18n.t('yourEmailPlaceholder')}
         placeholderTextColor="#999"
         keyboardType="email-address"
         autoCapitalize="none"
@@ -59,7 +58,7 @@ export default function ForgotPasswordScreen() {
       />
 
       <TouchableOpacity style={styles.button} onPress={handleReset}>
-        <Text style={styles.buttonText}>Send Reset Email</Text>
+        <Text style={styles.buttonText}>{i18n.t('sendResetEmailButton')}</Text>
       </TouchableOpacity>
     </View>
   );

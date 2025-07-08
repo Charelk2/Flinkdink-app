@@ -5,14 +5,17 @@ import {
   Text,
   TouchableOpacity,
   StyleSheet,
-  Platform,
 } from 'react-native';
+import i18n from '../i18n'; // ✅ Import i18n
 
+// ✅ 1. UPDATE THE PROPS INTERFACE
 type ConfirmModalProps = {
   visible: boolean;
   week: number;
   onCancel: () => void;
   onConfirm: () => void;
+  // We no longer need all the text props from the parent,
+  // as the modal can construct its own text using i18n.
 };
 
 export default function ConfirmModal({ visible, week, onCancel, onConfirm }: ConfirmModalProps) {
@@ -27,16 +30,17 @@ export default function ConfirmModal({ visible, week, onCancel, onConfirm }: Con
     >
       <View style={styles.overlay}>
         <View style={styles.modal}>
-          <Text style={styles.title}>Skip to Week {week}?</Text>
-          <Text style={styles.message}>Are you sure you want to jump to week {week}?</Text>
+          {/* ✅ 2. USE I18N KEYS WITH DYNAMIC VALUES */}
+          <Text style={styles.title}>{i18n.t('skipToWeekTitle', { week: week })}</Text>
+          <Text style={styles.message}>{i18n.t('skipToWeekMessage', { week: week })}</Text>
 
           <View style={styles.buttons}>
             <TouchableOpacity onPress={onCancel} style={[styles.button, styles.cancel]}>
-              <Text style={styles.buttonText}>Cancel</Text>
+              <Text style={styles.buttonText}>{i18n.t('cancel')}</Text>
             </TouchableOpacity>
 
             <TouchableOpacity onPress={onConfirm} style={[styles.button, styles.confirm]}>
-              <Text style={styles.buttonText}>Yes</Text>
+              <Text style={styles.buttonText}>{i18n.t('yes')}</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -45,6 +49,7 @@ export default function ConfirmModal({ visible, week, onCancel, onConfirm }: Con
   );
 }
 
+// Styles remain the same
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,

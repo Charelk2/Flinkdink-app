@@ -1,5 +1,3 @@
-// app/src/screens/SessionCompleteScreen.tsx
-
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, Platform } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
@@ -10,6 +8,7 @@ import { Ionicons } from '@expo/vector-icons';
 
 import { RootStackParamList } from '../navigation/types';
 import FlinkDinkBackground from '../components/FlinkDinkBackground';
+import i18n from '../i18n'; // ✅ IMPORT i18n
 
 export default function SessionCompleteScreen() {
   const navigation = useNavigation<
@@ -19,7 +18,6 @@ export default function SessionCompleteScreen() {
   return (
     <View style={styles.container}>
       <FlinkDinkBackground />
-      {/* A burst of confetti on screen load! */}
       <ConfettiCannon
         count={200}
         origin={{ x: -10, y: 0 }}
@@ -37,7 +35,7 @@ export default function SessionCompleteScreen() {
             duration={1200}
             style={styles.title}
           >
-            🎉 You Did It!
+            {i18n.t('youDidIt')}
           </Animatable.Text>
 
           <Animatable.Text
@@ -46,7 +44,7 @@ export default function SessionCompleteScreen() {
             delay={300}
             style={styles.subtitle}
           >
-            Today's Sessions is Complete!
+            {i18n.t('todaysSessionsComplete')}
           </Animatable.Text>
 
           <View style={styles.starsContainer}>
@@ -68,7 +66,7 @@ export default function SessionCompleteScreen() {
             style={styles.button}
             onPress={() => navigation.navigate('Home')}
           >
-            <Text style={styles.buttonText}>Back to Home</Text>
+            <Text style={styles.buttonText}>{i18n.t('backToHome')}</Text>
           </TouchableOpacity>
         </Animatable.View>
       </SafeAreaView>
@@ -76,6 +74,7 @@ export default function SessionCompleteScreen() {
   );
 }
 
+// Styles remain the same
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -110,7 +109,7 @@ const styles = StyleSheet.create({
   },
   starIcon: {
     fontSize: 56,
-    color: '#FFD700', // Gold color
+    color: '#FFD700',
     marginHorizontal: 8,
     textShadowColor: 'rgba(0, 0, 0, 0.15)',
     textShadowOffset: { width: 2, height: 2 },
