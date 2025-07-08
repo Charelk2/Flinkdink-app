@@ -1,6 +1,6 @@
 // app/src/screens/AddChildScreen.tsx
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   View,
   Text,
@@ -10,11 +10,14 @@ import {
   Keyboard,
   StyleSheet,
   Platform,
+  ScrollView,
+  SafeAreaView,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import * as Animatable from 'react-native-animatable';
 
 import { auth } from '../../config/firebase';
 import { uploadChildProfile } from '../../utils/firebaseSync';
@@ -23,11 +26,25 @@ import uuid from 'react-native-uuid';
 
 import { RootStackParamList } from '../navigation/types';
 import { ChildProfile } from '../../src/models/types';
+import FlinkDinkBackground from '../components/FlinkDinkBackground';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'AddChild'>;
 type RouteProps = RouteProp<RootStackParamList, 'AddChild'>;
 
-const avatarOptions = ['🧒', '👧', '🐸', '🐵', '😍'];
+const avatarOptions = ['🧒', '👧', '🐸', '🐵', '😍', '🤖', '🦄', '🦁'];
+
+// Define a separate style object for the web input
+const webDatePickerStyle: React.CSSProperties = {
+  backgroundColor: '#FFFFFF',
+  border: '1px solid #E5E7EB',
+  padding: '14px',
+  borderRadius: '12px',
+  fontSize: '16px',
+  marginBottom: '24px',
+  width: 'calc(100% - 30px)', // Adjust for padding
+  fontFamily: 'ComicSans', // Ensure font consistency
+  color: '#1F2937',
+};
 
 export default function AddChildScreen() {
   const navigation = useNavigation<NavigationProp>();
@@ -38,6 +55,8 @@ export default function AddChildScreen() {
   const [birthday, setBirthday] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [avatarIndex, setAvatarIndex] = useState(0);
+
+  const avatarRef = useRef<Animatable.View & View>(null);
 
   useEffect(() => {
     if (profileToEdit) {
@@ -64,7 +83,7 @@ export default function AddChildScreen() {
 
     const existing = await getProfiles();
     const updatedList = profileToEdit
-      ? existing.map(p => p.id === updatedChild.id ? updatedChild : p)
+      ? existing.map(p => (p.id === updatedChild.id ? updatedChild : p))
       : [...existing, updatedChild];
 
     await saveProfiles(updatedList);
@@ -85,167 +104,187 @@ export default function AddChildScreen() {
     setAvatarIndex(prev =>
       dir === 'left'
         ? (prev - 1 + avatarOptions.length) % avatarOptions.length
-        : (prev + 1) % avatarOptions.length
+        : (prev + 1) % avatarOptions.length,
     );
+    // This is a bulletproof check that satisfies TypeScript
+    if (avatarRef.current && typeof (avatarRef.current as any).pulse === 'function') {
+      (avatarRef.current as any).pulse(800);
+    }
   };
 
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-      <View style={styles.container}>
+    <View style={styles.rootContainer}>
+      <FlinkDinkBackground />
+      <SafeAreaView style={styles.safeArea}>
         <TouchableOpacity
           style={styles.backButton}
-          onPress={() => {
-            if (navigation.canGoBack()) navigation.goBack();
-            else navigation.navigate('ProfileSelector');
-          }}
+          onPress={() => navigation.canGoBack() ? navigation.goBack() : navigation.navigate('ProfileSelector')}
         >
           <Ionicons name="arrow-back" size={28} color="#382E1C" />
         </TouchableOpacity>
 
-        <Text style={styles.title}>
-          {profileToEdit ? 'Edit Child' : 'Add Child'}
-        </Text>
+        <ScrollView contentContainerStyle={styles.scrollContainer}>
+          <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+            <Animatable.View animation="fadeInUp" duration={600} style={styles.card}>
+              <Text style={styles.title}>
+                {profileToEdit ? 'Edit Profile' : 'New Profile'}
+              </Text>
 
-        <Text style={styles.label}>Child’s name</Text>
-        <TextInput
-          value={name}
-          onChangeText={setName}
-          placeholder="Enter name"
-          placeholderTextColor="#999"
-          style={styles.input}
-        />
-
-        <Text style={styles.label}>Birthday</Text>
-        {Platform.OS === 'web' ? (
-          <View style={[styles.input, { padding: 0 }]}>
-            <input
-              type="date"
-              value={birthday.toISOString().split('T')[0]}
-              onChange={e => {
-                const d = new Date(e.target.value);
-                if (!isNaN(d.getTime())) setBirthday(d);
-              }}
-              style={{
-                fontSize: 16,
-                fontFamily: 'ComicSans',
-                color: '#382E1C',
-                padding: 12,
-                border: 'none',
-                backgroundColor: 'transparent',
-                borderRadius: 10,
-              }}
-            />
-          </View>
-        ) : (
-          <>
-            <TouchableOpacity
-              style={styles.input}
-              onPress={() => setShowDatePicker(true)}
-            >
-              <Text style={styles.dateText}>{birthday.toDateString()}</Text>
-            </TouchableOpacity>
-            {showDatePicker && (
-              <DateTimePicker
-                mode="date"
-                value={birthday}
-                display="spinner"
-                maximumDate={new Date()}
-                onChange={(_, d) => {
-                  setShowDatePicker(false);
-                  if (d) setBirthday(d);
-                }}
+              <Text style={styles.label}>Child’s Name</Text>
+              <TextInput
+                value={name}
+                onChangeText={setName}
+                placeholder="Enter a name"
+                placeholderTextColor="#A1A1AA"
+                style={styles.input}
               />
-            )}
-          </>
-        )}
 
-        <Text style={styles.label}>Emoji avatar</Text>
-        <View style={styles.avatarRow}>
-          <TouchableOpacity onPress={() => handleAvatarChange('left')}>
-            <Text style={styles.navArrow}>←</Text>
-          </TouchableOpacity>
-          <Text style={styles.avatar}>{avatarOptions[avatarIndex]}</Text>
-          <TouchableOpacity onPress={() => handleAvatarChange('right')}>
-            <Text style={styles.navArrow}>→</Text>
-          </TouchableOpacity>
-        </View>
+              <Text style={styles.label}>Birthday</Text>
+              {Platform.OS === 'web' ? (
+                 <input
+                    type="date"
+                    value={birthday.toISOString().split('T')[0]}
+                    onChange={e => {
+                      const d = new Date(e.target.value);
+                      if (!isNaN(d.getTime())) setBirthday(d);
+                    }}
+                    style={webDatePickerStyle}
+                  />
+              ) : (
+                <>
+                  <TouchableOpacity
+                    style={styles.input}
+                    onPress={() => setShowDatePicker(true)}
+                  >
+                    <Text style={styles.dateText}>{birthday.toDateString()}</Text>
+                  </TouchableOpacity>
+                  {showDatePicker && (
+                    <DateTimePicker
+                      mode="date"
+                      value={birthday}
+                      display="spinner"
+                      maximumDate={new Date()}
+                      onChange={(_, d) => {
+                        setShowDatePicker(false);
+                        if (d) setBirthday(d);
+                      }}
+                    />
+                  )}
+                </>
+              )}
 
-        <TouchableOpacity style={styles.button} onPress={handleSave}>
-          <Text style={styles.buttonText}>
-            {profileToEdit ? 'Update' : 'Save'}
-          </Text>
-        </TouchableOpacity>
-      </View>
-    </TouchableWithoutFeedback>
+              <Text style={styles.label}>Choose an Avatar</Text>
+              <View style={styles.avatarRow}>
+                <TouchableOpacity onPress={() => handleAvatarChange('left')}>
+                  <Ionicons name="chevron-back-circle-sharp" size={48} color="#4D96FF" />
+                </TouchableOpacity>
+                <Animatable.View ref={avatarRef}>
+                  <Text style={styles.avatar}>{avatarOptions[avatarIndex]}</Text>
+                </Animatable.View>
+                <TouchableOpacity onPress={() => handleAvatarChange('right')}>
+                  <Ionicons name="chevron-forward-circle-sharp" size={48} color="#4D96FF" />
+                </TouchableOpacity>
+              </View>
+
+              <TouchableOpacity style={styles.button} onPress={handleSave}>
+                <Text style={styles.buttonText}>
+                  {profileToEdit ? 'Update Profile' : 'Save Profile'}
+                </Text>
+              </TouchableOpacity>
+            </Animatable.View>
+          </TouchableWithoutFeedback>
+        </ScrollView>
+      </SafeAreaView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  rootContainer: {
     flex: 1,
-    backgroundColor: '#FFFBF2',
-    padding: 24,
+  },
+  safeArea: {
+    flex: 1,
+  },
+  scrollContainer: {
+    flexGrow: 1,
     justifyContent: 'center',
+    paddingHorizontal: 24,
+  },
+  card: {
+    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+    borderRadius: 24,
+    padding: 24,
+    paddingTop: 32,
+    ...Platform.select({
+      ios: { shadowColor: '#000', shadowOpacity: 0.1, shadowOffset: { width: 0, height: 4 }, shadowRadius: 10 },
+      android: { elevation: 6 },
+    }),
+  },
+  backButton: {
+    position: 'absolute',
+    top: Platform.OS === 'ios' ? 50 : 20,
+    left: 20,
+    zIndex: 10,
+    padding: 8,
   },
   title: {
-    fontSize: 36,
+    fontSize: 32,
     fontFamily: 'ComicSans',
     textAlign: 'center',
     color: '#382E1C',
-    marginBottom: 30,
+    marginBottom: 32,
   },
   label: {
-    fontSize: 18,
+    fontSize: 16,
     fontFamily: 'ComicSans',
     color: '#382E1C',
-    marginBottom: 6,
+    marginBottom: 8,
+    fontWeight: '600',
   },
   input: {
-    backgroundColor: '#FFF8E7',
-    borderWidth: 2,
-    borderColor: '#D6B98C',
-    padding: 12,
-    borderRadius: 10,
-    fontFamily: 'ComicSans',
-    marginBottom: 20,
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    padding: 14,
+    borderRadius: 12,
+    fontSize: 16,
+    marginBottom: 24,
+    color: '#1F2937', // Make sure text color is set for native input
+    ...Platform.select({
+      ios: { shadowColor: '#000', shadowOpacity: 0.05, shadowOffset: { width: 0, height: 2 }, shadowRadius: 4 },
+      android: { elevation: 2 },
+    }),
   },
   dateText: {
-    fontFamily: 'ComicSans',
     fontSize: 16,
-    color: '#382E1C',
+    color: '#1F2937',
   },
   avatarRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-around',
-    marginVertical: 20,
+    marginVertical: 16,
   },
   avatar: {
-    fontSize: 64,
-    marginHorizontal: 20,
-  },
-  navArrow: {
-    fontSize: 32,
-    color: '#382E1C',
-    fontFamily: 'ComicSans',
+    fontSize: 80,
+    marginHorizontal: 16,
   },
   button: {
-    backgroundColor: '#FBD278',
-    padding: 16,
-    borderRadius: 30,
+    backgroundColor: '#4D96FF',
+    paddingVertical: 16,
+    borderRadius: 16,
     alignItems: 'center',
-    marginTop: 10,
+    marginTop: 24,
+    ...Platform.select({
+      ios: { shadowColor: '#000', shadowOpacity: 0.2, shadowOffset: { width: 0, height: 4 }, shadowRadius: 8 },
+      android: { elevation: 6 },
+    }),
   },
   buttonText: {
-    fontSize: 20,
-    color: '#382E1C',
+    fontSize: 18,
+    color: '#FFFFFF',
     fontFamily: 'ComicSans',
-  },
-  backButton: {
-    position: 'absolute',
-    top: 50,
-    left: 20,
-    zIndex: 10,
-    padding: 8,
+    fontWeight: 'bold',
   },
 });

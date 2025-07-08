@@ -1,4 +1,5 @@
-// ProfileSelector.tsx
+// app/src/screens/ProfileSelector.tsx
+
 import React, { useState, useCallback } from 'react';
 import {
   View,
@@ -7,10 +8,11 @@ import {
   StyleSheet,
   FlatList,
   Vibration,
-  Alert,
   ActivityIndicator,
   Platform,
   RefreshControl,
+  Modal,
+  SafeAreaView,
 } from 'react-native';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -24,68 +26,47 @@ import { auth, db } from '../../config/firebase';
 import Toast from 'react-native-toast-message';
 import { Ionicons } from '@expo/vector-icons';
 import { fetchAllChildProfiles } from '../../utils/firebaseSync';
-import { useActiveProfile } from '../context/ActiveProfileContext';
 import * as Animatable from 'react-native-animatable';
+import { useActiveProfile } from '../../src/context/ActiveProfileContext';
+import FlinkDinkBackground from '../components/FlinkDinkBackground';
 
-
-
-type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
+type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'ProfileSelector'>;
 
 export default function ProfileSelectorScreen() {
   const navigation = useNavigation<NavigationProp>();
-  const [profiles, setProfiles] = useState<ChildProfile[]>([]);
-  const [syncing, setSyncing] = useState(false);
-  const [refreshing, setRefreshing] = useState(false);
   const { activeProfile, setActiveProfile } = useActiveProfile();
-
-
+  const [profiles, setProfiles] = useState<ChildProfile[]>([]);
+  const [syncing, setSyncing] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  const [deleting, setDeleting] = useState<ChildProfile | null>(null);
 
   const loadProfiles = async (showLoader = true) => {
     if (showLoader) setSyncing(true);
-
     const local = await getProfiles();
-    console.log(`📦 Loaded ${local.length} profiles from AsyncStorage.`);
     setProfiles(local);
 
     const user = auth.currentUser;
     if (!user) {
-      console.warn('❌ No authenticated user.');
       if (showLoader) setSyncing(false);
       return;
     }
 
     try {
-      const cloudProfiles = await fetchAllChildProfiles(user.uid);
-      console.log(`✅ Fetched ${cloudProfiles.length} profiles from Firestore.`);
-    
-      // 🩹 Patch missing startDate
-      const patched = cloudProfiles.map((p) => {
-        if (!p.startDate) {
-          return {
-            ...p,
-            startDate: new Date(p.createdAt ?? Date.now()).toISOString(),
-          };
-        }
-        return p;
-      });
-    
+      const cloud = await fetchAllChildProfiles(user.uid);
+      const patched = cloud.map(p => ({
+        ...p,
+        startDate: p.startDate || new Date(p.createdAt ?? Date.now()).toISOString(),
+      }));
       setProfiles(patched);
       await saveProfiles(patched);
-      console.log('💾 Updated AsyncStorage with latest profiles.');
-    } catch (err) {
-      console.warn('⚠️ Could not fetch from Firestore. Using cached data.');
+    } catch {
       Toast.show({ type: 'info', text1: 'Offline mode', text2: 'Using saved profiles.' });
-    }
-     finally {
+    } finally {
       if (showLoader) setSyncing(false);
     }
   };
 
-  useFocusEffect(
-    useCallback(() => {
-      loadProfiles(true);
-    }, [])
-  );
+  useFocusEffect(useCallback(() => { loadProfiles(true); }, []));
 
   const handleRefresh = async () => {
     setRefreshing(true);
@@ -93,108 +74,74 @@ export default function ProfileSelectorScreen() {
     setRefreshing(false);
   };
 
-  const handleSelect = async (profileId: string) => {
-    console.log(`👆 Selected profile: ${profileId}`);
-    await AsyncStorage.setItem('activeProfileId', profileId);
-    const selected = profiles.find((p) => p.id === profileId);
-    if (selected) {
-      setActiveProfile(selected);
-    }
+  const handleSelect = async (profile: ChildProfile) => {
+    await AsyncStorage.setItem('activeProfileId', profile.id);
+    setActiveProfile(profile);
     navigation.navigate('Home');
   };
-  
 
-  const handleAdd = () => {
-    //console.log('➕ Navigating to AddChild screen');
-    navigation.navigate('AddChild', {});
-  };
+  const handleAdd = () => navigation.navigate('AddChild', {});
 
-  const handleDelete = async (profile: ChildProfile) => {
-    console.log(`🗑️ Deleting profile ${profile.name} (${profile.id})`);
-
-    const user = auth.currentUser;
-    if (!user) {
-      Toast.show({ type: 'error', text1: 'Not logged in', text2: 'Please log in again.' });
-      return;
-    }
-
-    const confirmDelete = async () => {
-      try {
-        const current = await AsyncStorage.getItem('activeProfileId');
-        const updatedLocal = profiles.filter((p) => p.id !== profile.id);
-        setProfiles(updatedLocal);
-        await saveProfiles(updatedLocal);
-        console.log('🧹 Removed from local cache.');
-
-        if (current === profile.id) {
-          await AsyncStorage.removeItem('activeProfileId');
-          console.log('🧼 Cleared activeProfileId.');
-        }
-
-        await deleteDoc(doc(db, 'users', user.uid, 'children', profile.id));
-        console.log('✅ Deleted from Firestore.');
-        Toast.show({ type: 'success', text1: 'Profile deleted' });
-      } catch (err) {
-        console.error('❌ Failed to delete from Firestore.', err);
-        Toast.show({ type: 'error', text1: 'Could not delete online. Local only.' });
-      }
-    };
-
+  const handleDelete = (profile: ChildProfile) => {
     if (Platform.OS !== 'web') Vibration.vibrate(50);
-
-    if (Platform.OS === 'web') {
-      if (window.confirm(`Delete ${profile.name}? This cannot be undone.`)) {
-        await confirmDelete();
-      }
-    } else {
-      Alert.alert(
-        `Delete ${profile.name}?`,
-        'This cannot be undone.',
-        [
-          { text: 'Cancel', style: 'cancel' },
-          { text: 'Delete', style: 'destructive', onPress: confirmDelete },
-        ]
-      );
-    }
+    setDeleting(profile);
   };
 
-  const getAge = (birthday: string) => {
+  const confirmDelete = async () => {
+    if (!deleting) return;
+    const profileToDelete = deleting;
+    setDeleting(null);
+
     try {
-      return differenceInYears(new Date(), new Date(birthday));
-    } catch {
-      return '?';
+      const updated = profiles.filter(p => p.id !== profileToDelete.id);
+      setProfiles(updated);
+      await saveProfiles(updated);
+
+      if (activeProfile?.id === profileToDelete.id) {
+        await AsyncStorage.removeItem('activeProfileId');
+        setActiveProfile(null);
+      }
+
+      await deleteDoc(doc(db, 'users', auth.currentUser!.uid, 'children', profileToDelete.id));
+      Toast.show({ type: 'success', text1: 'Profile deleted' });
+    } catch (e) {
+      Toast.show({ type: 'error', text1: 'Delete failed', text2: 'Local cache updated.' });
     }
   };
 
-  const pastelColors = ['#FFEDD5', '#DBEAFE', '#FEF9C3', '#DCFCE7'];
+  const cancelDelete = () => setDeleting(null);
 
+  const getAge = (b: string) => {
+    try { return differenceInYears(new Date(), new Date(b)); }
+    catch { return '?'; }
+  };
+
+  const pastel = ['#FFC2B2', '#DBEAFE', '#FFF6A5', '#C3EDC0'];
   const renderItem = ({ item, index }: { item: ChildProfile; index: number }) => {
-    const isActive = activeProfile?.id === item.id;
-  
+    const isActive = item.id === activeProfile?.id;
     return (
       <Animatable.View
         animation="fadeInUp"
         duration={500}
         delay={index * 100}
         style={[
-          styles.profileCard,
-          { backgroundColor: pastelColors[index % pastelColors.length] },
+          styles.card,
+          { borderTopColor: pastel[index % pastel.length] },
           isActive && styles.activeCard,
         ]}
       >
-        <TouchableOpacity style={styles.trash} onPress={() => handleDelete(item)}>
-          <Ionicons name="trash-outline" size={22} color="#B91C1C" />
+        <TouchableOpacity style={styles.deleteButton} onPress={() => handleDelete(item)}>
+          <Ionicons name="trash-outline" size={22} color="#EF4444" />
         </TouchableOpacity>
-  
-        <TouchableOpacity onPress={() => handleSelect(item.id)} style={styles.profileContent}>
+
+        <TouchableOpacity onPress={() => handleSelect(item)} style={styles.content}>
           <Text style={styles.avatar}>{item.avatar}</Text>
           <Text style={styles.name}>{item.name}</Text>
-          <Text style={styles.age}>{getAge(item.birthday)} years</Text>
-          {isActive && <Text style={styles.activeLabel}>✓ Active</Text>}
+          <Text style={styles.age}>{getAge(item.birthday)} years old</Text>
         </TouchableOpacity>
-  
+
         <TouchableOpacity
-          style={styles.edit}
+          style={styles.editButton}
           onPress={() => navigation.navigate('AddChild', { profileToEdit: item })}
         >
           <Ionicons name="create-outline" size={22} color="#0F766E" />
@@ -202,56 +149,71 @@ export default function ProfileSelectorScreen() {
       </Animatable.View>
     );
   };
-  
-  
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Child Profiles</Text>
+      <FlinkDinkBackground />
+      <SafeAreaView style={styles.safeArea}>
+        <Text style={styles.title}>Who's Learning Today?</Text>
 
-      {syncing && (
-        <View style={styles.syncingContainer}>
-          <ActivityIndicator size="small" color="#382E1C" />
-          <Text style={styles.syncingText}>Syncing profiles...</Text>
-        </View>
-      )}
-
-    <FlatList
-      data={profiles}
-      keyExtractor={(item) => item.id}
-      renderItem={renderItem}
-      contentContainerStyle={[
-        styles.grid,
-        profiles.length === 0 && { flex: 1, justifyContent: 'center', alignItems: 'center' },
-      ]}
-      numColumns={2}
-      refreshControl={
-        <RefreshControl
-          refreshing={refreshing}
-          onRefresh={handleRefresh}
-          colors={['#382E1C']}
-        />
-      }
-      ListEmptyComponent={
-        !syncing ? (
-          <View style={styles.emptyState}>
-            <Text style={styles.emptyText}>No child profiles yet.</Text>
-            <TouchableOpacity style={styles.emptyAddButton} onPress={handleAdd}>
-              <Text style={styles.emptyAddText}>＋ Add your first child</Text>
-            </TouchableOpacity>
+        {syncing && !refreshing && (
+          <View style={styles.syncing}>
+            <ActivityIndicator size="small" color="#382E1C" />
+            <Text style={styles.syncText}>Syncing profiles...</Text>
           </View>
-        ) : null
-      }
-      ListFooterComponent={
-        profiles.length > 0 ? (
-          <TouchableOpacity style={[styles.profileCard, styles.addCard]} onPress={handleAdd}>
-            <Text style={styles.addText}>＋</Text>
-            <Text style={styles.addLabel}>Add another child</Text>
-          </TouchableOpacity>
-        ) : null
-      }
-    />
+        )}
 
+        <FlatList
+          data={profiles}
+          keyExtractor={p => p.id}
+          renderItem={renderItem}
+          numColumns={2}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} tintColor="#382E1C" />
+          }
+          contentContainerStyle={[styles.grid, profiles.length === 0 && styles.emptyContainer]}
+          ListEmptyComponent={
+            !syncing ? (
+              <View style={styles.empty}>
+                <Text style={styles.emptyText}>No profiles found.</Text>
+                <TouchableOpacity style={styles.emptyBtn} onPress={handleAdd}>
+                  <Text style={styles.emptyBtnText}>＋ Add Your First Child</Text>
+                </TouchableOpacity>
+              </View>
+            ) : null
+          }
+        />
+
+        {profiles.length > 0 && (
+          <TouchableOpacity style={styles.fab} onPress={handleAdd}>
+            <Ionicons name="add" size={32} color="#fff" />
+          </TouchableOpacity>
+        )}
+      </SafeAreaView>
+
+      <Modal
+        visible={!!deleting}
+        transparent
+        animationType="fade"
+        onRequestClose={cancelDelete}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalBox}>
+            <Text style={styles.modalTitle}>Delete Profile</Text>
+            <Text style={styles.modalText}>
+              Are you sure you want to delete {deleting?.name}? This cannot be undone.
+            </Text>
+            <View style={styles.modalBtns}>
+              <TouchableOpacity onPress={cancelDelete} style={[styles.btn, styles.btnCancel]}>
+                <Text style={styles.btnText}>Cancel</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={confirmDelete} style={[styles.btn, styles.btnDelete]}>
+                <Text style={[styles.btnText, styles.btnTextDelete]}>Delete</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -259,122 +221,183 @@ export default function ProfileSelectorScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFBF2',
-    paddingHorizontal: 20,
-    paddingTop: 60,
+  },
+  safeArea: {
+    flex: 1,
+    backgroundColor: 'transparent',
   },
   title: {
-    fontSize: 28,
+    fontSize: 32,
     fontFamily: 'ComicSans',
     textAlign: 'center',
     color: '#382E1C',
-    marginBottom: 10,
+    marginVertical: 20,
   },
-  syncingContainer: {
-    paddingVertical: 12,
+  syncing: {
+    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
+    padding: 12,
   },
-  syncingText: {
+  syncText: {
     fontFamily: 'ComicSans',
     color: '#382E1C',
-    marginTop: 6,
+    marginLeft: 8,
   },
   grid: {
-    paddingBottom: 60,
-    gap: 20,
+    paddingHorizontal: 16,
+    paddingBottom: 100, // Make space for FAB
   },
-  profileCard: {
+  emptyContainer: {
     flex: 1,
-    margin: 10,
-    padding: 16,
-    borderRadius: 20,
-    minWidth: '40%',
-    position: 'relative',
-    backgroundColor: '#FFF',
-  },
-  profileContent: {
-    alignItems: 'center',
-  },
-  trash: {
-    position: 'absolute',
-    top: 8,
-    right: 8,
-    zIndex: 1,
-  },
-  avatar: {
-    fontSize: 50,
-    marginBottom: 10,
-  },
-  name: {
-    fontSize: 18,
-    fontFamily: 'ComicSans',
-    color: '#382E1C',
-    textAlign: 'center',
-  },
-  age: {
-    fontSize: 14,
-    color: '#555',
-    fontFamily: 'ComicSans',
-    marginTop: 4,
-  },
-  addCard: {
-    backgroundColor: '#EDE9FE',
     justifyContent: 'center',
     alignItems: 'center',
   },
-addText: {
-  fontSize: 36,
-  color: '#382E1C',
-  fontFamily: 'ComicSans',
-},
-  addLabel: {
-    fontSize: 16,
-    color: '#382E1C',
-    fontFamily: 'ComicSans',
-    marginTop: 8,
-  },
-  edit: {
-    position: 'absolute',
-    top: 8,
-    left: 8,
-    zIndex: 1,
-  },  
-
-  emptyState: {
+  empty: {
     alignItems: 'center',
-    marginTop: 40,
+    padding: 20,
   },
   emptyText: {
     fontSize: 18,
     fontFamily: 'ComicSans',
     color: '#555',
-    textAlign: 'center',
-    marginBottom: 20,
+    marginBottom: 24,
   },
-  emptyAddButton: {
-    backgroundColor: '#FBD278',
+  emptyBtn: {
+    backgroundColor: '#FF9B1C',
     paddingVertical: 12,
     paddingHorizontal: 24,
     borderRadius: 30,
+    ...Platform.select({
+      ios: { shadowColor: '#000', shadowOpacity: 0.2, shadowOffset: { width: 0, height: 4 }, shadowRadius: 8 },
+      android: { elevation: 6 },
+    }),
   },
-  emptyAddText: {
+  emptyBtnText: {
     fontSize: 16,
     fontFamily: 'ComicSans',
+    color: '#FFF',
+    fontWeight: 'bold',
+  },
+  card: {
+    flex: 1,
+    margin: 8,
+    borderRadius: 24,
+    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+    borderTopWidth: 8,
+    ...Platform.select({
+      ios: { shadowColor: '#000', shadowOpacity: 0.1, shadowOffset: { width: 0, height: 4 }, shadowRadius: 10 },
+      android: { elevation: 6 },
+    }),
+  },
+  deleteButton: {
+    position: 'absolute',
+    top: 4,
+    right: 4,
+    padding: 8,
+    zIndex: 1,
+  },
+  editButton: {
+    position: 'absolute',
+    top: 4,
+    left: 4,
+    padding: 8,
+    zIndex: 1,
+  },
+  content: {
+    alignItems: 'center',
+    padding: 16,
+    paddingTop: 8,
+  },
+  avatar: {
+    fontSize: 72,
+    marginBottom: 12,
+  },
+  name: {
+    fontSize: 20,
+    fontFamily: 'ComicSans',
+    fontWeight: 'bold',
     color: '#382E1C',
+    textAlign: 'center',
+  },
+  age: {
+    fontSize: 14,
+    fontFamily: 'ComicSans',
+    color: '#666',
+    marginTop: 4,
   },
   activeCard: {
-    borderWidth: 0,
-    borderColor: '#22C55E',
+    borderWidth: 3,
+    borderColor: '#38B000',
   },
-  
-  activeLabel: {
-    marginTop: 6,
-    fontSize: 12,
-    color: '#555',
+  fab: {
+    position: 'absolute',
+    right: 24,
+    bottom: 40,
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: '#4D96FF',
+    justifyContent: 'center',
+    alignItems: 'center',
+    ...Platform.select({
+      ios: { shadowColor: '#000', shadowOpacity: 0.3, shadowOffset: { width: 0, height: 4 }, shadowRadius: 5 },
+      android: { elevation: 8 },
+    }),
+  },
+  // Modal Styles
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 24,
+  },
+  modalBox: {
+    backgroundColor: '#FFF',
+    padding: 24,
+    borderRadius: 20,
+    width: '100%',
+    alignItems: 'center',
+  },
+  modalTitle: {
+    fontSize: 22,
     fontFamily: 'ComicSans',
+    fontWeight: 'bold',
+    color: '#382E1C',
+    marginBottom: 12,
   },
-  
-  
+  modalText: {
+    fontSize: 16,
+    fontFamily: Platform.select({ ios: 'System', android: 'sans-serif'}),
+    color: '#555',
+    marginBottom: 24,
+    textAlign: 'center',
+    lineHeight: 22,
+  },
+  modalBtns: {
+    flexDirection: 'row',
+  },
+  btn: {
+    flex: 1,
+    paddingVertical: 12,
+    borderRadius: 16,
+    marginHorizontal: 8,
+    alignItems: 'center',
+  },
+  btnCancel: {
+    backgroundColor: '#F3F4F6',
+  },
+  btnText: {
+    fontSize: 16,
+    fontFamily: 'ComicSans',
+    fontWeight: 'bold',
+    color: '#382E1C',
+  },
+  btnDelete: {
+    backgroundColor: '#EF4444',
+  },
+  btnTextDelete: {
+    color: '#FFF',
+  },
 });
-

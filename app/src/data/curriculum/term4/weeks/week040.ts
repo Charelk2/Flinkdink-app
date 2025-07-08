@@ -1,7 +1,7 @@
 export default {
   "language": [
     "houtvloer",
-    "veelap",
+    "partytjiehoed",
     "tandeborsel",
     "olielamp",
     "eetlus",
@@ -9,7 +9,7 @@ export default {
     "slaapsak",
     "waterkan",
     "glyskaal",
-    "vuurhout"
+    "braaivleis"
   ],
   "mathWindowStart": 226,
   "mathWindowLength": 0,

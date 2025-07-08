@@ -1,7 +1,7 @@
 export default {
   "language": [
-    "sandveld",
-    "grasmat",
+    "sandput",
+    "grasdak",
     "kaasbord",
     "windpomp",
     "sneeubal",
@@ -9,7 +9,7 @@ export default {
     "karwas",
     "reënjas",
     "sterlig",
-    "katmandjie"
+    "katsand"
   ],
   "mathWindowStart": 216,
   "mathWindowLength": 0,

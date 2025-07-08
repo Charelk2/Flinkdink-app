@@ -22,6 +22,7 @@ import SessionScreen from './app/src/screens/SessionScreen';
 import ProgressScreen from './app/src/screens/ProgressScreen';
 import CurriculumScreen from './app/src/screens/CurriculumScreen';
 import SessionCompleteScreen from './app/src/screens/SessionCompleteScreen'; // ✅ NEW
+import InstructionScreen   from './app/src/screens/InstructionScreen'
 
 // Types
 import { RootStackParamList } from './app/src/navigation/types';
@@ -65,6 +66,7 @@ function AppNavigator() {
       {user && (
         <>
           <Stack.Screen name="Home" component={HomeScreen} />
+          <Stack.Screen name="Instructions" component={InstructionScreen} />
           <Stack.Screen name="AddChild" component={AddChildScreen} />
           <Stack.Screen name="MyAccount" component={MyAccountScreen} />
           <Stack.Screen name="Session" component={SessionScreen} />

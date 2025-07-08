@@ -8,10 +8,12 @@ import {
   ActivityIndicator,
   Pressable,
   useWindowDimensions,
+  Platform,
 } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import { RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import * as Animatable from 'react-native-animatable';
 import { useActiveProfile } from '../context/ActiveProfileContext';
 import { generateSessionSlides, Slide } from '../../utils/generateSessionSlides';
 import {
@@ -101,12 +103,21 @@ export default function SessionScreen() {
             type: 'language',
             content: (
               <View style={styles.finalSlide}>
-                <Text style={styles.finalText}>
-                  🎉 Well done, {activeProfile.name}!
-                </Text>
-                <Text style={styles.subText}>
+                <Animatable.Text
+                  animation="bounceIn"
+                  duration={1200}
+                  style={styles.finalTitle}
+                >
+                  Well done, {activeProfile.name}!
+                </Animatable.Text>
+                <Animatable.Text
+                  animation="fadeInUp"
+                  delay={500}
+                  duration={1000}
+                  style={styles.finalSubtitle}
+                >
                   Session {completedCount} of 3 completed
-                </Text>
+                </Animatable.Text>
               </View>
             ),
           },
@@ -133,7 +144,7 @@ export default function SessionScreen() {
         const dx = (event.nativeEvent as any).translationX;
       if (dx > 50 && index > 0) {
         setIndex((i) => i - 1);
-      } else if (dx < -50 && index < slides.length - 1) {
+      } else if (dx < -50) { // Removed condition to allow swiping on final slide
         handleNext();
       }
     }
@@ -141,7 +152,7 @@ export default function SessionScreen() {
 
   return (
     <GestureHandlerRootView style={styles.container}>
-      <PanGestureHandler onHandlerStateChange={onHandlerStateChange}>
+      <PanGestureHandler onHandlerStateChange={onHandlerStateChange} enabled={index < slides.length - 1}>
         <Pressable
           style={styles.container}
           onPress={({ nativeEvent }) => {
@@ -158,12 +169,12 @@ export default function SessionScreen() {
           {showConfetti && (
             <View style={styles.confettiContainer} pointerEvents="none">
               <ConfettiCannon
-                count={100}
-                origin={{ x: 200, y: 0 }}
+                count={150}
+                origin={{ x: -10, y: 0 }}
                 fadeOut
                 autoStart
                 explosionSpeed={400}
-                fallSpeed={2800}
+                fallSpeed={3000}
               />
             </View>
           )}
@@ -185,25 +196,29 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#FFFBF2',
+    backgroundColor: '#38B000', // A nice, celebratory green
     paddingHorizontal: 24,
   },
-  finalText: {
-    fontSize: 32,
+  finalTitle: {
+    fontSize: 34,
     fontFamily: 'ComicSans',
-    color: '#382E1C',
+    color: '#FFFFFF',
+    fontWeight: 'bold',
     textAlign: 'center',
+    ...Platform.select({
+      ios: { shadowColor: '#000', shadowOpacity: 0.25, shadowOffset: { width: 0, height: 2 }, shadowRadius: 4 },
+      android: { elevation: 5 },
+    }),
   },
-  subText: {
+  finalSubtitle: {
     fontSize: 20,
     fontFamily: 'ComicSans',
-    color: '#555',
+    color: 'rgba(255, 255, 255, 0.85)',
     textAlign: 'center',
-    marginTop: 10,
+    marginTop: 12,
   },
   confettiContainer: {
     ...StyleSheet.absoluteFillObject,
     zIndex: 999,
-    pointerEvents: 'none',
   },
 });

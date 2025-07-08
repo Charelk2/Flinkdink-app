@@ -8,8 +8,8 @@ export default {
     "waterbottel",
     "roomys",
     "speelpark",
-    "melkglas",
-    "stoepstoel"
+    "melkkan",
+    "skuifdeur"
   ],
   "mathWindowStart": 211,
   "encyclopedia": [

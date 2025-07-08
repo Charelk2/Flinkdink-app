@@ -15,43 +15,43 @@ export default {
   "encyclopedia": [
     {
       "id": "laptop",
-      "title": "Laptop",
-      "query": "Laptop",
+      "title": "laptop",
+      "query": "laptop",
       "fact": "A portable personal computer for work and play.",
       "image": "laptop.svg"
     },
     {
       "id": "selfoon",
-      "title": "Selfoon",
-      "query": "Mobile phone",
+      "title": "selfoon",
+      "query": "mobile phone",
       "fact": "A handheld device for calling, texting, and apps.",
       "image": "selfoon.svg"
     },
     {
       "id": "horlosie",
-      "title": "Horlosie",
-      "query": "Watch",
+      "title": "horlosie",
+      "query": "watch",
       "fact": "A device worn on the wrist to keep track of time.",
       "image": "horlosie.svg"
     },
     {
       "id": "afstandbeheer",
-      "title": "Afstandbeheer",
-      "query": "Remote control",
+      "title": "afstandbeheer",
+      "query": "remote control",
       "fact": "Used to operate TVs and other electronics from a distance.",
       "image": "afstandbeheer.svg"
     },
     {
       "id": "generator",
-      "title": "Generator",
-      "query": "Generator",
+      "title": "generator",
+      "query": "generator",
       "fact": "Converts mechanical energy into electrical power.",
       "image": "generator.svg"
     },
     {
       "id": "sonpaneel",
-      "title": "Sonpaneel",
-      "query": "Solar panel",
+      "title": "sonpaneel",
+      "query": "solar panel",
       "fact": "Captures sunlight and turns it into electricity.",
       "image": "sonpaneel.svg"
     },
@@ -63,23 +63,23 @@ export default {
       "image": "3d-printer.svg"
     },
     {
-      "id": "slimhuis",
-      "title": "Slimhuis",
-      "query": "Smart home",
+      "id": "sateliet",
+      "title": "sateliet",
+      "query": "satelite",
       "fact": "Automates lights, security, and appliances.",
-      "image": "slimhuis.svg"
+      "image": "sateliet.svg"
     },
     {
       "id": "televisie",
-      "title": "Televisie",
-      "query": "Television",
+      "title": "televisie",
+      "query": "television",
       "fact": "Electronic device for watching video and broadcasts.",
       "image": "televisie.svg"
     },
     {
       "id": "robot",
-      "title": "Robot",
-      "query": "Robot",
+      "title": "robot",
+      "query": "robot",
       "fact": "A programmable machine that can perform various tasks.",
       "image": "robot.svg"
     }

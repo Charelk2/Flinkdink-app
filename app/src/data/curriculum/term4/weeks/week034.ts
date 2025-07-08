@@ -6,7 +6,7 @@ export default {
     "spiere",
     "arms",
     "mond",
-    "ribbe",
+    "ribbekas",
     "longe",
     "hare",
     "hart"

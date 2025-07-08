@@ -48,13 +48,13 @@ export default {
       "fact": "Famous for the Amazon rainforest and Andes mountains.",
       "image": "suid-amerika.svg"
     },
-    {
+    /*{
       "id": "antarktika",
       "title": "Antarktika",
       "query": "Antarctica",
       "fact": "A frozen continent surrounding the South Pole.",
       "image": "antarktika.svg"
-    },
+    },*/
     {
       "id": "australie",
       "title": "Australië",
@@ -62,7 +62,7 @@ export default {
       "fact": "Both a country and a continent, known for its Outback.",
       "image": "australie.svg"
     },
-    {
+    /*{
       "id": "atlantiese-oseaan",
       "title": "Atlantiese Oseaan",
       "query": "Atlantic Ocean",
@@ -82,6 +82,6 @@ export default {
       "query": "Pacific Ocean",
       "fact": "The largest and deepest of Earth’s oceans.",
       "image": "stille-oseaan.svg"
-    }
+    }*/
   ]
 }

@@ -18,7 +18,7 @@ export default {
       "title": "Dalmation",
       "query": "Dalmatian",
       "fact": "A spotted working dog.",
-      "image": "dalmatiese-hond.svg"
+      "image": "dalmation.svg"
     },
     {
       "id": "worshond",

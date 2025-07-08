@@ -6,10 +6,12 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  TouchableWithoutFeedback,
   Keyboard,
   StyleSheet,
   ActivityIndicator,
+  SafeAreaView,
+  ScrollView,
+  Platform,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { signInWithEmailAndPassword } from 'firebase/auth';
@@ -17,6 +19,8 @@ import { auth } from '../../config/firebase';
 import Toast from 'react-native-toast-message';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../navigation/types';
+import FlinkDinkBackground from '../components/FlinkDinkBackground';
+import { Ionicons } from '@expo/vector-icons';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'Login'>;
 
@@ -26,6 +30,10 @@ export default function LoginScreen() {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  // For the FlinkDink title
+  const colors = ['#FF6B6B', '#FF9B1C', '#4D96FF', '#38B000', '#6A4C93', '#FF6B6B', '#FF9B1C', '#4D96FF', '#38B000'];
+  const titleChars = 'FLINKDINK'.split('');
 
   const showToast = (type: 'success' | 'error', message: string) => {
     Toast.show({ type, text1: message, position: 'top', visibilityTime: 3000 });
@@ -43,19 +51,18 @@ export default function LoginScreen() {
     try {
       await signInWithEmailAndPassword(auth, cleanEmail, cleanPassword);
       showToast('success', 'Welcome back!');
-      setTimeout(() => navigation.navigate('ProfileSelector'), 500);
+      // Let the toast show before navigating
     } catch (error: any) {
       const getMessage = (code: string) => {
         switch (code) {
           case 'auth/invalid-email':
-            return 'Invalid email address.';
+            return 'Invalid email address format.';
           case 'auth/user-not-found':
-            return 'No account found with this email.';
           case 'auth/wrong-password':
           case 'auth/invalid-credential':
             return 'Incorrect email or password.';
           case 'auth/network-request-failed':
-            return 'Network error. Are you offline?';
+            return 'Network error. Please check your connection.';
           default:
             return 'Login failed. Please try again.';
         }
@@ -67,139 +74,228 @@ export default function LoginScreen() {
   };
 
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-      <View style={styles.container}>
-        <Text style={styles.title}>Log In</Text>
-        <Text style={styles.label}>Email</Text>
-        <TextInput
-          value={email}
-          onChangeText={setEmail}
-          placeholder="Enter your email"
-          placeholderTextColor="#999"
-          keyboardType="email-address"
-          autoCapitalize="none"
-          style={styles.input}
-        />
-
-        <Text style={styles.label}>Password</Text>
-        <View style={styles.passwordContainer}>
-          <TextInput
-            value={password}
-            onChangeText={setPassword}
-            placeholder="Enter your password"
-            placeholderTextColor="#999"
-            secureTextEntry={!showPassword}
-            style={[styles.input, { flex: 1, marginBottom: 0 }]}
-          />
-          <TouchableOpacity
-            onPress={() => setShowPassword(!showPassword)}
-            style={styles.toggleButton}
-          >
-            <Text style={styles.toggleText}>
-              {showPassword ? 'Hide' : 'Show'}
-            </Text>
-          </TouchableOpacity>
-        </View>
-
-        <TouchableOpacity
-          style={styles.button}
-          onPress={handleLogin}
-          disabled={loading}
+    <View style={styles.rootContainer}>
+      <FlinkDinkBackground />
+      <SafeAreaView style={styles.safeArea}>
+        <ScrollView
+          contentContainerStyle={styles.scrollContainer}
+          keyboardShouldPersistTaps="handled" // <-- THE FIX IS HERE
+          showsVerticalScrollIndicator={false}
         >
-          {loading
-            ? <ActivityIndicator color="#382E1C" />
-            : <Text style={styles.buttonText}>Log In</Text>
-          }
-        </TouchableOpacity>
+          {/* FlinkDink Title */}
+          <View style={styles.titleContainer}>
+            {titleChars.map((char, i) => (
+              <View key={i} style={[styles.letterBox, { backgroundColor: colors[i % colors.length] }]}>
+                <Text style={styles.char}>{char}</Text>
+              </View>
+            ))}
+          </View>
 
-        <Text
-          onPress={() => navigation.navigate('ForgotPassword')}
-          style={styles.forgotPasswordText}
-        >
-          Forgot Password?
-        </Text>
+          {/* Login Card */}
+          <View style={styles.card}>
+            <Text style={styles.title}>Log In</Text>
 
-        <Text
-          onPress={() => navigation.navigate('SignUp')}
-          style={styles.footerText}
-        >
-          Not a member? Sign up now
-        </Text>
-      </View>
-    </TouchableWithoutFeedback>
+            <Text style={styles.label}>Email Address</Text>
+            <TextInput
+              value={email}
+              onChangeText={setEmail}
+              placeholder="Enter your email"
+              placeholderTextColor="#A1A1AA"
+              keyboardType="email-address"
+              autoCapitalize="none"
+              style={styles.input}
+            />
+
+            <Text style={styles.label}>Password</Text>
+            <View style={styles.passwordContainer}>
+              <TextInput
+                value={password}
+                onChangeText={setPassword}
+                placeholder="Enter your password"
+                placeholderTextColor="#A1A1AA"
+                secureTextEntry={!showPassword}
+                style={styles.passwordInput}
+              />
+              <TouchableOpacity
+                onPress={() => setShowPassword(!showPassword)}
+                style={styles.toggleButton}
+              >
+                <Ionicons name={showPassword ? "eye-off-outline" : "eye-outline"} size={22} color="#666" />
+              </TouchableOpacity>
+            </View>
+            
+            <TouchableOpacity onPress={() => navigation.navigate('ForgotPassword')} >
+              <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.button}
+              onPress={handleLogin}
+              disabled={loading}
+            >
+              {loading
+                ? <ActivityIndicator color="#FFFFFF" />
+                : <Text style={styles.buttonText}>Log In</Text>
+              }
+            </TouchableOpacity>
+
+            <View style={styles.divider}>
+              <View style={styles.dividerLine} />
+              <Text style={styles.dividerText}>or</Text>
+              <View style={styles.dividerLine} />
+            </View>
+
+            <TouchableOpacity
+              style={styles.secondaryButton}
+              onPress={() => navigation.navigate('SignUp')}
+              disabled={loading}
+            >
+              <Text style={styles.secondaryButtonText}>Create a New Account</Text>
+            </TouchableOpacity>
+          </View>
+        </ScrollView>
+      </SafeAreaView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  rootContainer: {
     flex: 1,
-    backgroundColor: '#FFFBF2',
+  },
+  safeArea: {
+    flex: 1,
     justifyContent: 'center',
+  },
+  scrollContainer: {
+    flexGrow: 1,
+    justifyContent: 'center',
+    paddingHorizontal: 24,
+    paddingVertical: 20,
+  },
+  titleContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    flexWrap: 'wrap',
+    marginBottom: 24,
+  },
+  char: {
+    fontSize: 19,
+    fontFamily: 'ComicSans',
+    color: '#fff',
+    letterSpacing: 2,
+    textShadowColor: 'rgba(0,0,0,0.4)',
+    textShadowOffset: { width: 2, height: 2 },
+    textShadowRadius: 4,
+  },
+  letterBox: {
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    marginHorizontal: 4,
+    borderRadius: 8,
+    ...Platform.select({
+      ios: { shadowColor: '#000', shadowOpacity: 0.3, shadowOffset: { width: 0, height: 2 }, shadowRadius: 4 },
+      android: { elevation: 4 },
+    }),
+  },
+  card: {
+    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+    borderRadius: 24,
     padding: 24,
+    ...Platform.select({
+      ios: { shadowColor: '#000', shadowOpacity: 0.1, shadowOffset: { width: 0, height: 4 }, shadowRadius: 10 },
+      android: { elevation: 6 },
+    }),
   },
   title: {
-    fontSize: 36,
+    fontSize: 28,
     fontFamily: 'ComicSans',
     textAlign: 'center',
     color: '#382E1C',
-    marginBottom: 30,
+    marginBottom: 24,
   },
   label: {
-    fontSize: 18,
+    fontSize: 16,
     fontFamily: 'ComicSans',
     color: '#382E1C',
-    marginBottom: 6,
+    marginBottom: 8,
+    fontWeight: '600',
   },
   input: {
-    backgroundColor: '#FFF8E7',
-    borderWidth: 2,
-    borderColor: '#D6B98C',
-    padding: 12,
-    borderRadius: 10,
-    fontFamily: 'ComicSans',
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    padding: 14,
+    borderRadius: 12,
+    fontSize: 16,
+    color: '#1F2937',
     marginBottom: 20,
   },
   passwordContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#FFF8E7',
-    borderRadius: 10,
-    paddingRight: 12,
-    marginBottom: 20,
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    borderRadius: 12,
+    marginBottom: 8,
+  },
+  passwordInput: {
+    flex: 1,
+    padding: 14,
+    fontSize: 16,
+    color: '#1F2937',
   },
   toggleButton: {
-    paddingHorizontal: 10,
-    paddingVertical: 8,
-  },
-  toggleText: {
-    fontFamily: 'ComicSans',
-    fontSize: 14,
-    color: '#555',
+    padding: 10,
   },
   button: {
-    backgroundColor: '#FFC8A2',
-    padding: 16,
-    borderRadius: 30,
+    backgroundColor: '#4D96FF',
+    paddingVertical: 16,
+    borderRadius: 16,
     alignItems: 'center',
-    marginBottom: 16,
+    marginTop: 20,
   },
   buttonText: {
-    fontSize: 20,
-    color: '#382E1C',
+    fontSize: 18,
+    color: '#FFFFFF',
     fontFamily: 'ComicSans',
+    fontWeight: 'bold',
   },
   forgotPasswordText: {
-    fontSize: 12,
+    fontSize: 14,
     fontFamily: 'ComicSans',
-    color: '#555',
+    color: '#4D96FF',
     textAlign: 'right',
+    paddingVertical: 8,
   },
-  footerText: {
-    fontSize: 16,
-    marginTop: 50,
+  divider: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: 24,
+  },
+  dividerLine: {
+    flex: 1,
+    height: 1,
+    backgroundColor: '#E5E7EB',
+  },
+  dividerText: {
+    marginHorizontal: 16,
     fontFamily: 'ComicSans',
-    textAlign: 'center',
-    color: '#555',
-    textDecorationLine: 'underline',
+    color: '#9CA3AF',
+  },
+  secondaryButton: {
+    backgroundColor: 'transparent',
+    paddingVertical: 16,
+    borderRadius: 16,
+    alignItems: 'center',
+    borderWidth: 2,
+    borderColor: '#4D96FF',
+  },
+  secondaryButtonText: {
+    fontSize: 18,
+    color: '#4D96FF',
+    fontFamily: 'ComicSans',
+    fontWeight: 'bold',
   },
 });

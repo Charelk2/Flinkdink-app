@@ -9,7 +9,7 @@ export default {
     "vol - leeg",
     "lig - donker",
     "meer - minder",
-    "swaar - liggies"
+    "swaar - lig"
   ],
   "mathWindowStart": 206,
   "encyclopedia": [

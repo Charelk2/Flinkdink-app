@@ -1,13 +1,13 @@
 export default {
   "language": [
-    "muisgat",
+    "molshoop",
     "blompot",
-    "seepbak",
+    "bosveld",
     "koffiebeker",
     "woltrui",
     "braaibak",
     "kerslig",
-    "kitaarboks",
+    "kitaarkis",
     "klipmuur",
     "skoenveter"
   ],

@@ -15,70 +15,70 @@ export default {
   "encyclopedia": [
     {
       "id": "dahlia",
-      "title": "Dahlia",
+      "title": "dahlia",
       "query": "dahlia",
       "fact": "This flower is prized for its bright, full blooms.",
       "image": "dahlia.svg"
     },
     {
       "id": "protea",
-      "title": "Protea",
+      "title": "protea",
       "query": "protea",
       "fact": "Known for its striking, spiky petals.",
       "image": "protea.svg"
     },
     {
       "id": "malva",
-      "title": "Malva",
+      "title": "malva",
       "query": "mallow",
       "fact": "Also called mallow, it has delicate, colorful flowers.",
       "image": "malva.svg"
     },
     {
-      "id": "hesperantha-aandblom",
-      "title": "Hesperantha (aandblom)",
+      "id": "hesperantha",
+      "title": "hesperantha (aandblom)",
       "query": "hesperantha",
       "fact": "The evening flower opens its petals at sunset.",
-      "image": "hesperantha-aandblom.svg"
+      "image": "hesperantha.svg"
     },
     {
       "id": "kappertjie",
-      "title": "Kappertjie",
+      "title": "kappertjie",
       "query": "nasturtium",
       "fact": "Nasturtiums add a peppery flavor to salads.",
       "image": "kappertjie.svg"
     },
     {
       "id": "ranonkel",
-      "title": "Ranonkel",
+      "title": "ranonkel",
       "query": "ranunculus",
       "fact": "Ranunculus blooms in many vibrant colors.",
       "image": "ranonkel.svg"
     },
     {
       "id": "sonneblom",
-      "title": "Sonneblom",
+      "title": "sonneblom",
       "query": "sunflower",
       "fact": "The sunflower turns its head to follow the sun.",
       "image": "sonneblom.svg"
     },
     {
       "id": "lelie",
-      "title": "Lelie",
+      "title": "lelie",
       "query": "lily",
       "fact": "Lilies are famous for their fragrant blossoms.",
       "image": "lelie.svg"
     },
     {
       "id": "roos",
-      "title": "Roos",
+      "title": "roos",
       "query": "rose",
       "fact": "Roses symbolize love and affection.",
       "image": "roos.svg"
     },
     {
       "id": "tulp",
-      "title": "Tulp",
+      "title": "tulp",
       "query": "tulip",
       "fact": "Tulips are early spring flowers with cup-shaped blooms.",
       "image": "tulp.svg"

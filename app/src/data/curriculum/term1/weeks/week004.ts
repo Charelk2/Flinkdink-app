@@ -50,21 +50,21 @@ export default {
     },
     {
       "id": "grader",
-      "title": "grader",
+      "title": "padskraper",
       "query": "Grader",
       "fact": "Machine that levels soil or roads.",
       "image": "grader.svg"
     },
     {
       "id": "forklift",
-      "title": "forklift",
+      "title": "vurkhyser",
       "query": "Forklift",
       "fact": "Used in warehouses to move pallets.",
       "image": "forklift.svg"
     },
     {
       "id": "bulldozer",
-      "title": "bulldozer",
+      "title": "stootskraper",
       "query": "Bulldozer",
       "fact": "Large machine with a blade for pushing earth.",
       "image": "bulldozer.svg"

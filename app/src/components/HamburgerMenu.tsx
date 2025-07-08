@@ -15,9 +15,10 @@ interface Props {
   onSwitchProfile: () => void;
   onMyAccount: () => void;
   onSignOut: () => void;
+  onResetProgress?: () => void;
 }
 
-export default function HamburgerMenu({ visible, onClose, onSwitchProfile, onMyAccount, onSignOut }: Props) {
+export default function HamburgerMenu({ visible, onClose, onSwitchProfile, onMyAccount, onSignOut, onResetProgress }: Props) {
   return (
     <Modal transparent animationType="fade" visible={visible} onRequestClose={onClose}>
       <Pressable style={styles.overlay} onPress={onClose}>
@@ -31,6 +32,10 @@ export default function HamburgerMenu({ visible, onClose, onSwitchProfile, onMyA
           <TouchableOpacity style={styles.item} onPress={onMyAccount}>
             <Text style={styles.text}>My Account</Text>
           </TouchableOpacity>
+          {onResetProgress &&
+            <TouchableOpacity style={styles.item} onPress={() => { onClose(); onResetProgress(); }}>
+              <Text style={styles.text}>Reset Progress</Text>
+            </TouchableOpacity> }
 
 
           <TouchableOpacity style={[styles.item, styles.signOut]} onPress={onSignOut}>

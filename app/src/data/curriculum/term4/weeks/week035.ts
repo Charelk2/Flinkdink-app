@@ -2,8 +2,8 @@ export default {
   "language": [
     "wimpers",
     "skedel",
-    "boude",
-    "derm",
+    "enkels",
+    "gewrig",
     "oog",
     "hand",
     "vinger",
