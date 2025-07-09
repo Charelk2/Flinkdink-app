@@ -17,70 +17,70 @@ export default {
       "id": "graafmasjien",
       "title": "graafmasjien",
       "query": "Excavator",
-      "fact": "A powerful machine used for digging.",
+      //"fact": "A powerful machine used for digging.",
       "image": "graafmasjien.svg"
     },
     {
       "id": "trekker",
       "title": "trekker",
       "query": "Tractor",
-      "fact": "Tractors help pull heavy loads.",
+      //"fact": "Tractors help pull heavy loads.",
       "image": "trekker.svg"
     },
     {
       "id": "hyskraan",
       "title": "hyskraan",
       "query": "Crane",
-      "fact": "Used to lift heavy objects on site.",
+      //"fact": "Used to lift heavy objects on site.",
       "image": "hyskraan.svg"
     },
     {
       "id": "vullistrok",
       "title": "vullistrok",
       "query": "Garbage truck",
-      "fact": "Truck that collects waste.",
+      //"fact": "Truck that collects waste.",
       "image": "vullistrok.svg"
     },
     {
       "id": "padroller",
       "title": "padroller",
       "query": "Road roller",
-      "fact": "Heavy vehicle that compacts road surfaces.",
+      //"fact": "Heavy vehicle that compacts road surfaces.",
       "image": "padroller.svg"
     },
     {
       "id": "grader",
       "title": "padskraper",
       "query": "Grader",
-      "fact": "Machine that levels soil or roads.",
+      //"fact": "Machine that levels soil or roads.",
       "image": "grader.svg"
     },
     {
       "id": "forklift",
       "title": "vurkhyser",
       "query": "Forklift",
-      "fact": "Used in warehouses to move pallets.",
+      //"fact": "Used in warehouses to move pallets.",
       "image": "forklift.svg"
     },
     {
       "id": "bulldozer",
       "title": "stootskraper",
       "query": "Bulldozer",
-      "fact": "Large machine with a blade for pushing earth.",
+      //"fact": "Large machine with a blade for pushing earth.",
       "image": "bulldozer.svg"
     },
     {
       "id": "sementmenger",
       "title": "sementmenger",
       "query": "Cement mixer",
-      "fact": "Mixes cement for building.",
+      //"fact": "Mixes cement for building.",
       "image": "sementmenger.svg"
     },
     {
       "id": "stroper",
       "title": "stroper",
       "query": "Harvester",
-      "fact": "Machine that harvests crops.",
+      //"fact": "Machine that harvests crops.",
       "image": "stroper.svg"
     }
   ],

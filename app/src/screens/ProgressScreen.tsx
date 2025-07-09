@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useContext } from 'react'; // Added useCallback, useContext
 import {
   View,
   Text,
@@ -9,14 +9,15 @@ import {
   Dimensions,
   Modal,
   Platform,
+  ActivityIndicator, // Added ActivityIndicator for loading state
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import { useNavigation, useIsFocused } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native'; // Changed useIsFocused to useFocusEffect
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { signOut } from 'firebase/auth';
 import { auth } from '../../config/firebase';
-import { useActiveProfile } from '../context/ActiveProfileContext';
+import { ActiveProfileContext } from '../context/ActiveProfileContext'; // Use ActiveProfileContext
 import { RootStackParamList } from '../navigation/types';
 import {
   getLastViewedWeek,
@@ -26,7 +27,7 @@ import {
 
 import FlinkDinkBackground from '../components/FlinkDinkBackground';
 import HamburgerMenu from '../components/HamburgerMenu';
-import i18n from '../i18n'; // ✅ 1. IMPORT i18n
+import i18n from '../i18n';
 const { width } = Dimensions.get('window');
 
 const TERM_COUNT = 4;
@@ -37,13 +38,13 @@ type NavProp = NativeStackNavigationProp<RootStackParamList>;
 
 export default function ProgressScreen() {
   const navigation = useNavigation<NavProp>();
-  const isFocused = useIsFocused();
-  const { activeProfile } = useActiveProfile();
+  const { activeProfile } = useContext(ActiveProfileContext); // Use useContext to get activeProfile
   const { width } = Dimensions.get('window');
 
   const [menuVisible, setMenuVisible] = useState(false);
   const [currentWeek, setCurrentWeek] = useState(1);
   const [completedWeeks, setCompletedWeeks] = useState<number[]>([]);
+  const [loading, setLoading] = useState(true); // Added loading state
   
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedWeek, setSelectedWeek] = useState(0);
@@ -54,8 +55,13 @@ export default function ProgressScreen() {
   const activeTermIndex = Math.max(0, Math.ceil(currentWeek / WEEKS_PER_TERM) - 1);
   const [viewingTermIndex, setViewingTermIndex] = useState(activeTermIndex);
 
-  async function loadProgress() {
-    if (!activeProfile) return;
+  // Memoize loadProgress to prevent unnecessary re-creations
+  const loadProgress = useCallback(async () => {
+    if (!activeProfile) {
+      setLoading(false); // Stop loading if no profile
+      return;
+    }
+    setLoading(true); // Start loading
     const now = new Date();
     const start = new Date(activeProfile.startDate ?? now);
     const defaultWeek = Math.min(
@@ -72,7 +78,9 @@ export default function ProgressScreen() {
     const done: number[] = [];
     for (let w = 1; w <= TOTAL_WEEKS; w++) {
       const data = await getWeekSessionData(activeProfile.id, w);
-      if (isWeekFullyComplete(data)) done.push(w);
+      if (isWeekFullyComplete(data)) {
+        done.push(w);
+      }
     }
     setCompletedWeeks(done);
 
@@ -81,13 +89,17 @@ export default function ProgressScreen() {
       duration: 500,
       useNativeDriver: false,
     }).start();
-  }
+    setLoading(false); // End loading
+  }, [activeProfile, progressAnim]); // Depend on activeProfile and progressAnim
 
-  useEffect(() => {
-    if (isFocused && activeProfile) {
+  // Use useFocusEffect to ensure data is fresh when the screen is focused
+  useFocusEffect(
+    useCallback(() => {
       loadProgress();
-    }
-  }, [isFocused, activeProfile]);
+      // Optional: Clean up function if you had event listeners
+      return () => {};
+    }, [loadProgress]) // Depend on loadProgress (which depends on activeProfile)
+  );
 
   const handleWeekPress = async (week: number) => {
     if (!activeProfile) return;
@@ -106,6 +118,14 @@ export default function ProgressScreen() {
     { length: WEEKS_PER_TERM },
     (_, i) => viewingTermIndex * WEEKS_PER_TERM + i + 1,
   );
+
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#FFFBF2' }}>
+        <ActivityIndicator size="large" color="#4D96FF" />
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -128,14 +148,14 @@ export default function ProgressScreen() {
           ListHeaderComponent={
             <View style={styles.cardHeader}>
               <View style={styles.centeredRow}>
-  <Text
-    style={styles.title}
-    numberOfLines={2}
-    ellipsizeMode="tail"
-  >
-    {i18n.t('myProgressTitle')}
-  </Text>
-</View>
+                <Text
+                  style={styles.title}
+                  numberOfLines={2}
+                  ellipsizeMode="tail"
+                >
+                  {i18n.t('myProgressTitle')}
+                </Text>
+              </View>
               
               <View style={styles.progressContainer}>
                 <Text style={styles.progressText}>
@@ -223,7 +243,6 @@ export default function ProgressScreen() {
         </TouchableOpacity>
       </Modal>
 
-      {/* ✅ Pass the required text props */}
       <HamburgerMenu
         visible={menuVisible}
         onClose={() => setMenuVisible(false)}

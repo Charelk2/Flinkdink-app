@@ -15,72 +15,72 @@ export default {
   "encyclopedia": [
     {
       "id": "kitaar",
-      "title": "Kitaar",
+      "title": "kitaar",
       "query": "Guitar",
-      "fact": "A popular string instrument used in many music styles.",
+      //"fact": "A popular string instrument used in many music styles.",
       "image": "kitaar.svg"
     },
     {
       "id": "klavier",
-      "title": "Klavier",
+      "title": "klavier",
       "query": "Piano",
-      "fact": "Produces sound when keys strike internal strings.",
+      //"fact": "Produces sound when keys strike internal strings.",
       "image": "klavier.svg"
     },
     {
       "id": "dromme",
-      "title": "Dromme",
+      "title": "dromme",
       "query": "Drums",
-      "fact": "Percussion instrument played by striking skins or pads.",
+      //"fact": "Percussion instrument played by striking skins or pads.",
       "image": "dromme.svg"
     },
     {
       "id": "mandolien",
-      "title": "Mandolien",
+      "title": "mandolien",
       "query": "Mandolin",
-      "fact": "A small string instrument typically plucked with a pick.",
+      //"fact": "A small string instrument typically plucked with a pick.",
       "image": "mandolien.svg"
     },
     {
       "id": "trompet",
-      "title": "Trompet",
+      "title": "trompet",
       "query": "Trumpet",
-      "fact": "Brass instrument known for its bright, powerful sound.",
+      //"fact": "Brass instrument known for its bright, powerful sound.",
       "image": "trompet.svg"
     },
     {
       "id": "viool",
-      "title": "Viool",
+      "title": "viool",
       "query": "Violin",
-      "fact": "The smallest high-pitched instrument in the string family.",
+      //"fact": "The smallest high-pitched instrument in the string family.",
       "image": "viool.svg"
     },
     {
       "id": "fluit",
-      "title": "Fluit",
+      "title": "fluit",
       "query": "Flute",
-      "fact": "Woodwind instrument played by blowing across an opening.",
+      //"fact": "Woodwind instrument played by blowing across an opening.",
       "image": "fluit.svg"
     },
     {
       "id": "saksofoon",
-      "title": "Saksofoon",
+      "title": "saksofoon",
       "query": "Saxophone",
-      "fact": "Woodwind instrument commonly used in jazz music.",
+      //"fact": "Woodwind instrument commonly used in jazz music.",
       "image": "saksofoon.svg"
     },
     {
       "id": "harp",
-      "title": "Harp",
+      "title": "harp",
       "query": "Harp",
-      "fact": "Large instrument with many strings plucked by hand.",
+      //"fact": "Large instrument with many strings plucked by hand.",
       "image": "harp.svg"
     },
     {
       "id": "doedelsak",
-      "title": "Doedelsak",
+      "title": "doedelsak",
       "query": "Bagpipes",
-      "fact": "Traditional instrument that uses air stored in a bag.",
+      //"fact": "Traditional instrument that uses air stored in a bag.",
       "image": "doedelsak.svg"
     }
   ],

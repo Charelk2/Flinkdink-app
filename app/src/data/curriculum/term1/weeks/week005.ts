@@ -15,72 +15,72 @@ export default {
   "encyclopedia": [
     {
       "id": "vlieg",
-      "title": "Vlieg",
+      "title": "vlieg",
       "query": "fly",
-      "fact": "A small insect often found near food.",
+      //"fact": "A small insect often found near food.",
       "image": "vlieg.svg"
     },
     {
       "id": "stokgogga",
-      "title": "Stokgogga",
+      "title": "stokgogga",
       "query": "stick insect",
-      "fact": "Mimics twigs to hide from predators.",
+      //"fact": "Mimics twigs to hide from predators.",
       "image": "stokgogga.svg"
     },
     {
       "id": "mot",
-      "title": "Mot",
+      "title": "mot",
       "query": "moth",
-      "fact": "Night-flying insect drawn to lights.",
+      //"fact": "Night-flying insect drawn to lights.",
       "image": "mot.svg"
     },
     {
       "id": "mier",
-      "title": "Mier",
+      "title": "mier",
       "query": "ant",
-      "fact": "Hard-working insect living in colonies.",
+      //"fact": "Hard-working insect living in colonies.",
       "image": "mier.svg"
     },
     {
       "id": "kakkerlak",
-      "title": "Kakkerlak",
+      "title": "kakkerlak",
       "query": "cockroach",
-      "fact": "Tough insect that can live almost anywhere.",
+      //"fact": "Tough insect that can live almost anywhere.",
       "image": "kakkerlak.svg"
     },
     {
       "id": "lieweheersbesie",
-      "title": "Lieweheersbesie",
+      "title": "lieweheersbesie",
       "query": "ladybug",
-      "fact": "Spotted beetle that eats garden pests.",
+      //"fact": "Spotted beetle that eats garden pests.",
       "image": "lieweheersbesie.svg"
     },
     {
       "id": "by",
-      "title": "By",
+      "title": "by",
       "query": "bee",
-      "fact": "Pollinator famous for making honey.",
+      //"fact": "Pollinator famous for making honey.",
       "image": "by.svg"
     },
     {
       "id": "naaldekoker",
-      "title": "Naaldekoker",
+      "title": "naaldekoker",
       "query": "dragonfly",
-      "fact": "Swift flyer that hunts near water.",
+      //"fact": "Swift flyer that hunts near water.",
       "image": "naaldekoker.svg"
     },
     {
       "id": "vuurvliegie",
-      "title": "Vuurvliegie",
+      "title": "vuurvliegie",
       "query": "firefly",
-      "fact": "Glows at night using natural light.",
+      //"fact": "Glows at night using natural light.",
       "image": "vuurvliegie.svg"
     },
     {
       "id": "hottentotsgot",
-      "title": "Hottentotsgot",
+      "title": "hottentotsgot",
       "query": "praying mantis",
-      "fact": "Predator that folds its long front legs.",
+      //"fact": "Predator that folds its long front legs.",
       "image": "hottentotsgot.svg"
     }
   ]

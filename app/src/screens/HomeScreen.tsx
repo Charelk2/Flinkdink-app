@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useContext, useCallback } from 'react'; // Added useCallback
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
   View,
@@ -13,11 +13,11 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { signOut } from 'firebase/auth';
 import { auth } from '../../config/firebase';
-import { useActiveProfile } from '../context/ActiveProfileContext';
+import { ActiveProfileContext } from '../context/ActiveProfileContext'; // Use ActiveProfileContext
 import HamburgerMenu from '../components/HamburgerMenu';
 import ConfirmModal from '../components/ConfirmModal';
 import FlinkDinkBackground from '../components/FlinkDinkBackground';
-import { useNavigation, useIsFocused } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native'; // Changed useIsFocused to useFocusEffect
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../navigation/types';
 import {
@@ -33,8 +33,7 @@ import { useTranslation } from 'react-i18next';
 
 export default function HomeScreen() {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-  const { activeProfile } = useActiveProfile();
-  const isFocused = useIsFocused();
+  const { activeProfile } = useContext(ActiveProfileContext); // Use useContext to get activeProfile
   const insets = useSafeAreaInsets();
   const { width } = useWindowDimensions();
   const { t } = useTranslation();
@@ -61,13 +60,12 @@ export default function HomeScreen() {
   const [showConfirm, setShowConfirm] = useState(false);
   const [pendingWeek, setPendingWeek] = useState<number | null>(null);
 
-  useEffect(() => {
-    if (isFocused && activeProfile) loadWeekData();
-    // eslint-disable-next-line
-  }, [isFocused, activeProfile]);
-
-  const loadWeekData = async (weekOverride?: number) => {
-    if (!activeProfile) return;
+  // Memoize loadWeekData to prevent unnecessary re-creations
+  const loadWeekData = useCallback(async (weekOverride?: number) => {
+    if (!activeProfile) {
+      setLoading(false); // Stop loading if no profile
+      return;
+    }
     setLoading(true);
     const now = new Date();
     const start = new Date(activeProfile.startDate ?? now);
@@ -76,29 +74,41 @@ export default function HomeScreen() {
       40
     );
     const stored = await getLastViewedWeek(activeProfile.id);
-    const week = weekOverride ?? stored ?? defaultWeek;
+    const weekToLoad = weekOverride ?? stored ?? defaultWeek;
 
-    // Load async session data
-    const tCount = await getTodaySessionCount(activeProfile.id, week);
-    const cDays = await getCompletedDaysThisWeek(activeProfile.id, week);
+    // Load async session data for the specific week
+    const tCount = await getTodaySessionCount(activeProfile.id, weekToLoad);
+    const cDays = await getCompletedDaysThisWeek(activeProfile.id, weekToLoad);
 
-    // Build completed weeks array
+    // Rebuild completed weeks array by checking all weeks
     const comp: number[] = [];
     for (let w = 1; w <= 40; w++) {
       const data = await getWeekSessionData(activeProfile.id, w);
-      if (isWeekFullyComplete(data)) comp.push(w);
+      if (isWeekFullyComplete(data)) {
+        comp.push(w);
+      }
     }
 
-    setCurrentWeek(week);
+    setCurrentWeek(weekToLoad);
     setTodayCount(tCount);
     setCompletedDays(cDays);
     setCompletedWeeks(comp);
     setLoading(false);
-  };
+  }, [activeProfile]); // Recreate if activeProfile changes
+
+  // Use useFocusEffect to ensure data is fresh when the screen is focused
+  useFocusEffect(
+    useCallback(() => {
+      loadWeekData();
+      // Optional: Clean up function if you had event listeners
+      return () => {};
+    }, [loadWeekData]) // Depend on loadWeekData (which depends on activeProfile)
+  );
 
   const handleSessionStart = async () => {
     if (activeProfile) {
       await setLastViewedWeek(activeProfile.id, currentWeek);
+      // After navigating back from Session, useFocusEffect on HomeScreen will re-fetch data.
       navigation.navigate('Session', { overrideWeek: currentWeek });
     }
   };
@@ -110,9 +120,13 @@ export default function HomeScreen() {
 
   const confirmSkip = async () => {
     if (pendingWeek !== null && activeProfile) {
-      await resetTodaySessionCount(activeProfile.id, pendingWeek);
+      // Resetting today's count for the week to be skipped to.
+      // This ensures a clean slate for sessions in the new week.
+      //await resetTodaySessionCount(activeProfile.id, pendingWeek);
       await setLastViewedWeek(activeProfile.id, pendingWeek);
-      setCurrentWeek(pendingWeek);
+      
+      // After setting the new current week, navigate.
+      // loadWeekData will be called automatically by useFocusEffect when navigating back.
       navigation.navigate('Session', { overrideWeek: pendingWeek });
     }
     setShowConfirm(false);

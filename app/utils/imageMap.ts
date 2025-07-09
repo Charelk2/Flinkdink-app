@@ -6,11 +6,11 @@ export const imageMap: { [key: string]: any } = {
   
     // Week 1 – Honde (Dogs)
     'dalmation.svg': require('../assets/images/dalmation.jpg'),
-    'worshond.svg': require('../assets/images/worshond.jpeg'),
-    'bulhond.svg': require('../assets/images/bulhond.jpeg'),
+    'worshond.svg': require('../assets/images/worshond.jpg'),
+    'bulhond.svg': require('../assets/images/bulhond.jpg'),
     'bloedhond.svg': require('../assets/images/bloedhond.jpg'),
     'golden-retriever.svg': require('../assets/images/golden-retriever.jpg'),
-    'windhond.svg': require('../assets/images/windhond.jpeg'),
+    'windhond.svg': require('../assets/images/windhond.jpg'),
     'rifrug.svg': require('../assets/images/rifrug.png'),
     'ierse-wolfhond.svg': require('../assets/images/ierse-wolfhond.jpg'),
     'vizsla.svg': require('../assets/images/vizsla.jpg'),

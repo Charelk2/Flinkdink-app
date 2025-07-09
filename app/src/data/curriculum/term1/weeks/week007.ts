@@ -15,37 +15,37 @@ export default {
   "encyclopedia": [
     {
       "id": "afrika",
-      "title": "Afrika",
+      "title": "afrika",
       "query": "Africa",
-      "fact": "The second-largest continent by land area.",
+      //"fact": "The second-largest continent by land area.",
       "image": "afrika.svg"
     },
     {
       "id": "europa",
-      "title": "Europa",
+      "title": "europa",
       "query": "Europe",
-      "fact": "Known for its rich history and diversity of cultures.",
+      //"fact": "Known for its rich history and diversity of cultures.",
       "image": "europa.svg"
     },
     {
       "id": "asie",
-      "title": "Asië",
+      "title": "asië",
       "query": "Asia",
-      "fact": "The largest and most populous continent.",
+      //"fact": "The largest and most populous continent.",
       "image": "asie.svg"
     },
     {
       "id": "noord-amerika",
-      "title": "Noord-Amerika",
+      "title": "noord-amerika",
       "query": "North America",
-      "fact": "Home to countries like the USA, Canada, and Mexico.",
+      //"fact": "Home to countries like the USA, Canada, and Mexico.",
       "image": "noord-amerika.svg"
     },
     {
       "id": "suid-amerika",
-      "title": "Suid-Amerika",
+      "title": "suid-amerika",
       "query": "South America",
-      "fact": "Famous for the Amazon rainforest and Andes mountains.",
+      //"fact": "Famous for the Amazon rainforest and Andes mountains.",
       "image": "suid-amerika.svg"
     },
     /*{
@@ -57,9 +57,9 @@ export default {
     },*/
     {
       "id": "australie",
-      "title": "Australië",
+      "title": "australië",
       "query": "Australia",
-      "fact": "Both a country and a continent, known for its Outback.",
+      //"fact": "Both a country and a continent, known for its Outback.",
       "image": "australie.svg"
     },
     /*{
