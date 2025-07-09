@@ -1,123 +1,107 @@
-import React, { useState, useEffect, useRef, useCallback, useContext } from 'react'; // Added useCallback, useContext
+// app/src/screens/ProgressScreen.tsx
+
+import React, { useState, useEffect, useContext } from 'react';
 import {
   View,
   Text,
-  StyleSheet,
   TouchableOpacity,
   FlatList,
-  Animated,
-  Dimensions,
   Modal,
+  ActivityIndicator,
+  StyleSheet,
   Platform,
-  ActivityIndicator, // Added ActivityIndicator for loading state
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import { useNavigation, useFocusEffect } from '@react-navigation/native'; // Changed useIsFocused to useFocusEffect
-import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { useNavigation } from '@react-navigation/native';
 import { signOut } from 'firebase/auth';
 import { auth } from '../../config/firebase';
-import { ActiveProfileContext } from '../context/ActiveProfileContext'; // Use ActiveProfileContext
-import { RootStackParamList } from '../navigation/types';
+import { ActiveProfileContext } from '../context/ActiveProfileContext';
 import {
-  getLastViewedWeek,
-  getWeekSessionData,
+  subscribeToProfileSessions,
   isWeekFullyComplete,
 } from '../../utils/progress';
-
 import FlinkDinkBackground from '../components/FlinkDinkBackground';
 import HamburgerMenu from '../components/HamburgerMenu';
 import i18n from '../i18n';
-const { width } = Dimensions.get('window');
 
 const TERM_COUNT = 4;
 const WEEKS_PER_TERM = 10;
 const TOTAL_WEEKS = TERM_COUNT * WEEKS_PER_TERM;
 
-type NavProp = NativeStackNavigationProp<RootStackParamList>;
-
 export default function ProgressScreen() {
-  const navigation = useNavigation<NavProp>();
-  const { activeProfile } = useContext(ActiveProfileContext); // Use useContext to get activeProfile
-  const { width } = Dimensions.get('window');
+  const navigation = useNavigation();
+  const { activeProfile } = useContext(ActiveProfileContext);
 
-  const [menuVisible, setMenuVisible] = useState(false);
-  const [currentWeek, setCurrentWeek] = useState(1);
-  const [completedWeeks, setCompletedWeeks] = useState<number[]>([]);
-  const [loading, setLoading] = useState(true); // Added loading state
-  
+  const [sessionsByWeek, setSessionsByWeek] = useState<{ [week: number]: { [date: string]: number } }>({});
+  const [loading, setLoading] = useState(true);
+
+  // Modal state
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedWeek, setSelectedWeek] = useState(0);
   const [weekData, setWeekData] = useState<Record<string, number>>({});
 
-  const progressAnim = useRef(new Animated.Value(0)).current;
-  
-  const activeTermIndex = Math.max(0, Math.ceil(currentWeek / WEEKS_PER_TERM) - 1);
-  const [viewingTermIndex, setViewingTermIndex] = useState(activeTermIndex);
+  // Menu state
+  const [menuVisible, setMenuVisible] = useState(false);
 
-  // Memoize loadProgress to prevent unnecessary re-creations
-  const loadProgress = useCallback(async () => {
-    if (!activeProfile) {
-      setLoading(false); // Stop loading if no profile
-      return;
-    }
-    setLoading(true); // Start loading
+  // Tab state
+  const [viewingTermIndex, setViewingTermIndex] = useState(0);
+
+  // Get the current week from start date (optional fallback)
+  const currentWeek = React.useMemo(() => {
+    if (!activeProfile) return 1;
     const now = new Date();
     const start = new Date(activeProfile.startDate ?? now);
-    const defaultWeek = Math.min(
+    return Math.min(
       Math.floor((now.getTime() - start.getTime()) / (1000 * 60 * 60 * 24 * 7)) + 1,
-      TOTAL_WEEKS,
+      TOTAL_WEEKS
     );
-    const stored = await getLastViewedWeek(activeProfile.id);
-    const initialWeek = stored ?? defaultWeek;
-    setCurrentWeek(initialWeek);
+  }, [activeProfile]);
 
-    const initialTermIndex = Math.max(0, Math.ceil(initialWeek / WEEKS_PER_TERM) - 1);
-    setViewingTermIndex(initialTermIndex);
+  // Set initial tab to current week term
+  useEffect(() => {
+    setViewingTermIndex(Math.max(0, Math.ceil(currentWeek / WEEKS_PER_TERM) - 1));
+  }, [currentWeek]);
 
+  // Real-time sync from Firestore
+  useEffect(() => {
+    if (!activeProfile) return;
+    setLoading(true);
+    const unsub = subscribeToProfileSessions(activeProfile.id, sessions => {
+      setSessionsByWeek(sessions);
+      setLoading(false);
+    });
+    return unsub;
+  }, [activeProfile]);
+
+  // Helper to get completed weeks
+  function getCompletedWeeks() {
     const done: number[] = [];
     for (let w = 1; w <= TOTAL_WEEKS; w++) {
-      const data = await getWeekSessionData(activeProfile.id, w);
-      if (isWeekFullyComplete(data)) {
-        done.push(w);
-      }
+      if (isWeekFullyComplete(sessionsByWeek[w] || {})) done.push(w);
     }
-    setCompletedWeeks(done);
+    return done;
+  }
+  const completedWeeks = getCompletedWeeks();
 
-    Animated.timing(progressAnim, {
-      toValue: done.length / TOTAL_WEEKS,
-      duration: 500,
-      useNativeDriver: false,
-    }).start();
-    setLoading(false); // End loading
-  }, [activeProfile, progressAnim]); // Depend on activeProfile and progressAnim
-
-  // Use useFocusEffect to ensure data is fresh when the screen is focused
-  useFocusEffect(
-    useCallback(() => {
-      loadProgress();
-      // Optional: Clean up function if you had event listeners
-      return () => {};
-    }, [loadProgress]) // Depend on loadProgress (which depends on activeProfile)
+  // Term weeks to display in grid
+  const termWeeks = Array.from(
+    { length: WEEKS_PER_TERM },
+    (_, i) => viewingTermIndex * WEEKS_PER_TERM + i + 1
   );
 
-  const handleWeekPress = async (week: number) => {
-    if (!activeProfile) return;
-    const data = await getWeekSessionData(activeProfile.id, week);
+  // Modal for viewing sessions in a week
+  const handleWeekPress = (week: number) => {
     setSelectedWeek(week);
-    setWeekData(data);
+    setWeekData(sessionsByWeek[week] || {});
     setModalVisible(true);
   };
 
+  // Menu
   const onSignOut = async () => {
     await signOut(auth);
     setMenuVisible(false);
   };
-  
-  const termWeeks = Array.from(
-    { length: WEEKS_PER_TERM },
-    (_, i) => viewingTermIndex * WEEKS_PER_TERM + i + 1,
-  );
 
   if (loading) {
     return (
@@ -135,7 +119,7 @@ export default function ProgressScreen() {
           <TouchableOpacity onPress={() => setMenuVisible(true)} style={styles.headerIcon}>
             <Ionicons name="menu" size={28} color="#382E1C" />
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => navigation.navigate('Home')} style={styles.headerIcon}>
+          <TouchableOpacity onPress={() => navigation.navigate('Home' as never)} style={styles.headerIcon}>
             <Ionicons name="home" size={24} color="#382E1C" />
           </TouchableOpacity>
         </View>
@@ -148,34 +132,23 @@ export default function ProgressScreen() {
           ListHeaderComponent={
             <View style={styles.cardHeader}>
               <View style={styles.centeredRow}>
-                <Text
-                  style={styles.title}
-                  numberOfLines={2}
-                  ellipsizeMode="tail"
-                >
+                <Text style={styles.title} numberOfLines={2} ellipsizeMode="tail">
                   {i18n.t('myProgressTitle')}
                 </Text>
               </View>
-              
               <View style={styles.progressContainer}>
                 <Text style={styles.progressText}>
                   {i18n.t('weeksCompleteProgress', { completed: completedWeeks.length, total: TOTAL_WEEKS })}
                 </Text>
                 <View style={styles.progressBarBackground}>
-                  <Animated.View
+                  <View
                     style={[
                       styles.progressBarFill,
-                      {
-                        width: progressAnim.interpolate({
-                          inputRange: [0, 1],
-                          outputRange: ['0%', '100%'],
-                        }),
-                      },
+                      { width: `${(completedWeeks.length / TOTAL_WEEKS) * 100}%` },
                     ]}
                   />
                 </View>
               </View>
-
               <View style={styles.termRow}>
                 {Array.from({ length: TERM_COUNT }).map((_, i) => (
                   <TouchableOpacity
@@ -219,25 +192,38 @@ export default function ProgressScreen() {
         visible={modalVisible}
         transparent
         animationType="fade"
-        onRequestClose={() => setModalVisible(false)}>
+        onRequestClose={() => setModalVisible(false)}
+      >
         <TouchableOpacity
           style={styles.modalOverlay}
           activeOpacity={1}
-          onPressOut={() => setModalVisible(false)}>
+          onPressOut={() => setModalVisible(false)}
+        >
           <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>{i18n.t('weekDetailsTitle', { week: selectedWeek })}</Text>
-            {Object.entries(weekData).map(([day, count]) => (
-              <Text key={day} style={styles.modalText}>
-                {i18n.t(count === 1 ? 'sessionsCount' : 'sessionsCountPlural', { day: day, count: count })}
-              </Text>
-            ))}
-            {Object.keys(weekData).length === 0 && (
+            <Text style={styles.modalTitle}>
+              {i18n.t('weekDetailsTitle', { week: selectedWeek })}
+            </Text>
+            {Object.entries(weekData ?? {}).map((entry) => {
+              const [day, count] = entry as [string, number];
+              return (
+                <Text key={day} style={styles.modalText}>
+                  {i18n.t(
+                    count === 1 ? 'sessionsCount' : 'sessionsCountPlural',
+                    { day, count }
+                  )}
+                </Text>
+              );
+            })}
+            {Object.keys(weekData ?? {}).length === 0 && (
               <Text style={styles.modalText}>{i18n.t('noSessionsRecorded')}</Text>
             )}
             <TouchableOpacity
               style={styles.modalCloseButton}
-              onPress={() => setModalVisible(false)}>
-              <Text style={styles.modalCloseButtonText}>{i18n.t('closeButton')}</Text>
+              onPress={() => setModalVisible(false)}
+            >
+              <Text style={styles.modalCloseButtonText}>
+                {i18n.t('closeButton')}
+              </Text>
             </TouchableOpacity>
           </View>
         </TouchableOpacity>
@@ -248,22 +234,23 @@ export default function ProgressScreen() {
         onClose={() => setMenuVisible(false)}
         onSwitchProfile={() => {
           setMenuVisible(false);
-          navigation.navigate('ProfileSelector');
+          navigation.navigate('ProfileSelector' as never);
         }}
         onMyAccount={() => {
           setMenuVisible(false);
-          navigation.navigate('MyAccount');
+          navigation.navigate('MyAccount' as never);
         }}
         onSignOut={onSignOut}
-        switchProfileText={i18n.t('switchProfile')}
-        myAccountText={i18n.t('myAccount')}
-        signOutText={i18n.t('signOut')}
+        switchProfileText={i18n.t('switchProfile') as string}
+        myAccountText={i18n.t('myAccount') as string}
+        signOutText={i18n.t('signOut') as string}
       />
     </View>
   );
 }
 
-// Styles remain the same
+// ---- Styles remain the same ----
+
 const styles = StyleSheet.create({
   centeredRow: {
     alignItems: 'center',
@@ -338,14 +325,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     marginBottom: 8,
-    flexWrap: 'wrap', 
+    flexWrap: 'wrap',
   },
   termTab: {
-    minWidth: 72,  
+    minWidth: 72,
     paddingVertical: 8,
     paddingHorizontal: 12,
     borderRadius: 16,
-    marginVertical: 4,  
+    marginVertical: 4,
     marginHorizontal: 4,
     backgroundColor: '#FFF',
     borderWidth: 1,
@@ -359,8 +346,8 @@ const styles = StyleSheet.create({
   termText: {
     fontFamily: 'ComicSans',
     color: '#382E1C',
-    fontSize: width < 350 ? 12 : 14,
-    flexShrink: 1,   
+    fontSize: 14,
+    flexShrink: 1,
   },
   termTextActive: {
     color: '#FFF',

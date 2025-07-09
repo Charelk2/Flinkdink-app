@@ -76,22 +76,24 @@ export default function FlinkDinkBackground() {
   );
 
   const Cloud: React.FC<CloudProps> = ({ x, y, color }) => (
-    <View style={{ position: 'absolute' }}>
+    <>
       <Circle cx={x} cy={y} r={35} fill={color} opacity={0.7} />
       <Circle cx={x + 30} cy={y + 15} r={45} fill={color} opacity={0.7} />
       <Circle cx={x - 25} cy={y + 20} r={30} fill={color} opacity={0.7} />
       <Circle cx={x + 10} cy={y + 35} r={25} fill={color} opacity={0.7} />
-    </View>
+    </>
   );
+  
 
   const Tree: React.FC<TreeProps> = ({ x, y, size = 1, foliageColor, trunkColor }) => (
-    <View>
+    <>
       <Rect x={x - 4 * size} y={y} width={8 * size} height={24 * size} rx={4 * size} fill={trunkColor} />
       <Circle cx={x} cy={y} r={18 * size} fill={foliageColor} />
       <Circle cx={x + 12 * size} cy={y + 4 * size} r={12 * size} fill={foliageColor} opacity={0.88} />
       <Circle cx={x - 12 * size} cy={y + 5 * size} r={11 * size} fill={foliageColor} opacity={0.8} />
-    </View>
+    </>
   );
+  
 
   return (
     <View style={StyleSheet.absoluteFill} pointerEvents="none">

@@ -1,4 +1,4 @@
-import React, { useState, useContext, useCallback } from 'react'; // Added useCallback
+import React, { useState, useContext, useCallback, useEffect } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
   View,
@@ -13,41 +13,37 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { signOut } from 'firebase/auth';
 import { auth } from '../../config/firebase';
-import { ActiveProfileContext } from '../context/ActiveProfileContext'; // Use ActiveProfileContext
+import { ActiveProfileContext } from '../context/ActiveProfileContext';
 import HamburgerMenu from '../components/HamburgerMenu';
 import ConfirmModal from '../components/ConfirmModal';
 import FlinkDinkBackground from '../components/FlinkDinkBackground';
-import { useNavigation, useFocusEffect } from '@react-navigation/native'; // Changed useIsFocused to useFocusEffect
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../navigation/types';
 import {
-  getCompletedDaysThisWeek,
   getTodaySessionCount,
-  getWeekSessionData,
   isWeekFullyComplete,
-  resetTodaySessionCount,
-  setLastViewedWeek,
-  getLastViewedWeek,
+  subscribeToProfileSessions,
 } from '../../utils/progress';
 import { useTranslation } from 'react-i18next';
 
+type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'Home'>;
+
+const TERM_WEEKS = 40;
+
 export default function HomeScreen() {
-  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-  const { activeProfile } = useContext(ActiveProfileContext); // Use useContext to get activeProfile
+  const navigation = useNavigation<NavigationProp>();
+  const { activeProfile } = useContext(ActiveProfileContext);
   const insets = useSafeAreaInsets();
   const { width } = useWindowDimensions();
   const { t } = useTranslation();
 
-  // Responsive title size
+  // Responsive logo sizes
   const titleFontSize = width > 1000 ? 64 : width > 600 ? 48 : 18;
-
-  // Responsive logo: one or two rows
   const logoThreshold = 350;
   const isNarrow = width < logoThreshold;
   const flink = 'FLINK'.split('');
   const dink = 'DINK'.split('');
-
-  // Colors for letter blocks
   const colors = ['#FF6B6B', '#FF9B1C', '#4D96FF', '#38B000', '#6A4C93', '#FF6B6B', '#FF9B1C', '#4D96FF', '#38B000'];
 
   // State
@@ -60,55 +56,50 @@ export default function HomeScreen() {
   const [showConfirm, setShowConfirm] = useState(false);
   const [pendingWeek, setPendingWeek] = useState<number | null>(null);
 
-  // Memoize loadWeekData to prevent unnecessary re-creations
-  const loadWeekData = useCallback(async (weekOverride?: number) => {
-    if (!activeProfile) {
-      setLoading(false); // Stop loading if no profile
-      return;
-    }
+  // Real-time sessions data by week
+  const [sessionsByWeek, setSessionsByWeek] = useState<{ [week: number]: { [date: string]: number } }>({});
+
+  // Subscribe to real-time progress
+  useEffect(() => {
+    if (!activeProfile) return;
     setLoading(true);
+    const unsub = subscribeToProfileSessions(activeProfile.id, (sessions) => {
+      setSessionsByWeek(sessions);
+      setLoading(false);
+    });
+    return unsub;
+  }, [activeProfile]);
+
+  // Derive completedWeeks/currentWeek/todayCount from sessionsByWeek
+  useEffect(() => {
+    if (!activeProfile) return;
+    // Calculate completed weeks
+    const done: number[] = [];
+    for (let w = 1; w <= TERM_WEEKS; w++) {
+      if (isWeekFullyComplete(sessionsByWeek[w] || {})) done.push(w);
+    }
+    setCompletedWeeks(done);
+
+    // Calculate current week (from startDate)
     const now = new Date();
     const start = new Date(activeProfile.startDate ?? now);
     const defaultWeek = Math.min(
       Math.floor((now.getTime() - start.getTime()) / (1000 * 60 * 60 * 24 * 7)) + 1,
-      40
+      TERM_WEEKS
     );
-    const stored = await getLastViewedWeek(activeProfile.id);
-    const weekToLoad = weekOverride ?? stored ?? defaultWeek;
+    setCurrentWeek(defaultWeek);
 
-    // Load async session data for the specific week
-    const tCount = await getTodaySessionCount(activeProfile.id, weekToLoad);
-    const cDays = await getCompletedDaysThisWeek(activeProfile.id, weekToLoad);
+    // Today count for current week
+    const today = new Date().toISOString().slice(0, 10);
+    setTodayCount(sessionsByWeek[currentWeek]?.[today] ?? 0);
 
-    // Rebuild completed weeks array by checking all weeks
-    const comp: number[] = [];
-    for (let w = 1; w <= 40; w++) {
-      const data = await getWeekSessionData(activeProfile.id, w);
-      if (isWeekFullyComplete(data)) {
-        comp.push(w);
-      }
-    }
-
-    setCurrentWeek(weekToLoad);
-    setTodayCount(tCount);
-    setCompletedDays(cDays);
-    setCompletedWeeks(comp);
-    setLoading(false);
-  }, [activeProfile]); // Recreate if activeProfile changes
-
-  // Use useFocusEffect to ensure data is fresh when the screen is focused
-  useFocusEffect(
-    useCallback(() => {
-      loadWeekData();
-      // Optional: Clean up function if you had event listeners
-      return () => {};
-    }, [loadWeekData]) // Depend on loadWeekData (which depends on activeProfile)
-  );
+    // Completed days for current week (days with 3+ sessions)
+    const weekSessions = sessionsByWeek[currentWeek] || {};
+    setCompletedDays(Object.values(weekSessions).filter((c) => c >= 3).length);
+  }, [sessionsByWeek, activeProfile, currentWeek]);
 
   const handleSessionStart = async () => {
     if (activeProfile) {
-      await setLastViewedWeek(activeProfile.id, currentWeek);
-      // After navigating back from Session, useFocusEffect on HomeScreen will re-fetch data.
       navigation.navigate('Session', { overrideWeek: currentWeek });
     }
   };
@@ -120,20 +111,14 @@ export default function HomeScreen() {
 
   const confirmSkip = async () => {
     if (pendingWeek !== null && activeProfile) {
-      // Resetting today's count for the week to be skipped to.
-      // This ensures a clean slate for sessions in the new week.
-      //await resetTodaySessionCount(activeProfile.id, pendingWeek);
-      await setLastViewedWeek(activeProfile.id, pendingWeek);
-      
-      // After setting the new current week, navigate.
-      // loadWeekData will be called automatically by useFocusEffect when navigating back.
+      // Go to the chosen week
       navigation.navigate('Session', { overrideWeek: pendingWeek });
     }
     setShowConfirm(false);
     setPendingWeek(null);
   };
 
-  if (loading) {
+  if (loading || !activeProfile) {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#FFFBF2' }}>
         <ActivityIndicator size="large" color="#4D96FF" />
@@ -165,7 +150,7 @@ export default function HomeScreen() {
           },
         ]}
       >
-        {/* FLINK DINK LOGO - Responsive! */}
+        {/* FLINK DINK LOGO */}
         <View style={styles.logoWrapper}>
           {isNarrow ? (
             <>
@@ -177,7 +162,7 @@ export default function HomeScreen() {
                 ))}
               </View>
               <View style={[styles.titleContainer, styles.dinkRow]}>
-                <View style={{ width: titleFontSize * 0.75 }} /> {/* Spacer for centering DINK */}
+                <View style={{ width: titleFontSize * 0.75 }} />
                 {dink.map((char, i) => (
                   <View key={i} style={[styles.letterBox, { backgroundColor: colors[(i + flink.length) % colors.length] }]}>
                     <Text style={[styles.char, { fontSize: titleFontSize, color: '#fff' }]}>{char}</Text>
@@ -197,7 +182,7 @@ export default function HomeScreen() {
         </View>
 
         <Text style={[styles.childName, { fontSize: titleFontSize * 1.5 }]}>
-          {activeProfile?.name}
+          {activeProfile.name}
         </Text>
 
         <View style={styles.actionGrid}>
@@ -224,7 +209,7 @@ export default function HomeScreen() {
           {t('weeksCompleted', { completed: completedWeeks.length })}
         </Text>
         <View style={styles.grid}>
-          {Array.from({ length: 40 }).map((_, idx) => {
+          {Array.from({ length: TERM_WEEKS }).map((_, idx) => {
             const n = idx + 1;
             const done = completedWeeks.includes(n);
             const curr = n === currentWeek;

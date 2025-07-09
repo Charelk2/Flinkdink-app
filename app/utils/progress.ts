@@ -10,38 +10,70 @@ import {
   query,
   where,
   Timestamp,
+  onSnapshot,
 } from 'firebase/firestore';
-import { getAuth } from 'firebase/auth';
-import { auth } from '../config/firebase'; // ✅ use your exported instance
+import { auth } from '../config/firebase';
 
+// --- AsyncStorage Keys ---
 const getKey = (profileId: string) => `progress-${profileId}`;
 const sessionKey = (profileId: string) => `sessions-${profileId}`;
 const pendingKey = (profileId: string) => `pending-${profileId}`;
 const CURRENT_WEEK_KEY = (profileId: string) => `current-week-${profileId}`;
 
+// --- Set/Get last viewed week (pure local, for UI convenience) ---
 export async function setLastViewedWeek(profileId: string, week: number) {
-  console.log('[progress] setLastViewedWeek', { profileId, week });
   await AsyncStorage.setItem(CURRENT_WEEK_KEY(profileId), String(week));
 }
 
 export async function getLastViewedWeek(profileId: string): Promise<number> {
   const raw = await AsyncStorage.getItem(CURRENT_WEEK_KEY(profileId));
   const parsed = raw ? parseInt(raw, 10) : null;
-  const week = parsed && !isNaN(parsed) ? parsed : 1;
-  console.log('[progress] getLastViewedWeek', { profileId, week });
-  return week;
+  return parsed && !isNaN(parsed) ? parsed : 1;
 }
 
+// --- Real-time Firestore Session Listener (cross-device sync) ---
+/**
+ * Subscribes to ALL session docs for a profile (live, cross-device).
+ * Calls onUpdate with { [week]: { [date]: count } }
+ * Returns unsubscribe function.
+ */
+export function subscribeToProfileSessions(
+  profileId: string,
+  onUpdate: (sessions: { [week: number]: { [date: string]: number } }) => void
+) {
+  const uid = auth.currentUser?.uid;
+  if (!uid || !profileId) return () => {};
+  const q = query(
+    collection(db, 'users', uid, 'sessions'),
+    where('profileId', '==', profileId)
+  );
+  const unsub = onSnapshot(q, snapshot => {
+    const sessions: { [week: number]: { [date: string]: number } } = {};
+    snapshot.forEach(doc => {
+      const { week, date, count } = doc.data();
+      if (
+        typeof week === 'number' &&
+        typeof date === 'string' &&
+        typeof count === 'number'
+      ) {
+        if (!sessions[week]) sessions[week] = {};
+        sessions[week][date] = count;
+      }
+    });
+    onUpdate(sessions);
+  });
+  return unsub;
+}
 
-// Check if online for Firestore sync
+// --- Online check ---
 export async function isOnline(): Promise<boolean> {
-    if (typeof navigator !== 'undefined' && 'onLine' in navigator) {
-      return navigator.onLine;
-    }
-    return true; // fallback for native
-  }  
+  if (typeof navigator !== 'undefined' && 'onLine' in navigator) {
+    return navigator.onLine;
+  }
+  return true; // fallback for native
+}
 
-// Mark a week as completed (offline + Firestore)
+// --- Mark a week as completed (offline+online, merges on next sync) ---
 export async function markWeekCompleted(profileId: string, week: number) {
   const key = getKey(profileId);
   const raw = await AsyncStorage.getItem(key);
@@ -60,9 +92,9 @@ export async function markWeekCompleted(profileId: string, week: number) {
   }
 }
 
-// Upload completed week to Firestore
+// --- Upload week completion to Firestore ---
 async function uploadWeek(profileId: string, week: number) {
-    const uid = auth.currentUser?.uid;
+  const uid = auth.currentUser?.uid;
   if (!uid) return;
 
   const ref = doc(db, `users/${uid}/progress`, `${profileId}_${week}`);
@@ -74,7 +106,7 @@ async function uploadWeek(profileId: string, week: number) {
   });
 }
 
-// Add week to offline pending list
+// --- Add pending completions (for offline) ---
 async function addPending(profileId: string, week: number) {
   const raw = await AsyncStorage.getItem(pendingKey(profileId));
   const pending: number[] = raw ? JSON.parse(raw) : [];
@@ -84,9 +116,9 @@ async function addPending(profileId: string, week: number) {
   }
 }
 
-// Sync any pending offline completions
+// --- Sync pending completions ---
 export async function syncPendingProgress(profileId: string) {
-    const uid = auth.currentUser?.uid;
+  const uid = auth.currentUser?.uid;
   if (!uid) return;
 
   const raw = await AsyncStorage.getItem(pendingKey(profileId));
@@ -99,9 +131,9 @@ export async function syncPendingProgress(profileId: string) {
   await AsyncStorage.removeItem(pendingKey(profileId));
 }
 
-// Fetch completed weeks from Firestore and cache locally
+// --- Fetch completed weeks from Firestore, cache locally ---
 export async function getCompletedWeeks(profileId: string): Promise<number[]> {
-    const uid = auth.currentUser?.uid;
+  const uid = auth.currentUser?.uid;
   if (!uid) return [];
 
   const snapshot = await getDocs(
@@ -120,13 +152,13 @@ export async function getCompletedWeeks(profileId: string): Promise<number[]> {
   return weeks;
 }
 
-// Check if a week is marked completed
+// --- Is week completed? ---
 export async function isWeekCompleted(profileId: string, week: number): Promise<boolean> {
   const completed = await getCompletedWeeks(profileId);
   return completed.includes(week);
 }
 
-// Get today's session count for a given week
+// --- Get today's session count for a given week ---
 export async function getTodaySessionCount(profileId: string, week: number): Promise<number> {
   const raw = await AsyncStorage.getItem(sessionKey(profileId));
   const data = raw ? JSON.parse(raw) : {};
@@ -140,14 +172,11 @@ export async function getTodaySessionCount(profileId: string, week: number): Pro
   return data?.[today]?.[week] || 0;
 }
 
-// Increment today's session count for a given week
+// --- Increment today's session count for a given week ---
 export async function incrementTodaySessionCount(profileId: string, week: number): Promise<void> {
   const raw = await AsyncStorage.getItem(sessionKey(profileId));
   const data = raw ? JSON.parse(raw) : {};
   const today = new Date().toISOString().slice(0, 10);
-  console.log('[🧠] UID:', auth.currentUser?.uid);
-  console.log('[🧠] Profile ID:', profileId);
-
 
   // Legacy fix
   if (typeof data[today] === 'number') {
@@ -173,7 +202,7 @@ export async function incrementTodaySessionCount(profileId: string, week: number
   });
 }
 
-// Reset today’s session count for a given week
+// --- Reset today’s session count for a given week ---
 export async function resetTodaySessionCount(profileId: string, week: number): Promise<void> {
   const raw = await AsyncStorage.getItem(sessionKey(profileId));
   const data = raw ? JSON.parse(raw) : {};
@@ -191,7 +220,7 @@ export async function resetTodaySessionCount(profileId: string, week: number): P
   await AsyncStorage.setItem(sessionKey(profileId), JSON.stringify(data));
 }
 
-// Get all daily session counts for a given week
+// --- Get all daily session counts for a given week (local only, for offline merge) ---
 export async function getWeekSessionData(
   profileId: string,
   week: number
@@ -210,18 +239,16 @@ export async function getWeekSessionData(
   return result;
 }
 
-// Determine if a week is fully complete (3 sessions × 7 days)
+// --- Is week fully complete? (3 sessions × 7 days) ---
 export function isWeekFullyComplete(weekData: { [date: string]: number }): boolean {
   const qualifiedDays = Object.values(weekData).filter((count) => count >= 3);
   return qualifiedDays.length >= 7;
 }
 
-// Count how many days have 3+ sessions in this week
+// --- Count how many days have 3+ sessions in this week (merges Firestore + local) ---
 export async function getCompletedDaysThisWeek(profileId: string, week: number): Promise<number> {
   const localData = await getWeekSessionData(profileId, week);
   const mergedData: Record<string, number> = { ...localData };
-  console.log('[📊] Fetching completed days for week', week, 'for profile:', profileId);
-
 
   // Firestore merge
   try {
