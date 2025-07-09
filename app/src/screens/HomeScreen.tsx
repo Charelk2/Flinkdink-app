@@ -97,11 +97,13 @@ export default function HomeScreen() {
     const weekSessions = sessionsByWeek[currentWeek] || {};
     setCompletedDays(Object.values(weekSessions).filter((c) => c >= 3).length);
   }, [sessionsByWeek, activeProfile, currentWeek]);
-
-  const handleSessionStart = async () => {
-    if (activeProfile) {
-      navigation.navigate('Session', { overrideWeek: currentWeek });
-    }
+  
+  const maxWeek = 40;
+  const handleSessionStart = () => {
+    if (!activeProfile) return;
+    let nextWeek = isWeekFullyComplete(sessionsByWeek[currentWeek] || {}) ? currentWeek + 1 : currentWeek;
+    if (nextWeek > maxWeek) nextWeek = maxWeek;
+    navigation.navigate('Session', { overrideWeek: nextWeek });
   };
 
   const handleSkipToWeek = (week: number) => {

@@ -115,5 +115,8 @@
     "alertReAuth": "Jy mag dalk weer moet aanmeld.",
     "languageSettings": "Taalinstelling",
     "english": "Engels",
-    "afrikaans": "Afrikaans"
+    "afrikaans": "Afrikaans",
+    "doneForTodayTitle": "🎉 Jy is klaar vir vandag!",
+    "doneForTodaySubtitle": "Jy het vandag {{count}} sessies voltooi. Wil jy dit weer doen vir die pret?",
+    "doAgainForFun": "Doen Weer vir Pret"
 }

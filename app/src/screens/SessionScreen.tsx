@@ -27,7 +27,7 @@ import {
   GestureHandlerStateChangeEvent,
   State,
 } from 'react-native-gesture-handler';
-import i18n from '../i18n'; // ✅ IMPORT i18n
+import i18n from '../i18n';
 
 export default function SessionScreen() {
   const route = useRoute<RouteProp<RootStackParamList, 'Session'>>();
@@ -41,7 +41,6 @@ export default function SessionScreen() {
   const [showConfetti, setShowConfetti] = useState(false);
 
   const BACK_ZONE_WIDTH = 48;
-
   const overrideWeek = route.params?.overrideWeek;
 
   const getDefaultWeek = () => {
@@ -54,11 +53,59 @@ export default function SessionScreen() {
   useEffect(() => {
     const load = async () => {
       if (!activeProfile) return;
-
       const week = overrideWeek ?? getDefaultWeek();
       const count = await getTodaySessionCount(activeProfile.id, week);
       if (count >= 3) {
-        navigation.goBack();
+        setSlides([
+          {
+            id: 'repeat',
+            type: 'language',
+            content: (
+              <View style={styles.finalSlide}>
+                <Text style={styles.finalTitle}>
+                  {i18n.t('doneForTodayTitle')}
+                </Text>
+                <Text style={styles.finalSubtitle}>
+                  {i18n.t('doneForTodaySubtitle', { count })}
+                </Text>
+                <Pressable
+                  onPress={async () => {
+                    const content = await generateSessionSlides(week, activeProfile);
+                    setSlides(content);
+                    setIndex(0);
+                    setCompleted(false);
+                    setShowConfetti(false);
+                  }}
+                  style={{
+                    marginTop: 28,
+                    backgroundColor: '#4D96FF',
+                    borderRadius: 12,
+                    padding: 18,
+                  }}>
+                  <Text style={{ color: 'white', fontFamily: 'ComicSans', fontSize: 18 }}>
+                    {i18n.t('doAgainForFun')}
+                  </Text>
+                </Pressable>
+                <Pressable
+                  onPress={() => navigation.goBack()}
+                  style={{
+                    marginTop: 16,
+                    borderRadius: 8,
+                    padding: 10,
+                    backgroundColor: '#e0e0e0',
+                  }}>
+                  <Text style={{ color: '#222', fontFamily: 'ComicSans', fontSize: 16 }}>
+                    {i18n.t('backToHome')}
+                  </Text>
+                </Pressable>
+              </View>
+            ),
+          },
+        ]);
+        setIndex(0);
+        setCompleted(true);
+        setShowConfetti(false);
+        setLoading(false);
         return;
       }
 
@@ -73,6 +120,7 @@ export default function SessionScreen() {
     };
 
     load();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeProfile]);
 
   const handleNext = async () => {
@@ -138,7 +186,7 @@ export default function SessionScreen() {
 
   const onHandlerStateChange = (event: GestureHandlerStateChangeEvent) => {
     if (event.nativeEvent.state === State.END) {
-        const dx = (event.nativeEvent as any).translationX;
+      const dx = (event.nativeEvent as any).translationX;
       if (dx > 50 && index > 0) {
         setIndex((i) => i - 1);
       } else if (dx < -50) {

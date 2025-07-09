@@ -115,5 +115,8 @@
     "alertReAuth": "You may need to re-authenticate.",
     "languageSettings": "Language Setting",
     "english": "English",
-    "afrikaans": "Afrikaans"
+    "afrikaans": "Afrikaans",
+    "doneForTodayTitle": "🎉 Done for Today!",
+    "doneForTodaySubtitle": "You’ve finished {{count}} sessions for today. Want to do it again for fun?",
+    "doAgainForFun": "Do Again for Fun"
 }
