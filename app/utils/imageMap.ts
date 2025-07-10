@@ -2,7 +2,7 @@
 
 export const imageMap: { [key: string]: any } = {
     // Placeholder
-    'placeholder.png': require('../assets/images/worshond.jpeg'),
+    'placeholder.png': require('../assets/images/worshond.jpg'),
   
     // Week 1 – Honde (Dogs)
     'dalmation.svg': require('../assets/images/dalmation.jpg'),
@@ -82,11 +82,11 @@ export const imageMap: { [key: string]: any } = {
     'asie.svg': require('../assets/images/asie.jpg'),
     'noord-amerika.svg': require('../assets/images/noordamerika.jpg'),
     'suid-amerika.svg': require('../assets/images/suidamerika.jpg'),
-    'antarktika.svg': require('../assets/images/worshond.jpeg'),
+    'antarktika.svg': require('../assets/images/worshond.jpg'),
     'australie.svg': require('../assets/images/australie.jpg'),
-    'atlantiese-oseaan.svg': require('../assets/images/worshond.jpeg'),
-    'indiese-oseaan.svg': require('../assets/images/worshond.jpeg'),
-    'stille-oseaan.svg': require('../assets/images/worshond.jpeg'),
+    'atlantiese-oseaan.svg': require('../assets/images/worshond.jpg'),
+    'indiese-oseaan.svg': require('../assets/images/worshond.jpg'),
+    'stille-oseaan.svg': require('../assets/images/worshond.jpg'),
   
     // Week 8 – Anatomie (Anatomy)
     'tande.svg': require('../assets/images/tande.jpg'),
@@ -121,7 +121,7 @@ export const imageMap: { [key: string]: any } = {
     'ankylosaurus.svg': require('../assets/images/ankylosaurus.jpg'),
     'spinosaurus.svg': require('../assets/images/spinosaurus.jpg'),
     'pterodactyl.svg': require('../assets/images/pterodactyl.jpg'),
-    'allosaurus.svg': require('../assets/images/worshond.jpeg'),
-    'parasaurolophus.svg': require('../assets/images/worshond.jpeg'),
+    'allosaurus.svg': require('../assets/images/worshond.jpg'),
+    'parasaurolophus.svg': require('../assets/images/worshond.jpg'),
   };
   
