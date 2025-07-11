@@ -15,74 +15,68 @@ export default {
   "mathWindowLength": 0,
   "encyclopedia": [
     {
-      "id": "afghaanse-hond",
-      "title": "Afgaanse hond",
-      "query": "Afghan hound",
-      "fact": "This hound has long, silky hair.",
-      "image": "dog.svg"
+      "id": "tyrannosaurus-rex",
+      "title_en": "tyrannosaurus rex",
+      "title_af": "tyrannosaurus rex",
+      "fact_en": "ROAR! The T-Rex was one of the biggest meat-eating dinosaurs with very big teeth, but tiny arms.",
+      "fact_af": "ROAR! Die T-Rex was een van die grootste vleisetende dinosourusse met baie groot tande, maar piepklein armpies.",
+      "image": "tyrannosaurusrex.svg"
     },
     {
-      "id": "goudkleurige-apporteerhond",
-      "title": "Goudkleurige Apporteerhond",
-      "query": "Golden Retriever",
-      "fact": "This retriever loves to fetch.",
-      "image": "dog.svg"
+      "id": "triceratops",
+      "title_en": "triceratops",
+      "title_af": "triceratops",
+      "fact_en": "A triceratops had three big horns on its face to protect itself from hungry predators.",
+      "fact_af": "'n Triceratops het drie groot horings op sy gesig gehad om homself teen honger roofdiere te beskerm.",
+      "image": "triceratops.svg"
     },
     {
-      "id": "dalmatiese-hond",
-      "title": "Dalmatiese hond",
-      "query": "Dalmatian",
-      "fact": "Known for its white coat with black spots.",
-      "image": "dog.svg"
+      "id": "stegosaurus",
+      "title_en": "stegosaurus",
+      "title_af": "stegosaurus",
+      "fact_en": "You can always spot a stegosaurus by the big, bony plates all along its back.",
+      "fact_af": "Jy kan altyd 'n stegosaurus herken aan die groot, benerige plate al langs sy rug.",
+      "image": "stegosaurus.svg"
     },
     {
-      "id": "dashond",
-      "title": "Dashond",
-      "query": "Dachshund",
-      "fact": "This breed has a long body and short legs.",
-      "image": "dog.svg"
+      "id": "velociraptor",
+      "title_en": "velociraptor",
+      "title_af": "velociraptor",
+      "fact_en": "A velociraptor was a fast, clever hunter that was about the size of a big turkey!",
+      "fact_af": "'n Velociraptor was 'n vinnige, slim jagter wat omtrent so groot soos 'n groot kalkoen was!",
+      "image": "velociraptor.svg"
     },
     {
-      "id": "franse-dashond",
-      "title": "Franse Dashond",
-      "query": "Basset Hound",
-      "fact": "A playful companion from France.",
-      "image": "dog.svg"
+      "id": "brachiosaurus",
+      "title_en": "brachiosaurus",
+      "title_af": "brachiosaurus",
+      "fact_en": "With its super-long neck, the brachiosaurus could eat leaves from the tallest treetops.",
+      "fact_af": "Met sy super-lang nek kon die brachiosaurus blare van die heel hoogste boomtoppe eet.",
+      "image": "brachiosaurus.svg"
     },
     {
-      "id": "jagwindhond",
-      "title": "Jagwindhond",
-      "query": "greyhound",
-      "fact": "This sighthound can run very fast.",
-      "image": "dog.svg"
+      "id": "ankylosaurus",
+      "title_en": "ankylosaurus",
+      "title_af": "ankylosaurus",
+      "fact_en": "This dinosaur was like a living tank, with strong armor on its back and a big club on its tail.",
+      "fact_af": "Hierdie dinosourus was soos 'n lewende tenk, met sterk pantser op sy rug en 'n groot knuppel aan sy stert.",
+      "image": "ankylosaurus.svg"
     },
     {
-      "id": "bulhond",
-      "title": "Bulhond",
-      "query": "Bulldog",
-      "fact": "Bulldogs have a distinctive wrinkled face.",
-      "image": "dog.svg"
+      "id": "spinosaurus",
+      "title_en": "spinosaurus",
+      "title_af": "spinosaurus",
+      "fact_en": "The spinosaurus had a giant sail on its back and loved to swim in water to hunt for fish.",
+      "fact_af": "Die spinosaurus het 'n reuse seil op sy rug gehad en was mal daaroor om in die water te swem om vis te jag.",
+      "image": "spinosaurus.svg"
     },
     {
-      "id": "engelse-patryshond",
-      "title": "Engelse Patryshond",
-      "query": "English pointer",
-      "fact": "English Pointers excel at bird hunting.",
-      "image": "dog.svg"
-    },
-    {
-      "id": "bloedhond",
-      "title": "Bloedhond",
-      "query": "Bloodhound",
-      "fact": "Bloodhounds have an exceptional sense of smell.",
-      "image": "dog.svg"
-    },
-    {
-      "id": "rhodesiese-rifrughond",
-      "title": "Rhodesiese Rifrughond",
-      "query": "Rhodesian Ridgeback",
-      "fact": "This dog has a ridge of hair along its back.",
-      "image": "dog.svg"
+      "id": "pterodactyl",
+      "title_en": "pterodactyl",
+      "title_af": "pterodactyl",
+      "fact_en": "A pterodactyl wasn't a dinosaur, but a flying reptile that soared through the skies!",
+      "fact_af": "'n Pterodactyl was nie 'n dinosourus nie, maar 'n vlieënde reptiel wat deur die lug gesweef het!",
+      "image": "pterodactyl.svg"
     }
   ],
   "subtraction": [

@@ -1,4 +1,5 @@
 // app/src/screens/AddChildScreen.tsx
+
 import React, { useState, useEffect, useRef } from 'react';
 import {
   View,
@@ -26,12 +27,12 @@ import uuid from 'react-native-uuid';
 import { RootStackParamList } from '../navigation/types';
 import { ChildProfile } from '../../src/models/types';
 import FlinkDinkBackground from '../components/FlinkDinkBackground';
-import i18n from '../i18n'; // ✅ 1. IMPORT i18n
+import i18n from '../i18n';
+// --- CHANGE: Import from imageMap ---
+import { avatarOptions } from '../../utils/imageMap';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'AddChild'>;
 type RouteProps = RouteProp<RootStackParamList, 'AddChild'>;
-
-const avatarOptions = ['🧒', '👧', '🐸', '🐵', '😍', '🤖', '🦄', '🦁'];
 
 // Define a separate style object for the web input
 const webDatePickerStyle: React.CSSProperties = {
@@ -106,7 +107,6 @@ export default function AddChildScreen() {
         ? (prev - 1 + avatarOptions.length) % avatarOptions.length
         : (prev + 1) % avatarOptions.length,
     );
-    // This is a bulletproof check that satisfies TypeScript
     if (avatarRef.current && typeof (avatarRef.current as any).pulse === 'function') {
       (avatarRef.current as any).pulse(800);
     }
@@ -199,6 +199,7 @@ export default function AddChildScreen() {
   );
 }
 
+// Styles remain the same
 const styles = StyleSheet.create({
   rootContainer: {
     flex: 1,
@@ -250,7 +251,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     fontSize: 16,
     marginBottom: 24,
-    color: '#1F2937', // Make sure text color is set for native input
+    color: '#1F2937',
     ...Platform.select({
       ios: { shadowColor: '#000', shadowOpacity: 0.05, shadowOffset: { width: 0, height: 2 }, shadowRadius: 4 },
       android: { elevation: 2 },

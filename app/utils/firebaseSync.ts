@@ -40,3 +40,18 @@ export const deleteChildProfile = async (userId: string, profileId: string) => {
     await AsyncStorage.removeItem('activeProfileId');
   }
 };
+export const syncProgressToCloud = async (userId: string, profileId: string, data: any) => {
+  const docId = `${profileId}_${Date.now()}`;
+  const ref = doc(db, `users/${userId}/sessions`, docId);
+
+  try {
+    await setDoc(ref, {
+      profileId,
+      data,
+      syncedAt: new Date().toISOString(),
+    });
+    console.log('✅ Synced session data to Firestore:', ref.path);
+  } catch (err) {
+    console.error('❌ Firestore sync failed:', err);
+  }
+};

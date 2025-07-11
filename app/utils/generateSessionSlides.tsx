@@ -12,6 +12,7 @@ import DotBoard from '../src/components/DotBoard';
 import { imageMap } from './imageMap';
 import { ChildProfile } from '../src/models/types';
 import { getTodaySessionCount } from './progress';
+import i18n from '../src/i18n'; // Import your i18n instance
 
 export interface Slide {
   type: 'language' | 'encyclopedia' | 'math';
@@ -19,21 +20,29 @@ export interface Slide {
   content: React.JSX.Element;
 }
 
+// --- FIX #1: Update interfaces to match the actual data structure ---
+interface LanguageWord {
+  id: string;
+  title_en: string;
+  title_af: string;
+}
+
 interface EncyclopediaItem {
   id?: string;
   image: string;
-  title: string;
-  fact: string;
+  title_en: string;
+  title_af: string;
+  fact_en: string;
+  fact_af: string;
 }
+// --- END OF FIX #1 ---
 
 function FullSlide({ children }: { children: React.ReactNode }) {
   const { width, height } = useWindowDimensions();
 
   return (
-    <SafeAreaView style={[styles.slide, { width, height }]}>      
-      <View style={styles.slideInner}>        
-        {children}
-      </View>
+    <SafeAreaView style={[styles.slide, { width, height }]}>
+      <View style={styles.slideInner}>{children}</View>
     </SafeAreaView>
   );
 }
@@ -48,7 +57,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 24, // consistent top and bottom inset
+    paddingVertical: 24,
   },
   languageText: {
     fontSize: 60,
@@ -115,38 +124,49 @@ export async function generateSessionSlides(
 
     // Language slides
     const languageSlides: Slide[] = shuffleArray(
-      (data.language ?? []).map((word: string, i: number) => ({
+      (data.language ?? []).map((word: LanguageWord, i: number) => ({
         type: 'language',
         id: `lang-${i}`,
         content: (
           <FullSlide key={`lang-${i}`}>
-            <Text style={styles.languageText}>{word}</Text>
+            <Text style={styles.languageText}>
+              {i18n.language === 'af' ? word.title_af : word.title_en}
+            </Text>
           </FullSlide>
         ),
       }))
     );
 
+    // --- FIX #2: Correctly map the encyclopedia data ---
     // Encyclopedia slides
     const encyclopediaSlides: Slide[] = shuffleArray(
-      (data.encyclopedia ?? [] as EncyclopediaItem[]).map((item: EncyclopediaItem, i: number) => ({
-        type: 'encyclopedia',
-        id: item.id || `ency-${i}`,
-        content: (
-          <FullSlide key={`ency-${i}`}>
-            <Image
-              source={imageMap[item.image] || imageMap['dog.svg']}
-              style={styles.image}
-            />
-            <Text style={styles.title}>{item.title}</Text>
-            <Text style={styles.fact}>{item.fact}</Text>
-          </FullSlide>
-        ),
-      }))
+      (data.encyclopedia ?? ([] as EncyclopediaItem[])).map(
+        (item: EncyclopediaItem, i: number) => ({
+          type: 'encyclopedia',
+          id: item.id || `ency-${i}`,
+          content: (
+            <FullSlide key={`ency-${i}`}>
+              <Image
+                source={imageMap[item.image] || imageMap['dog.svg']}
+                style={styles.image}
+              />
+              <Text style={styles.title}>
+                {i18n.language === 'af' ? item.title_af : item.title_en}
+              </Text>
+              <Text style={styles.fact}>
+                {i18n.language === 'af' ? item.fact_af : item.fact_en}
+              </Text>
+            </FullSlide>
+          ),
+        })
+      )
     );
+    // --- END OF FIX #2 ---
 
     // Math slides
     const mathSlides: Slide[] = [];
-    const isValid = (n: any) => typeof n === 'number' && Number.isInteger(n) && n >= 0;
+    const isValid = (n: any): n is number =>
+      typeof n === 'number' && Number.isInteger(n) && n >= 0;
 
     if (week <= 10) {
       const length = data.mathWindowLength ?? 10;
@@ -180,20 +200,20 @@ export async function generateSessionSlides(
       let result: number | undefined;
       let ops: string[] = [];
 
-      if (sum) {
-        operands = ['a','b','c'].map(k => sum[k]).filter(isValid);
+      if (sum && sum.sum) {
+        operands = ['a', 'b', 'c'].map((k) => sum[k]).filter(isValid);
         result = sum.sum;
         ops = sum.ops || Array(operands.length - 1).fill('+');
-      } else if (diff) {
-        operands = ['a','b','c'].map(k => diff[k]).filter(isValid);
+      } else if (diff && diff.difference) {
+        operands = ['a', 'b', 'c'].map((k) => diff[k]).filter(isValid);
         result = diff.difference;
         ops = diff.ops || Array(operands.length - 1).fill('-');
-      } else if (prod) {
-        operands = ['a','b'].map(k => prod[k]).filter(isValid);
+      } else if (prod && prod.product) {
+        operands = ['a', 'b'].map((k) => prod[k]).filter(isValid);
         result = prod.product;
         ops = ['×'];
-      } else if (quot) {
-        operands = ['a','b'].map(k => quot[k]).filter(isValid);
+      } else if (quot && quot.quotient) {
+        operands = ['a', 'b'].map((k) => quot[k]).filter(isValid);
         result = quot.quotient;
         ops = ['÷'];
       }
@@ -206,7 +226,9 @@ export async function generateSessionSlides(
             content: (
               <FullSlide key={`math-op${i}`}>
                 <DotBoard count={val} />
-                <Text style={styles.countText}>🔵 Operand {i+1}: {val}</Text>
+                <Text style={styles.countText}>
+                  🔵 Operand {i + 1}: {val}
+                </Text>
               </FullSlide>
             ),
           });
@@ -223,9 +245,10 @@ export async function generateSessionSlides(
           ),
         });
 
-        const equation = operands
-          .map((v,i) => (i===0 ? `${v}` : `${ops[i-1]} ${v}`))
-          .join(' ') + ` = ${result}`;
+        const equation =
+          operands
+            .map((v, i) => (i === 0 ? `${v}` : `${ops[i - 1]} ${v}`))
+            .join(' ') + ` = ${result}`;
 
         mathSlides.push({
           type: 'math',
@@ -242,7 +265,9 @@ export async function generateSessionSlides(
           id: 'math-fallback',
           content: (
             <FullSlide key="math-fallback">
-              <Text style={styles.equationText}>⚠️ No math equation found for today</Text>
+              <Text style={styles.equationText}>
+                ⚠️ No math equation found for today
+              </Text>
             </FullSlide>
           ),
         });

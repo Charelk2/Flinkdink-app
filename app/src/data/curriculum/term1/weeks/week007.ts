@@ -1,87 +1,65 @@
 export default {
   "language": [
-    "boom",
-    "blom",
-    "wolk",
-    "see",
-    "maan",
-    "ster",
-    "gras",
-    "sand",
-    "rots",
-    "rivier"
+    { "id": "boom", "title_en": "tree", "title_af": "boom" },
+    { "id": "blom", "title_en": "flower", "title_af": "blom" },
+    { "id": "wolk", "title_en": "cloud", "title_af": "wolk" },
+    { "id": "see", "title_en": "sea", "title_af": "see" },
+    { "id": "maan", "title_en": "moon", "title_af": "maan" },
+    { "id": "ster", "title_en": "star", "title_af": "ster" },
+    { "id": "gras", "title_en": "grass", "title_af": "gras" },
+    { "id": "sand", "title_en": "sand", "title_af": "sand" },
+    { "id": "rots", "title_en": "rock", "title_af": "rots" },
+    { "id": "rivier", "title_en": "river", "title_af": "rivier" }
   ],
   "mathWindowStart": 26,
   "encyclopedia": [
     {
       "id": "afrika",
-      "title": "afrika",
-      "query": "Africa",
-      //"fact": "The second-largest continent by land area.",
+      "title_en": "africa",
+      "title_af": "afrika",
+      //"fact_en": "Africa is a huge continent with amazing animals like lions, elephants, and giraffes!",
+      //"fact_af": "Afrika is 'n reuse kontinent met wonderlike diere soos leeus, olifante en kameelperde!",
       "image": "afrika.svg"
     },
     {
       "id": "europa",
-      "title": "europa",
-      "query": "Europe",
-      //"fact": "Known for its rich history and diversity of cultures.",
+      "title_en": "europe",
+      "title_af": "europa",
+      //"fact_en": "Europe has many old castles where kings and queens used to live a long, long time ago.",
+      //"fact_af": "Europa het baie ou kastele waar konings en koninginne lank, lank gelede gebly het.",
       "image": "europa.svg"
     },
     {
       "id": "asie",
-      "title": "asië",
-      "query": "Asia",
-      //"fact": "The largest and most populous continent.",
+      "title_en": "asia",
+      "title_af": "asië",
+      //"fact_en": "Asia is the biggest continent and is home to the giant panda and the Great Wall of China.",
+      //"fact_af": "Asië is die grootste kontinent en is die tuiste van die reusepanda en die Groot Muur van China.",
       "image": "asie.svg"
     },
     {
       "id": "noord-amerika",
-      "title": "noord-amerika",
-      "query": "North America",
-      //"fact": "Home to countries like the USA, Canada, and Mexico.",
+      "title_en": "north america",
+      "title_af": "noord-amerika",
+      //"fact_en": "In North America, you can find giant redwood trees that are taller than buildings!",
+      //"fact_af": "In Noord-Amerika kan jy reuse rooihoutbome vind wat hoër as geboue is!",
       "image": "noord-amerika.svg"
     },
     {
       "id": "suid-amerika",
-      "title": "suid-amerika",
-      "query": "South America",
-      //"fact": "Famous for the Amazon rainforest and Andes mountains.",
+      "title_en": "south america",
+      "title_af": "suid-amerika",
+      //"fact_en": "South America is where you'll find the amazing Amazon rainforest, full of colorful birds and monkeys.",
+      //"fact_af": "Suid-Amerika is waar jy die wonderlike Amasone-reënwoud vol kleurvolle voëls en apies sal vind.",
       "image": "suid-amerika.svg"
     },
-    /*{
-      "id": "antarktika",
-      "title": "Antarktika",
-      "query": "Antarctica",
-      "fact": "A frozen continent surrounding the South Pole.",
-      "image": "antarktika.svg"
-    },*/
     {
       "id": "australie",
-      "title": "australië",
-      "query": "Australia",
-      //"fact": "Both a country and a continent, known for its Outback.",
+      "title_en": "australia",
+      "title_af": "australië",
+      //"fact_en": "G'day! Australia is a special place where kangaroos and koalas live.",
+      //"fact_af": "Goeie dag! Australië is 'n spesiale plek waar kangaroes en koalas bly.",
       "image": "australie.svg"
-    },
-    /*{
-      "id": "atlantiese-oseaan",
-      "title": "Atlantiese Oseaan",
-      "query": "Atlantic Ocean",
-      "fact": "The second-largest ocean on Earth.",
-      "image": "atlantiese-oseaan.svg"
-    },
-    {
-      "id": "indiese-oseaan",
-      "title": "Indiese Oseaan",
-      "query": "Indian Ocean",
-      "fact": "The warm ocean between Africa, Asia, and Australia.",
-      "image": "indiese-oseaan.svg"
-    },
-    {
-      "id": "stille-oseaan",
-      "title": "Stille Oseaan",
-      "query": "Pacific Ocean",
-      "fact": "The largest and deepest of Earth’s oceans.",
-      "image": "stille-oseaan.svg"
-    }*/
+    }
   ]
 }

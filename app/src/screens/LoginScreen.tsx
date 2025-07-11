@@ -4,12 +4,12 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  Keyboard,
   StyleSheet,
   ActivityIndicator,
   SafeAreaView,
   ScrollView,
   Platform,
+  useWindowDimensions, // Import useWindowDimensions
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { signInWithEmailAndPassword } from 'firebase/auth';
@@ -19,7 +19,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../navigation/types';
 import FlinkDinkBackground from '../components/FlinkDinkBackground';
 import { Ionicons } from '@expo/vector-icons';
-import i18n from '../i18n'; // ✅ 1. IMPORT i18n
+import i18n from '../i18n';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'Login'>;
 
@@ -29,10 +29,16 @@ export default function LoginScreen() {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const { width } = useWindowDimensions(); // Get screen width
 
-  // For the FlinkDink title
+  // --- START: Responsive Logo Logic ---
+  const titleFontSize = width > 1000 ? 64 : width > 600 ? 48 : 18;
+  const logoThreshold = 350;
+  const isNarrow = width < logoThreshold;
+  const flink = 'FLINK'.split('');
+  const dink = 'DINK'.split('');
   const colors = ['#FF6B6B', '#FF9B1C', '#4D96FF', '#38B000', '#6A4C93', '#FF6B6B', '#FF9B1C', '#4D96FF', '#38B000'];
-  const titleChars = 'FLINKDINK'.split('');
+  // --- END: Responsive Logo Logic ---
 
   const showToast = (type: 'success' | 'error', message: string) => {
     Toast.show({ type, text1: message, position: 'top', visibilityTime: 3000 });
@@ -50,7 +56,6 @@ export default function LoginScreen() {
     try {
       await signInWithEmailAndPassword(auth, cleanEmail, cleanPassword);
       showToast('success', 'Welcome back!');
-      // Let the toast show before navigating
     } catch (error: any) {
       const getMessage = (code: string) => {
         switch (code) {
@@ -81,16 +86,38 @@ export default function LoginScreen() {
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
-          {/* FlinkDink Title */}
-          <View style={styles.titleContainer}>
-            {titleChars.map((char, i) => (
-              <View key={i} style={[styles.letterBox, { backgroundColor: colors[i % colors.length] }]}>
-                <Text style={styles.char}>{char}</Text>
+          {/* --- START: FlinkDink Title Implementation --- */}
+          <View style={styles.logoWrapper}>
+            {isNarrow ? (
+              <>
+                <View style={styles.titleContainer}>
+                  {flink.map((char, i) => (
+                    <View key={i} style={[styles.letterBox, { backgroundColor: colors[i % colors.length] }]}>
+                      <Text style={[styles.char, { fontSize: titleFontSize, color: '#fff' }]}>{char}</Text>
+                    </View>
+                  ))}
+                </View>
+                <View style={[styles.titleContainer, styles.dinkRow]}>
+                  <View style={{ width: titleFontSize * 0.75 }} />
+                  {dink.map((char, i) => (
+                    <View key={i} style={[styles.letterBox, { backgroundColor: colors[(i + flink.length) % colors.length] }]}>
+                      <Text style={[styles.char, { fontSize: titleFontSize, color: '#fff' }]}>{char}</Text>
+                    </View>
+                  ))}
+                </View>
+              </>
+            ) : (
+              <View style={styles.titleContainer}>
+                {[...flink, ...dink].map((char, i) => (
+                  <View key={i} style={[styles.letterBox, { backgroundColor: colors[i % colors.length] }]}>
+                    <Text style={[styles.char, { fontSize: titleFontSize, color: '#fff' }]}>{char}</Text>
+                  </View>
+                ))}
               </View>
-            ))}
+            )}
           </View>
+          {/* --- END: FlinkDink Title Implementation --- */}
 
-          {/* Login Card */}
           <View style={styles.card}>
             <Text style={styles.title}>{i18n.t('loginTitle')}</Text>
 
@@ -172,14 +199,20 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
     paddingVertical: 20,
   },
+  logoWrapper: {
+    alignItems: 'center',
+    marginBottom: 24,
+  },
   titleContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
-    flexWrap: 'wrap',
-    marginBottom: 24,
+    flexWrap: 'nowrap',
+    marginBottom: 0,
+  },
+  dinkRow: {
+    marginTop: 4,
   },
   char: {
-    fontSize: 19,
     fontFamily: 'ComicSans',
     color: '#fff',
     letterSpacing: 2,
@@ -188,8 +221,8 @@ const styles = StyleSheet.create({
     textShadowRadius: 4,
   },
   letterBox: {
-    paddingHorizontal: 10,
-    paddingVertical: 4,
+    paddingHorizontal: 8,
+    paddingVertical: 6,
     marginHorizontal: 4,
     borderRadius: 8,
     ...Platform.select({

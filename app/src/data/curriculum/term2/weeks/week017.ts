@@ -15,74 +15,52 @@ export default {
   "mathWindowLength": 0,
   "encyclopedia": [
     {
-      "id": "afghaanse-hond",
-      "title": "Afgaanse hond",
-      "query": "Afghan hound",
-      "fact": "This hound has long, silky hair.",
-      "image": "dog.svg"
+      "id": "afrika",
+      "title_en": "africa",
+      "title_af": "afrika",
+      "fact_en": "Africa is a huge continent with amazing animals like lions, elephants, and giraffes!",
+      "fact_af": "Afrika is 'n reuse kontinent met wonderlike diere soos leeus, olifante en kameelperde!",
+      "image": "afrika.svg"
     },
     {
-      "id": "goudkleurige-apporteerhond",
-      "title": "Goudkleurige Apporteerhond",
-      "query": "Golden Retriever",
-      "fact": "This retriever loves to fetch.",
-      "image": "dog.svg"
+      "id": "europa",
+      "title_en": "europe",
+      "title_af": "europa",
+      "fact_en": "Europe has many old castles where kings and queens used to live a long, long time ago.",
+      "fact_af": "Europa het baie ou kastele waar konings en koninginne lank, lank gelede gebly het.",
+      "image": "europa.svg"
     },
     {
-      "id": "dalmatiese-hond",
-      "title": "Dalmatiese hond",
-      "query": "Dalmatian",
-      "fact": "Known for its white coat with black spots.",
-      "image": "dog.svg"
+      "id": "asie",
+      "title_en": "asia",
+      "title_af": "asië",
+      "fact_en": "Asia is the biggest continent and is home to the giant panda and the Great Wall of China.",
+      "fact_af": "Asië is die grootste kontinent en is die tuiste van die reusepanda en die Groot Muur van China.",
+      "image": "asie.svg"
     },
     {
-      "id": "dashond",
-      "title": "Dashond",
-      "query": "Dachshund",
-      "fact": "This breed has a long body and short legs.",
-      "image": "dog.svg"
+      "id": "noord-amerika",
+      "title_en": "north america",
+      "title_af": "noord-amerika",
+      "fact_en": "In North America, you can find giant redwood trees that are taller than buildings!",
+      "fact_af": "In Noord-Amerika kan jy reuse rooihoutbome vind wat hoër as geboue is!",
+      "image": "noord-amerika.svg"
     },
     {
-      "id": "franse-dashond",
-      "title": "Franse Dashond",
-      "query": "Basset Hound",
-      "fact": "A playful companion from France.",
-      "image": "dog.svg"
+      "id": "suid-amerika",
+      "title_en": "south america",
+      "title_af": "suid-amerika",
+      "fact_en": "South America is where you'll find the amazing Amazon rainforest, full of colorful birds and monkeys.",
+      "fact_af": "Suid-Amerika is waar jy die wonderlike Amasone-reënwoud vol kleurvolle voëls en apies sal vind.",
+      "image": "suid-amerika.svg"
     },
     {
-      "id": "jagwindhond",
-      "title": "Jagwindhond",
-      "query": "greyhound",
-      "fact": "This sighthound can run very fast.",
-      "image": "dog.svg"
-    },
-    {
-      "id": "bulhond",
-      "title": "Bulhond",
-      "query": "Bulldog",
-      "fact": "Bulldogs have a distinctive wrinkled face.",
-      "image": "dog.svg"
-    },
-    {
-      "id": "engelse-patryshond",
-      "title": "Engelse Patryshond",
-      "query": "English pointer",
-      "fact": "English Pointers excel at bird hunting.",
-      "image": "dog.svg"
-    },
-    {
-      "id": "bloedhond",
-      "title": "Bloedhond",
-      "query": "Bloodhound",
-      "fact": "Bloodhounds have an exceptional sense of smell.",
-      "image": "dog.svg"
-    },
-    {
-      "id": "rhodesiese-rifrughond",
-      "title": "Rhodesiese Rifrughond",
-      "query": "Rhodesian Ridgeback",
-      "fact": "This dog has a ridge of hair along its back.",
-      "image": "dog.svg"
+      "id": "australie",
+      "title_en": "australia",
+      "title_af": "australië",
+      "fact_en": "G'day! Australia is a special place where kangaroos and koalas live.",
+      "fact_af": "Goeie dag! Australië is 'n spesiale plek waar kangaroes en koalas bly.",
+      "image": "australie.svg"
     }
   ],
   "subtraction": [

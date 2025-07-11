@@ -1,4 +1,7 @@
 {
+  "cli": {
+    "appVersionSource": "remote"
+  },
   "build": {
     "preview": {
       "android": {
@@ -6,8 +9,8 @@
       }
     },
     "production": {
-      "cli": {
-        "appVersionSource": "remote"
+      "android": {
+        "buildType": "app-bundle"
       }
     }
   }
