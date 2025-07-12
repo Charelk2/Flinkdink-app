@@ -30,8 +30,11 @@ import * as Animatable from 'react-native-animatable';
 import { useActiveProfile } from '../../src/context/ActiveProfileContext';
 import FlinkDinkBackground from '../components/FlinkDinkBackground';
 import i18n from '../i18n'; // ✅ 1. IMPORT i18n
+import { isPremium } from '../../utils/subscription';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'ProfileSelector'>;
+
+
 
 export default function ProfileSelectorScreen() {
   const navigation = useNavigation<NavigationProp>();
@@ -40,6 +43,7 @@ export default function ProfileSelectorScreen() {
   const [syncing, setSyncing] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [deleting, setDeleting] = useState<ChildProfile | null>(null);
+
 
   const loadProfiles = async (showLoader = true) => {
     if (showLoader) setSyncing(true);

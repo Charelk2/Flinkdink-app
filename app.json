@@ -2,7 +2,7 @@
   "expo": {
     "name": "flinkdink-native-app",
     "slug": "flinkdink-native-app",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "orientation": "default",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -19,11 +19,12 @@
       "bundleIdentifier": "com.anonymous.flinkdinknativeapp"
     },
     "android": {
+      "package": "com.anonymous.flinkdinknativeapp",
+      "versionCode": 2,
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      },
-      "package": "com.anonymous.flinkdinknativeapp"
+      }
     },
     "plugins": [
       "expo-font",
