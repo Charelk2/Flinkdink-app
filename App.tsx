@@ -1,17 +1,22 @@
 // App.tsx
-import React, { useEffect, useState } from 'react';
+
+import React, { useEffect, useState, useCallback } from 'react';
 import { View, ActivityIndicator, StyleSheet } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import type { RouteProp } from '@react-navigation/native';
+import {
+  createNativeStackNavigator,
+  type NativeStackScreenProps,
+} from '@react-navigation/native-stack';
 import * as Font from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import Toast from 'react-native-toast-message';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import Purchases from 'react-native-purchases';
+import Constants from 'expo-constants';
 
 import SessionGuard from './app/src/components/SessionGuard';
-// i18n config import
-import './app/src/i18n';
+import './app/src/i18n'; // i18n config
 
 // Screens
 import OnboardingScreen from './app/src/screens/OnboardingScreen';
@@ -29,17 +34,25 @@ import SessionCompleteScreen from './app/src/screens/SessionCompleteScreen';
 import InstructionScreen from './app/src/screens/InstructionScreen';
 import PaywallScreen from './app/src/screens/PaywallScreen';
 
-// Types
-import { RootStackParamList } from './app/src/navigation/types';
-
-// Context providers
 import { AuthProvider, useAuth } from './app/src/context/AuthContext';
 import { ActiveProfileProvider, useActiveProfile } from './app/src/context/ActiveProfileContext';
 import { LanguageProvider } from './app/src/context/LanguageContext';
+import { RootStackParamList } from './app/src/navigation/types';
+
+type SessionProps = NativeStackScreenProps<RootStackParamList, 'Session'>;
+function SessionWrapper({ route, navigation }: SessionProps) {
+  const { overrideWeek, term = 1, week = 1 } = route.params ?? {};
+  const guardWeek = overrideWeek ?? week;
+  return (
+    <SessionGuard term={term} week={guardWeek}>
+      {/* FIX: Removed the unnecessary route and navigation props */}
+      <SessionScreen />
+    </SessionGuard>
+  );
+}
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
-// Unauthenticated stack
 function AuthStack() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
@@ -51,7 +64,6 @@ function AuthStack() {
   );
 }
 
-// Authenticated stack with guarded session
 function MainStack() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
@@ -60,20 +72,9 @@ function MainStack() {
       <Stack.Screen name="Instructions" component={InstructionScreen} />
       <Stack.Screen name="AddChild" component={AddChildScreen} />
       <Stack.Screen name="MyAccount" component={MyAccountScreen} />
-      {/* Paywall route */}
       <Stack.Screen name="Paywall" component={PaywallScreen} />
-      {/* Guarded Session route */}
-      <Stack.Screen name="Session">
-        {(props: any) => {
-          const { overrideWeek, term = 1, week = 1 } = props.route.params ?? {};
-          const guardWeek = overrideWeek ?? week;
-          return (
-            <SessionGuard term={term} week={guardWeek}>
-              <SessionScreen {...props} />
-            </SessionGuard>
-          );
-        }}
-      </Stack.Screen>
+      {/* Use the wrapper component here */}
+      <Stack.Screen name="Session" component={SessionWrapper} />
       <Stack.Screen name="Progress" component={ProgressScreen} />
       <Stack.Screen name="Curriculum" component={CurriculumScreen} />
       <Stack.Screen name="SessionComplete" component={SessionCompleteScreen} />
@@ -81,7 +82,6 @@ function MainStack() {
   );
 }
 
-// Root navigator selecting auth vs main
 function AppNavigator() {
   const { user, loading: authLoading } = useAuth();
   const { loadingProfile } = useActiveProfile();
@@ -101,21 +101,25 @@ function AppNavigator() {
   );
 }
 
-// Configure RevenueCat after user is available
 function RevenueCatInitializer() {
   const { user } = useAuth();
+  const rcKey = (Constants.manifest as any)?.extra?.revenueCatKey as string | undefined;
+
   useEffect(() => {
-    if (user?.uid) {
-      Purchases.configure({
-        apiKey: process.env.REVENUECAT_PUBLIC_KEY!,
-        appUserID: user.uid,
-      });
+    if (!user?.uid) return;
+    if (!rcKey) {
+      console.warn(
+        '[RevenueCat] skipping configure: no API key found. ' +
+        'Set expo.extra.revenueCatKey in app.json.'
+      );
+      return;
     }
-  }, [user]);
+    Purchases.configure({ apiKey: rcKey, appUserID: user.uid });
+  }, [user, rcKey]);
+
   return null;
 }
 
-// Main App component
 export default function App() {
   const [appIsReady, setAppIsReady] = useState(false);
 
@@ -123,7 +127,9 @@ export default function App() {
     async function prepare() {
       try {
         await SplashScreen.preventAutoHideAsync();
-        await Font.loadAsync({ ComicSans: require('./app/assets/fonts/ComicSansMS.ttf') });
+        await Font.loadAsync({
+          ComicSans: require('./app/assets/fonts/ComicSansMS.ttf'),
+        });
       } catch (e) {
         console.warn('Error loading assets:', e);
       } finally {
