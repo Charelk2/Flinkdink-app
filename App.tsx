@@ -1,5 +1,5 @@
 // App.tsx
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, ActivityIndicator, StyleSheet } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -7,9 +7,9 @@ import * as Font from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import Toast from 'react-native-toast-message';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import Purchases from 'react-native-purchases';
 
 import SessionGuard from './app/src/components/SessionGuard';
-
 // i18n config import
 import './app/src/i18n';
 
@@ -37,9 +37,6 @@ import { AuthProvider, useAuth } from './app/src/context/AuthContext';
 import { ActiveProfileProvider, useActiveProfile } from './app/src/context/ActiveProfileContext';
 import { LanguageProvider } from './app/src/context/LanguageContext';
 
-// Utils
-import { syncPendingProgress } from './app/utils/progress';
-
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 // Unauthenticated stack
@@ -63,14 +60,11 @@ function MainStack() {
       <Stack.Screen name="Instructions" component={InstructionScreen} />
       <Stack.Screen name="AddChild" component={AddChildScreen} />
       <Stack.Screen name="MyAccount" component={MyAccountScreen} />
-
       {/* Paywall route */}
       <Stack.Screen name="Paywall" component={PaywallScreen} />
-
       {/* Guarded Session route */}
       <Stack.Screen name="Session">
         {(props: any) => {
-          // destructure optional params
           const { overrideWeek, term = 1, week = 1 } = props.route.params ?? {};
           const guardWeek = overrideWeek ?? week;
           return (
@@ -80,7 +74,6 @@ function MainStack() {
           );
         }}
       </Stack.Screen>
-
       <Stack.Screen name="Progress" component={ProgressScreen} />
       <Stack.Screen name="Curriculum" component={CurriculumScreen} />
       <Stack.Screen name="SessionComplete" component={SessionCompleteScreen} />
@@ -108,6 +101,20 @@ function AppNavigator() {
   );
 }
 
+// Configure RevenueCat after user is available
+function RevenueCatInitializer() {
+  const { user } = useAuth();
+  useEffect(() => {
+    if (user?.uid) {
+      Purchases.configure({
+        apiKey: process.env.REVENUECAT_PUBLIC_KEY!,
+        appUserID: user.uid,
+      });
+    }
+  }, [user]);
+  return null;
+}
+
 // Main App component
 export default function App() {
   const [appIsReady, setAppIsReady] = useState(false);
@@ -116,9 +123,7 @@ export default function App() {
     async function prepare() {
       try {
         await SplashScreen.preventAutoHideAsync();
-        await Font.loadAsync({
-          ComicSans: require('./app/assets/fonts/ComicSansMS.ttf'),
-        });
+        await Font.loadAsync({ ComicSans: require('./app/assets/fonts/ComicSansMS.ttf') });
       } catch (e) {
         console.warn('Error loading assets:', e);
       } finally {
@@ -129,13 +134,12 @@ export default function App() {
     prepare();
   }, []);
 
-  if (!appIsReady) {
-    return null;
-  }
+  if (!appIsReady) return null;
 
   return (
     <SafeAreaProvider>
       <AuthProvider>
+        <RevenueCatInitializer />
         <LanguageProvider>
           <ActiveProfileProvider>
             <AppNavigator />

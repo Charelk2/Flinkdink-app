@@ -1,8 +1,8 @@
 {
   "expo": {
-    "name": "flinkdink-native-app",
-    "slug": "flinkdink-native-app",
-    "version": "1.0.1",
+    "name": "FlinkDink",
+    "slug": "flinkdink",
+    "version": "1.0.0",
     "orientation": "default",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -16,15 +16,18 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.anonymous.flinkdinknativeapp"
+      "bundleIdentifier": "com.saruman.flinkdink"
     },
     "android": {
-      "package": "com.anonymous.flinkdinknativeapp",
-      "versionCode": 2,
+      "package": "com.saruman.flinkdink",
+      "versionCode": 1,
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "permissions": [
+        "com.android.vending.BILLING"
+      ]
     },
     "plugins": [
       "expo-font",
@@ -43,11 +46,6 @@
     "web": {
       "favicon": "./assets/favicon.png",
       "bundler": "metro"
-    },
-    "extra": {
-      "eas": {
-        "projectId": "29fa38d8-8893-4208-88a0-fdc8ae6471c6"
-      }
     }
   }
 }

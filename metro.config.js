@@ -1,8 +1,16 @@
+// metro.config.js
 const { getDefaultConfig } = require('@expo/metro-config');
 
-const defaultConfig = getDefaultConfig(__dirname);
+// Get default Expo Metro configuration
+const config = getDefaultConfig(__dirname);
 
-defaultConfig.resolver.sourceExts.push('cjs'); // <-- Needed for some Firebase internal files
-defaultConfig.resolver.unstable_enablePackageExports = false; // <-- The key fix
+// Exclude Flow type files so Metro doesn't try to parse .js.flow
+config.resolver.sourceExts = config.resolver.sourceExts.filter(ext => ext !== 'flow');
 
-module.exports = defaultConfig;
+// Add support for .cjs files (needed by some dependencies)
+config.resolver.sourceExts.push('cjs');
+
+// Ensure Package Exports are handled correctly
+config.resolver.unstable_enablePackageExports = false;
+
+module.exports = config;
