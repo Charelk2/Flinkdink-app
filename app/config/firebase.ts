@@ -1,15 +1,16 @@
-// firebase.ts
+// app/src/config/firebase.ts
+
 import { initializeApp, FirebaseApp } from 'firebase/app';
 import {
   initializeAuth,
   getAuth,
-  Auth,
-} from 'firebase/auth/react-native'; // ✅ Must import from here for getReactNativePersistence
+  type Auth,
+} from 'firebase/auth/react-native';
 import { getFirestore } from 'firebase/firestore';
-import { getReactNativePersistence } from 'firebase/auth/react-native'; // ✅ CORRECT path
+import { getReactNativePersistence } from 'firebase/auth/react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-
+// Replace with your actual Firebase config
 const firebaseConfig = {
   apiKey: 'AIzaSyA9qMC_ubnC7huub1oCByDXHyjuQEqQWAg',
   authDomain: 'flinkdink-19fb2.firebaseapp.com',
@@ -20,20 +21,23 @@ const firebaseConfig = {
   measurementId: 'G-VL2VZD15ME',
 };
 
-const app: FirebaseApp = initializeApp(firebaseConfig);
+// Initialize the Firebase App
+export const app: FirebaseApp = initializeApp(firebaseConfig);
 
+// Initialize Auth with persistent storage
 let auth: Auth;
-
 try {
   auth = initializeAuth(app, {
     persistence: getReactNativePersistence(AsyncStorage),
   });
   console.log('✅ Firebase Auth initialized with AsyncStorage persistence');
-} catch (err) {
-  auth = getAuth(app); // fallback
+} catch {
+  auth = getAuth(app);
   console.log('📦 Falling back to in-memory auth persistence');
 }
 
-export { auth };
+// Initialize Firestore
 export const db = getFirestore(app);
 
+// Export Auth instance
+export { auth };

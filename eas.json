@@ -9,17 +9,26 @@
         "distribution": "internal",
         "android": {
           "buildType": "apk"
+        },
+        "env": {
+          "REVENUECAT_PUBLIC_KEY": "@from:app.json:expo.extra.revenueCatPublicKey"
         }
       },
       "preview": {
         "distribution": "internal",
         "android": {
           "buildType": "apk"
+        },
+        "env": {
+          "REVENUECAT_PUBLIC_KEY": "@from:app.json:expo.extra.revenueCatPublicKey"
         }
       },
       "production": {
         "android": {
           "buildType": "app-bundle"
+        },
+        "env": {
+          "REVENUECAT_PUBLIC_KEY": "@from:app.json:expo.extra.revenueCatPublicKey"
         }
       }
     }

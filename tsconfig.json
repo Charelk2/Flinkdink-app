@@ -16,7 +16,11 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "react-native"
+    "jsx": "react-native",
+    "baseUrl": "./app",
+    "paths": {
+      "@/*": ["src/*"]
+    }
   },
   "include": [
     "app",
@@ -24,6 +28,5 @@
   ],
   "exclude": [
     "node_modules"
-  ],
-  "extends": "@tsconfig/react-native/tsconfig.json"
+  ]
 }

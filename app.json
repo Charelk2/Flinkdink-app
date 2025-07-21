@@ -1,3 +1,4 @@
+
 {
   "expo": {
     "name": "FlinkDink",
@@ -46,6 +47,15 @@
     "web": {
       "favicon": "./assets/favicon.png",
       "bundler": "metro"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "aeb77c78-6538-49dc-bc6d-7c16f4342933"
+      },
+      
+      "revenueCatPublicKey": "goog_KbArquIXpiywIFZzosWvrYeVlFw",
+      
+      "revenueCatSecretKey": "REPLACE_WITH_YOUR_SECRET_KEY"
     }
   }
 }

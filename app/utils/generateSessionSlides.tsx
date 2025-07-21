@@ -1,4 +1,5 @@
-import type * as React from 'react';
+// app/utils/generateSessionSlides.tsx
+import React, { JSX } from 'react';
 import {
   SafeAreaView,
   View,
@@ -12,15 +13,14 @@ import DotBoard from '../src/components/DotBoard';
 import { imageMap } from './imageMap';
 import { ChildProfile } from '../src/models/types';
 import { getTodaySessionCount } from './progress';
-import i18n from '../src/i18n'; // Import your i18n instance
+import i18n from '../src/i18n';
 
 export interface Slide {
   type: 'language' | 'encyclopedia' | 'math';
   id: string;
-  content: React.JSX.Element;
+  content: JSX.Element;
 }
 
-// --- FIX #1: Update interfaces to match the actual data structure ---
 interface LanguageWord {
   id: string;
   title_en: string;
@@ -35,75 +35,15 @@ interface EncyclopediaItem {
   fact_en: string;
   fact_af: string;
 }
-// --- END OF FIX #1 ---
 
 function FullSlide({ children }: { children: React.ReactNode }) {
   const { width, height } = useWindowDimensions();
-
   return (
-    <SafeAreaView style={[styles.slide, { width, height }]}>
+    <SafeAreaView style={[styles.slide, { width, height }]}> 
       <View style={styles.slideInner}>{children}</View>
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  slide: {
-    flex: 1,
-    backgroundColor: '#FFFFFF',
-    paddingHorizontal: 24,
-  },
-  slideInner: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 24,
-  },
-  languageText: {
-    fontSize: 60,
-    fontFamily: 'ComicSans',
-    color: '#382E1C',
-    textAlign: 'center',
-    marginBottom: 24,
-  },
-  image: {
-    width: '250%',
-    height: '70%',
-    borderRadius: 20,
-    resizeMode: 'contain',
-    marginBottom: 16,
-  },
-  title: {
-    fontSize: 40,
-    fontFamily: 'ComicSans',
-    color: '#382E1C',
-    textAlign: 'center',
-    marginBottom: 8,
-  },
-  fact: {
-    fontSize: 12,
-    fontFamily: 'ComicSans',
-    color: '#555',
-    textAlign: 'center',
-    marginBottom: 24,
-  },
-  countText: {
-    fontSize: 18,
-    fontFamily: 'ComicSans',
-    color: '#382E1C',
-    textAlign: 'center',
-    marginTop: 12,
-    marginBottom: 24,
-  },
-  equationText: {
-    fontSize: 20,
-    fontFamily: 'ComicSans',
-    color: '#382E1C',
-    textAlign: 'center',
-    marginTop: 12,
-    marginBottom: 24,
-  },
-});
 
 export async function generateSessionSlides(
   week: number,
@@ -113,67 +53,56 @@ export async function generateSessionSlides(
     const data = await loadWeekData(week);
     if (!data) throw new Error(`No data for week ${week}`);
 
-    const shuffleArray = <T,>(array: T[]): T[] => {
-      const arr = [...array];
-      for (let i = arr.length - 1; i > 0; i--) {
+    const shuffle = <T,>(arr: T[]): T[] => {
+      const a = [...arr];
+      for (let i = a.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
-        [arr[i], arr[j]] = [arr[j], arr[i]];
+        [a[i], a[j]] = [a[j], a[i]];
       }
-      return arr;
+      return a;
     };
 
-    // Language slides
-    const languageSlides: Slide[] = shuffleArray(
-      (data.language ?? []).map((word: LanguageWord, i: number) => ({
+    const languageSlides: Slide[] = shuffle(
+      (data.language ?? []).map((w: LanguageWord, i) => ({
         type: 'language',
         id: `lang-${i}`,
         content: (
           <FullSlide key={`lang-${i}`}>
             <Text style={styles.languageText}>
-              {i18n.language === 'af' ? word.title_af : word.title_en}
+              {i18n.language === 'af' ? w.title_af : w.title_en}
             </Text>
           </FullSlide>
         ),
       }))
     );
 
-    // --- FIX #2: Correctly map the encyclopedia data ---
-    // Encyclopedia slides
-    const encyclopediaSlides: Slide[] = shuffleArray(
-      (data.encyclopedia ?? ([] as EncyclopediaItem[])).map(
-        (item: EncyclopediaItem, i: number) => ({
-          type: 'encyclopedia',
-          id: item.id || `ency-${i}`,
-          content: (
-            <FullSlide key={`ency-${i}`}>
-              <Image
-                source={imageMap[item.image] || imageMap['dog.svg']}
-                style={styles.image}
-              />
-              <Text style={styles.title}>
-                {i18n.language === 'af' ? item.title_af : item.title_en}
-              </Text>
-              <Text style={styles.fact}>
-                {i18n.language === 'af' ? item.fact_af : item.fact_en}
-              </Text>
-            </FullSlide>
-          ),
-        })
-      )
+    const encyclopediaSlides: Slide[] = shuffle(
+      (data.encyclopedia ?? [] as EncyclopediaItem[]).map((item, i) => ({
+        type: 'encyclopedia',
+        id: item.id || `ency-${i}`,
+        content: (
+          <FullSlide key={`ency-${i}`}>
+            <Image source={imageMap[item.image] || imageMap['dog.svg']} style={styles.image} />
+            <Text style={styles.title}>
+              {i18n.language === 'af' ? item.title_af : item.title_en}
+            </Text>
+            <Text style={styles.fact}>
+              {i18n.language === 'af' ? item.fact_af : item.fact_en}
+            </Text>
+          </FullSlide>
+        ),
+      }))
     );
-    // --- END OF FIX #2 ---
 
-    // Math slides
     const mathSlides: Slide[] = [];
-    const isValid = (n: any): n is number =>
-      typeof n === 'number' && Number.isInteger(n) && n >= 0;
+    const isNum = (n: any): n is number => typeof n === 'number' && Number.isInteger(n) && n >= 0;
 
     if (week <= 10) {
-      const length = data.mathWindowLength ?? 10;
+      const len = data.mathWindowLength ?? 10;
       const start = data.mathWindowStart ?? 1;
-      for (let i = 0; i < length; i++) {
+      for (let i = 0; i < len; i++) {
         const count = start + i;
-        if (isValid(count)) {
+        if (isNum(count)) {
           mathSlides.push({
             type: 'math',
             id: `count-${count}`,
@@ -200,76 +129,58 @@ export async function generateSessionSlides(
       let result: number | undefined;
       let ops: string[] = [];
 
-      if (sum && sum.sum) {
-        operands = ['a', 'b', 'c'].map((k) => sum[k]).filter(isValid);
+      if (sum?.sum) {
+        operands = ['a','b','c'].map(k => sum[k]).filter(isNum);
         result = sum.sum;
-        ops = sum.ops || Array(operands.length - 1).fill('+');
-      } else if (diff && diff.difference) {
-        operands = ['a', 'b', 'c'].map((k) => diff[k]).filter(isValid);
+        ops = sum.ops || Array(operands.length-1).fill('+');
+      } else if (diff?.difference) {
+        operands = ['a','b','c'].map(k => diff[k]).filter(isNum);
         result = diff.difference;
-        ops = diff.ops || Array(operands.length - 1).fill('-');
-      } else if (prod && prod.product) {
-        operands = ['a', 'b'].map((k) => prod[k]).filter(isValid);
+        ops = diff.ops || Array(operands.length-1).fill('-');
+      } else if (prod?.product) {
+        operands = ['a','b'].map(k => prod[k]).filter(isNum);
         result = prod.product;
         ops = ['×'];
-      } else if (quot && quot.quotient) {
-        operands = ['a', 'b'].map((k) => quot[k]).filter(isValid);
+      } else if (quot?.quotient) {
+        operands = ['a','b'].map(k => quot[k]).filter(isNum);
         result = quot.quotient;
         ops = ['÷'];
       }
 
-      if (operands.every(isValid) && isValid(result)) {
-        operands.forEach((val, i) => {
-          mathSlides.push({
-            type: 'math',
-            id: `math-op${i}`,
-            content: (
-              <FullSlide key={`math-op${i}`}>
-                <DotBoard count={val} />
-                <Text style={styles.countText}>
-                  🔵 Operand {i + 1}: {val}
-                </Text>
-              </FullSlide>
-            ),
-          });
-        });
+      if (operands.every(isNum) && isNum(result)) {
+        operands.forEach((val,i) => mathSlides.push({
+          type:'math', id:`math-op${i}`, content:(
+            <FullSlide key={`math-op${i}`}>
+              <DotBoard count={val}/>
+              <Text style={styles.countText}>🔵 Operand {i+1}: {val}</Text>
+            </FullSlide>
+          )
+        }));
 
         mathSlides.push({
-          type: 'math',
-          id: 'math-res',
-          content: (
+          type:'math', id:'math-res', content:(
             <FullSlide key="math-res">
-              <DotBoard count={result!} />
+              <DotBoard count={result}/>
               <Text style={styles.countText}>🔵 Result: {result}</Text>
             </FullSlide>
-          ),
+          )
         });
 
-        const equation =
-          operands
-            .map((v, i) => (i === 0 ? `${v}` : `${ops[i - 1]} ${v}`))
-            .join(' ') + ` = ${result}`;
-
+        const equation = operands.map((v,i)=> i===0?`${v}`:`${ops[i-1]} ${v}`).join(' ') + ` = ${result}`;
         mathSlides.push({
-          type: 'math',
-          id: 'math-eq',
-          content: (
+          type:'math', id:'math-eq', content:(
             <FullSlide key="math-eq">
               <Text style={styles.equationText}>🧮 {equation}</Text>
             </FullSlide>
-          ),
+          )
         });
       } else {
         mathSlides.push({
-          type: 'math',
-          id: 'math-fallback',
-          content: (
+          type:'math', id:'math-fallback', content:(
             <FullSlide key="math-fallback">
-              <Text style={styles.equationText}>
-                ⚠️ No math equation found for today
-              </Text>
+              <Text style={styles.equationText}>⚠️ No math equation found for today</Text>
             </FullSlide>
-          ),
+          )
         });
       }
     }
@@ -280,3 +191,14 @@ export async function generateSessionSlides(
     return [];
   }
 }
+
+const styles = StyleSheet.create({
+  slide: { flex:1, backgroundColor:'#FFF', paddingHorizontal:24 },
+  slideInner: { flex:1, alignItems:'center', justifyContent:'center', paddingVertical:24 },
+  languageText: { fontSize:60, fontFamily:'ComicSans', color:'#382E1C', textAlign:'center', marginBottom:24 },
+  image: { width:'250%', height:'70%', borderRadius:20, resizeMode:'contain', marginBottom:16 },
+  title: { fontSize:40, fontFamily:'ComicSans', color:'#382E1C', textAlign:'center', marginBottom:8 },
+  fact: { fontSize:12, fontFamily:'ComicSans', color:'#555', textAlign:'center', marginBottom:24 },
+  countText: { fontSize:18, fontFamily:'ComicSans', color:'#382E1C', textAlign:'center', marginTop:12, marginBottom:24 },
+  equationText: { fontSize:20, fontFamily:'ComicSans', color:'#382E1C', textAlign:'center', marginTop:12, marginBottom:24 },
+});

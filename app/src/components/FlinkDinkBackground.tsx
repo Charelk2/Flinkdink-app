@@ -1,10 +1,7 @@
-// app/src/components/FlinkDinkBackground.tsx
 import React from 'react';
 import {
   StyleSheet,
   View,
-  useColorScheme,
-  ColorSchemeName,
   useWindowDimensions,
 } from 'react-native';
 import Svg, { Defs, LinearGradient, Stop, Rect, Path, Circle } from 'react-native-svg';
@@ -20,57 +17,26 @@ interface ThemeColors {
   treeFoliage: string[];
 }
 
-// --- Color Palette ---
-const palette: { light: ThemeColors; dark: ThemeColors } = {
-  light: {
-    skyTop: '#8ED6FF',
-    skyBottom: '#C8FFFF',
-    sun: '#FFE66D',
-    cloud: '#FFFFFF',
-    hill: '#7FD88B',
-    treeTrunk: '#84542A',
-    treeFoliage: ['#52BE6C', '#66C87D', '#47A34A'],
-  },
-  dark: {
-    skyTop: '#0D1B2A',
-    skyBottom: '#1B263B',
-    sun: '#F5F5F5', // Moon
-    cloud: '#415A77',
-    hill: '#1E3A3A',
-    treeTrunk: '#4B3421',
-    treeFoliage: ['#2A6F41', '#285B2A', '#3C7A39'],
-  }
+// --- Color Palette (always use light) ---
+const colors: ThemeColors = {
+  skyTop: '#8ED6FF',
+  skyBottom: '#C8FFFF',
+  sun: '#FFE66D',
+  cloud: '#FFFFFF',
+  hill: '#7FD88B',
+  treeTrunk: '#84542A',
+  treeFoliage: ['#52BE6C', '#66C87D', '#47A34A'],
 };
 
 // --- Prop Type Definitions for Sub-components ---
-interface SunProps {
-  colors: ThemeColors;
-}
+interface SunProps { colors: ThemeColors; }
+interface CloudProps { x: number; y: number; color: string; }
+interface TreeProps { x: number; y: number; size?: number; foliageColor: string; trunkColor: string; }
 
-interface CloudProps {
-  x: number;
-  y: number;
-  color: string;
-}
-
-interface TreeProps {
-  x: number;
-  y: number;
-  size?: number;
-  foliageColor: string;
-  trunkColor: string;
-}
-
-// --- Main Background Component ---
 export default function FlinkDinkBackground() {
   const { width, height } = useWindowDimensions();
-  const colorScheme: ColorSchemeName = useColorScheme();
-  const themeKey = (colorScheme && palette[colorScheme]) ? colorScheme : 'light';
-  const colors = palette[themeKey];
 
-  // --- Helper Components are now defined INSIDE the main component ---
-  // This gives them access to the `width` and `height` from the hook above.
-
+  // Helper Components
   const Sun: React.FC<SunProps> = ({ colors }) => (
     <Circle cx={width * 0.09} cy={height * 0.12} r={28} fill={colors.sun} opacity={0.75} />
   );
@@ -83,7 +49,6 @@ export default function FlinkDinkBackground() {
       <Circle cx={x + 10} cy={y + 35} r={25} fill={color} opacity={0.7} />
     </>
   );
-  
 
   const Tree: React.FC<TreeProps> = ({ x, y, size = 1, foliageColor, trunkColor }) => (
     <>
@@ -93,26 +58,32 @@ export default function FlinkDinkBackground() {
       <Circle cx={x - 12 * size} cy={y + 5 * size} r={11 * size} fill={foliageColor} opacity={0.8} />
     </>
   );
-  
 
   return (
     <View style={StyleSheet.absoluteFill} pointerEvents="none">
       <Svg width={width} height={height}>
         {/* Sky Gradient */}
         <Defs>
-          <LinearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1">
+          <LinearGradient
+            id="skyGrad"
+            gradientUnits="userSpaceOnUse"
+            x1="0"
+            y1="0"
+            x2="0"
+            y2={height.toString()}
+          >
             <Stop offset="0%" stopColor={colors.skyTop} />
             <Stop offset="100%" stopColor={colors.skyBottom} />
           </LinearGradient>
         </Defs>
         <Rect x="0" y="0" width={width} height={height} fill="url(#skyGrad)" />
-        
+
         <Sun colors={colors} />
 
         {/* Clouds */}
         <Cloud x={width * 0.75} y={height * 0.18} color={colors.cloud} />
         <Cloud x={width * 0.2} y={height * 0.22} color={colors.cloud} />
-        
+
         {/* Hill */}
         <Path
           d={`M0,${height * 0.7} C ${width * 0.3},${height * 0.65} ${width * 0.7},${height * 0.75} ${width},${height * 0.7} L${width},${height} L0,${height} Z`}

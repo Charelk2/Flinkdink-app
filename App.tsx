@@ -1,57 +1,77 @@
 // App.tsx
-
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, ActivityIndicator, StyleSheet } from 'react-native';
+import { getApp, getApps } from '@react-native-firebase/app';
+import auth from '@react-native-firebase/auth';
 import { NavigationContainer } from '@react-navigation/native';
-import type { RouteProp } from '@react-navigation/native';
-import {
-  createNativeStackNavigator,
-  type NativeStackScreenProps,
-} from '@react-navigation/native-stack';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as Font from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import Toast from 'react-native-toast-message';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import Purchases from 'react-native-purchases';
-import Constants from 'expo-constants';
 
+import Purchases, { PurchasesEntitlementInfo } from 'react-native-purchases';
 import SessionGuard from './app/src/components/SessionGuard';
-import './app/src/i18n'; // i18n config
-
-// Screens
+import './app/src/i18n';
 import OnboardingScreen from './app/src/screens/OnboardingScreen';
 import LoginScreen from './app/src/screens/LoginScreen';
 import SignUpScreen from './app/src/screens/SignUpScreen';
 import ForgotPasswordScreen from './app/src/screens/ForgotPasswordScreen';
-import HomeScreen from './app/src/screens/HomeScreen';
-import AddChildScreen from './app/src/screens/AddChildScreen';
 import ProfileSelectorScreen from './app/src/screens/ProfileSelector';
+import HomeScreen from './app/src/screens/HomeScreen';
+import InstructionScreen from './app/src/screens/InstructionScreen';
+import AddChildScreen from './app/src/screens/AddChildScreen';
 import MyAccountScreen from './app/src/screens/MyAccountScreen';
+import PaywallScreen from './app/src/screens/PaywallScreen';
 import SessionScreen from './app/src/screens/SessionScreen';
 import ProgressScreen from './app/src/screens/ProgressScreen';
 import CurriculumScreen from './app/src/screens/CurriculumScreen';
 import SessionCompleteScreen from './app/src/screens/SessionCompleteScreen';
-import InstructionScreen from './app/src/screens/InstructionScreen';
-import PaywallScreen from './app/src/screens/PaywallScreen';
 
 import { AuthProvider, useAuth } from './app/src/context/AuthContext';
 import { ActiveProfileProvider, useActiveProfile } from './app/src/context/ActiveProfileContext';
 import { LanguageProvider } from './app/src/context/LanguageContext';
-import { RootStackParamList } from './app/src/navigation/types';
+
+import { initAnalytics, logEvent } from './app/utils/Analytics';
+
+// Configure RevenueCat before app loads
+Purchases.configure({ apiKey: 'goog_KbArquIXpiywIFZzosWvrYeVlFw' });
+
+type RootStackParamList = {
+  Onboarding: undefined;
+  Login: undefined;
+  SignUp: undefined;
+  ForgotPassword: undefined;
+  ProfileSelector: undefined;
+  Home: undefined;
+  Instructions: undefined;
+  AddChild: undefined;
+  MyAccount: undefined;
+  Paywall: { term: number; week: number };
+  Session: { term: number; week: number; overrideWeek?: number };
+  Progress: undefined;
+  Curriculum: undefined;
+  SessionComplete: undefined;
+};
+
+const Stack = createNativeStackNavigator<RootStackParamList>();
 
 type SessionProps = NativeStackScreenProps<RootStackParamList, 'Session'>;
-function SessionWrapper({ route, navigation }: SessionProps) {
-  const { overrideWeek, term = 1, week = 1 } = route.params ?? {};
-  const guardWeek = overrideWeek ?? week;
+function SessionWrapper({ route }: SessionProps) {
+  const { term = 1, week = 1, overrideWeek } = route.params;
+  const currentWeek = overrideWeek ?? week;
+
+  useEffect(() => {
+    logEvent('first_session_start', { term, week: currentWeek });
+  }, [term, currentWeek]);
+
   return (
-    <SessionGuard term={term} week={guardWeek}>
-      {/* FIX: Removed the unnecessary route and navigation props */}
+    <SessionGuard term={term} week={currentWeek}>
       <SessionScreen />
     </SessionGuard>
   );
 }
-
-const Stack = createNativeStackNavigator<RootStackParamList>();
 
 function AuthStack() {
   return (
@@ -73,7 +93,6 @@ function MainStack() {
       <Stack.Screen name="AddChild" component={AddChildScreen} />
       <Stack.Screen name="MyAccount" component={MyAccountScreen} />
       <Stack.Screen name="Paywall" component={PaywallScreen} />
-      {/* Use the wrapper component here */}
       <Stack.Screen name="Session" component={SessionWrapper} />
       <Stack.Screen name="Progress" component={ProgressScreen} />
       <Stack.Screen name="Curriculum" component={CurriculumScreen} />
@@ -89,7 +108,7 @@ function AppNavigator() {
   if (authLoading || loadingProfile) {
     return (
       <View style={styles.centered}>
-        <ActivityIndicator size="large" color="#382E1C" />
+        <ActivityIndicator size="large" />
       </View>
     );
   }
@@ -101,51 +120,42 @@ function AppNavigator() {
   );
 }
 
-function RevenueCatInitializer() {
-  const { user } = useAuth();
-  const rcKey = (Constants.manifest as any)?.extra?.revenueCatKey as string | undefined;
-
-  useEffect(() => {
-    if (!user?.uid) return;
-    if (!rcKey) {
-      console.warn(
-        '[RevenueCat] skipping configure: no API key found. ' +
-        'Set expo.extra.revenueCatKey in app.json.'
-      );
-      return;
-    }
-    Purchases.configure({ apiKey: rcKey, appUserID: user.uid });
-  }, [user, rcKey]);
-
-  return null;
-}
-
 export default function App() {
-  const [appIsReady, setAppIsReady] = useState(false);
+  const [resourcesReady, setResourcesReady] = useState(false);
+  const [firebaseReady, setFirebaseReady] = useState(false);
 
+  // Load fonts & prevent splash hide
   useEffect(() => {
-    async function prepare() {
-      try {
-        await SplashScreen.preventAutoHideAsync();
-        await Font.loadAsync({
-          ComicSans: require('./app/assets/fonts/ComicSansMS.ttf'),
-        });
-      } catch (e) {
-        console.warn('Error loading assets:', e);
-      } finally {
-        setAppIsReady(true);
-        await SplashScreen.hideAsync();
-      }
-    }
-    prepare();
+    (async () => {
+      await SplashScreen.preventAutoHideAsync();
+      await Font.loadAsync({ ComicSans: require('./app/assets/fonts/ComicSansMS.ttf') });
+      setResourcesReady(true);
+      await SplashScreen.hideAsync();
+    })();
   }, []);
 
-  if (!appIsReady) return null;
+  // Init Firebase app & analytics
+  useEffect(() => {
+    (async () => {
+      if (getApps().length === 0) return;
+      getApp();
+      await initAnalytics();
+      logEvent('install');
+      setFirebaseReady(true);
+    })();
+  }, []);
+
+  if (!resourcesReady || !firebaseReady) {
+    return (
+      <View style={styles.centered}>
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  }
 
   return (
     <SafeAreaProvider>
       <AuthProvider>
-        <RevenueCatInitializer />
         <LanguageProvider>
           <ActiveProfileProvider>
             <AppNavigator />
@@ -158,10 +168,5 @@ export default function App() {
 }
 
 const styles = StyleSheet.create({
-  centered: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#FFFBF2',
-  },
+  centered: { flex: 1, justifyContent: 'center', alignItems: 'center' },
 });

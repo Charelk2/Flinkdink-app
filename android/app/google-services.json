@@ -1,0 +1,90 @@
+{
+  "project_info": {
+    "project_number": "164154739308",
+    "project_id": "flinkdink-19fb2",
+    "storage_bucket": "flinkdink-19fb2.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:164154739308:android:d440f1fdb5bd4bf0246649",
+        "android_client_info": {
+          "package_name": "com.saruman.flinkdink"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "164154739308-gqq97mfn6ufivgej5375um7jsf4vr5ra.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDDWX0-Zn9xYy_wH1XV9T18mBZ0oqhvn4w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "164154739308-gqq97mfn6ufivgej5375um7jsf4vr5ra.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "164154739308-jkidf332t358145i7n36bbu6tq24nnfe.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "FlinkDink"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:164154739308:android:b8c35ed3501eb07f246649",
+        "android_client_info": {
+          "package_name": "flink.dink"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "164154739308-tndei8dfjsni95lmlp04j7heso0psidb.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "flink.dink",
+            "certificate_hash": "390a755726106916f1d209b505967de0d69046d8"
+          }
+        },
+        {
+          "client_id": "164154739308-gqq97mfn6ufivgej5375um7jsf4vr5ra.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDDWX0-Zn9xYy_wH1XV9T18mBZ0oqhvn4w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "164154739308-gqq97mfn6ufivgej5375um7jsf4vr5ra.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "164154739308-jkidf332t358145i7n36bbu6tq24nnfe.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "FlinkDink"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
