@@ -1,4 +1,6 @@
 // App.tsx
+globalThis.RNFB_SILENCE_MODULAR_DEPRECATION_WARNINGS = true;
+import { LogBox } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { View, ActivityIndicator, StyleSheet } from 'react-native';
 import { getApp, getApps } from '@react-native-firebase/app';

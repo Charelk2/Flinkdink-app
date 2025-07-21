@@ -1,4 +1,6 @@
 // app/src/screens/HomeScreen.tsx
+globalThis.RNFB_SILENCE_MODULAR_DEPRECATION_WARNINGS = true;
+import { LogBox } from 'react-native';
 
 import React, { useState, useContext, useEffect, useMemo, useCallback } from 'react';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
